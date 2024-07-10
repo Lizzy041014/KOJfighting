@@ -1,5 +1,8 @@
 <template>
     <div class="big">
+        <div class="pictrueBox">
+<!-- <img src="../assets/kexielogo.png"> -->
+        </div>
         <div class="loginBox">
             <h2>LOGIN</h2>
             <form action="">
@@ -31,11 +34,30 @@
     margin: 0;
     padding: 0;
 }
+.pictrueBox{
+    position: relative;
+    top: 6%;
+    margin: 0 auto;
+    height: 150px;
+    width: 150px;
+    /* background-color: beige; */
+    border-radius: 75px;
+box-shadow: 2px 10px 20px 0 rgba(10, 51, 139, 0.387);
+    animation: faguang 2s linear infinite;
+    background-image:url('../assets/kexielogo.png');
+    background-repeat: no-repeat;
+    background-size: 168px 168px;
+    background-position:center;
 
+}
+
+@keyframes faguang {
+
+}
 .big{
 width: 100vw;
 height: 100vh;
-background: linear-gradient(#c1d9f3,#f8fdff );
+background: linear-gradient(#c1d9f3,#fbfeff );
 /* background-color: #ffffff; */
 }
 a {
@@ -60,7 +82,7 @@ body {
 
 .loginBox {
     position: relative;
-    top: 17%;
+    top: 8%;
     width: 400px;
     height: 360px;
     background-color: #f1f2f3;
@@ -90,7 +112,7 @@ h2 {
 .item input {
     width: 100%;
     height: 100%;
-    color: #0a346b;
+    color: #0a3164;
     padding-top: 20px;
     font-size: 16px;
     box-sizing: border-box;
@@ -99,13 +121,14 @@ h2 {
 .item input:focus+label,
 .item input:valid+label {
     top: 0px;
-    font-size: 11px;
+    font-size: 13px;
 }
 
 .item label {
     position: absolute;
+    font-size: 17px;
     left: 0;
-    top: 12px;
+    top: 15px;
     transition: all 0.5s linear;
 }
 
@@ -113,8 +136,9 @@ h2 {
     text-align: center;
     padding: 10px 20px;
     margin-top: 8px;
-    font-size: 15px;
-    color: rgb(2, 56, 104);
+    font-size: 17px;
+    font-weight: 600;
+    color: rgb(12, 74, 128);
     position: relative;
     overflow: hidden;
     text-transform: uppercase;
@@ -139,7 +163,7 @@ h2 {
 
 .btn>span:nth-child(1) {
     width: 100%;
-    height: 1.5px;
+    height: 2px;
     background: -webkit-linear-gradient(left, transparent, rgb(0, 63, 118));
     left: -100%;
     top: 0px;
@@ -155,7 +179,7 @@ h2 {
 }
 
 .btn>span:nth-child(2) {
-    width: 1.5px;
+    width: 2px;
     height: 100%;
     background: -webkit-linear-gradient(top, transparent, rgb(0, 63, 118));
     right: 0px;
@@ -173,7 +197,7 @@ h2 {
 
 .btn>span:nth-child(3) {
     width: 100%;
-    height: 1.5px;
+    height: 2px;
     background: -webkit-linear-gradient(left, rgb(0, 63, 118), transparent);
     left: 100%;
     bottom: 0px;
@@ -189,7 +213,7 @@ h2 {
 }
 
 .btn>span:nth-child(4) {
-    width: 1.5px;
+    width:2px;
     height: 100%;
     background: -webkit-linear-gradient(top, transparent, rgb(0, 63, 118));
     left: 0px;
