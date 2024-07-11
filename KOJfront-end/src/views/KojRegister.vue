@@ -4,65 +4,54 @@
             <div class="pulse1"></div>
             <div class="pulse2"></div>
         </div>
-        <div class="loginBox">
-            <h2>LOGIN</h2>
+        <div class="registerBox">
+            <h2>REGISTER</h2>
             <form action="">
                 <div class="item">
-                    <input type="text" required v-model="email">
-                    <label for="">Email</label>
+                    <input type="text" required v-model="username">
+                    <label for="">Username</label>
                 </div>
                 <div class="item">
                     <input type="password" required v-model="password">
                     <label for="">Password</label>
                 </div>
-                <button class="btn">enter
+                <div class="item">
+                    <input type="text" required v-model="email">
+                    <label for="">Email</label>
+                </div>
+                <button @click="showMessage" class="btn">submit
                     <span></span>
                     <span></span>
                     <span></span>
                     <span></span>
                 </button>
             </form>
-            <div class="register">
-                <RouterLink to="/register" active-class="active">
-                    &nbsp;&nbsp;&nbsp;没有账号？点击注册
-                </RouterLink>
+            <div class="login">
+                <RouterLink to="/login" active-class="active">
+                    &nbsp; &nbsp; &nbsp; &nbsp;已有账号？请登陆吧~</RouterLink>
             </div>
         </div>
     </div>
 </template>
 
-<script setup  name="KojLogin">
+<script setup name="KojRegister">
+import { ElMessage } from 'element-plus';
 import { RouterLink, RouterView } from 'vue-router';
 import { useRouter } from 'vue-router';
-// const router = useRouter();
+const router = useRouter();
+function showMessage(){
+    ElMessage({
+        type:"success",
+        message:'恭喜uu注册成功，请前往登录页面登陆吧~~'
+    })
+}
 </script>
-
 <style scoped>
 * {
     margin: 0;
     padding: 0;
 }
 
-/* 属性选择器 */
-.pictrueBox div[class^=pulse] {
-    /* 保证我们的发光盒子里面水平垂直居中，放大之后就会向四周发散 */
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    height: 139px;
-    width: 139px;
-    border-radius: 75px;
-    box-shadow: 0px 0px 20px 1px rgba(9, 43, 117, 0.898);
-        animation: faguang 2s ease 0s infinite normal none running;
-}
-@keyframes faguang {
-    70%{
-        width: 144px;
-        height: 144px;
-        opacity: 1;
-    }
-}
 .pictrueBox {
     position: relative;
     top: 5%;
@@ -76,6 +65,28 @@ import { useRouter } from 'vue-router';
     background-position: center;
 
 }
+
+/* 属性选择器 */
+.pictrueBox div[class^=pulse] {
+    /* 保证我们的发光盒子里面水平垂直居中，放大之后就会向四周发散 */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 139px;
+    width: 139px;
+    border-radius: 75px;
+    box-shadow: 0px 0px 20px 1px rgba(9, 43, 117, 0.898);
+    animation: faguang 2s ease 0s infinite normal none running;
+}
+
+@keyframes faguang {
+    70% {
+        width: 144px;
+        height: 144px;
+        opacity: 1;
+    }
+}
 .big {
     width: 100vw;
     height: 100vh;
@@ -85,7 +96,7 @@ import { useRouter } from 'vue-router';
 
 a {
     text-decoration: none;
-        color: #032564;
+    color: #032564;
 }
 
 input,
@@ -104,15 +115,15 @@ body {
     color: #ffffff;
 }
 
-.loginBox {
+.registerBox {
     position: relative;
-    top: 10.5%;
+    top: 8.5%;
     width: 400px;
-    height: 360px;
+    height: 422px;
     background-color: #f9fdff;
     margin: 0 auto;
     border-radius: 10px;
-    box-shadow: 2px 12px 20px 0 rgba(19, 63, 157, 0.576);
+    box-shadow: 2px 8px 18px 0 rgba(10, 51, 139, 0.488);
     padding: 38px;
     box-sizing: border-box;
     color: #032564;
@@ -122,13 +133,13 @@ h2 {
     text-align: center;
     font-size: 38px;
     color: rgb(0, 54, 102);
-    margin-bottom: 20px;
-    margin-top: -10px;
+    margin-bottom: 22px;
+    margin-top: -8px;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
 .item {
-    height: 45px;
+    height: 38px;
     border-bottom: 1px solid #052f76;
     margin-bottom: 40px;
     position: relative;
@@ -142,6 +153,7 @@ h2 {
     font-size: 16px;
     box-sizing: border-box;
 }
+
 /* input在触发焦点时更改样式
 +号是相邻兄弟选择器
 为的是去找与input相邻的兄弟label
@@ -152,7 +164,7 @@ h2 {
 但是密码不会，密码框的值为空，那么这句话就不合法，required不能为空 当我们给密码框写点东西的时候才会执行以下代码 ———————————————— 版权声明：本文为博主原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接和本声明。
 */
 .item input:focus+label,
-.item input:valid+label{
+.item input:valid+label {
     top: 0px;
     font-size: 13px;
 }
@@ -161,19 +173,19 @@ h2 {
     position: absolute;
     font-size: 17px;
     left: 0;
-    top: 15px;
+    top: 3px;
     transition: all 0.5s linear;
 }
-.register{
-    margin-top: 18px;
-    text-align: center;
-    font-size: 12px;
-    
+.login{
+        margin-top: 22px;
+        text-align: center;
+        font-size: 12px;
+        color: #032564;
 }
 .btn {
     text-align: center;
     padding: 10px 20px;
-    margin-top: 12px;
+    /* margin-top: 2px; */
     font-size: 18px;
     font-weight: 600;
     color: rgb(12, 74, 128);
@@ -203,7 +215,6 @@ h2 {
     width: 100%;
     height: 2px;
     background: -webkit-linear-gradient(left, transparent, rgb(0, 63, 118));
-    /* 第一个参数表示线性渐变的方向 */
     left: -100%;
     top: 0px;
     animation: line1 1.25s linear infinite;
@@ -239,10 +250,8 @@ h2 {
     height: 2px;
     background: -webkit-linear-gradient(left, rgb(0, 63, 118), transparent);
     left: 100%;
-    /* 初始时，进度条完全在父元素的右侧，不可见。 */
     bottom: 0px;
     animation: line3 1.25s 1s linear infinite;
-    /* 动画持续时间为1.25秒，延迟1秒开始 */
 }
 
 @keyframes line3 {
@@ -250,7 +259,6 @@ h2 {
     50%,
     100% {
         left: -100%;
-        /* 进度条移动到其初始位置的左侧100%，使其从右侧完全移动到左侧， */
     }
 }
 

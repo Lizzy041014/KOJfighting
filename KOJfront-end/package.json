@@ -4,16 +4,24 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --open",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
-    "vue": "^3.4.29"
+    "element-plus": "^2.7.6",
+    "sass": "^1.77.7",
+    "sass-loader": "^14.2.1",
+    "unplugin-element-plus": "^0.8.0",
+    "vue": "^3.4.29",
+    "vue-router": "^4.4.0"
   },
   "devDependencies": {
+    "@types/node": "^20.14.10",
     "@vitejs/plugin-vue": "^5.0.5",
     "typescript": "^5.2.2",
+    "unplugin-auto-import": "^0.17.6",
+    "unplugin-vue-components": "^0.27.2",
     "vite": "^5.3.3",
     "vue-tsc": "^2.0.21"
   }
