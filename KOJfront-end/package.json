@@ -2,14 +2,18 @@
   "name": "kojfront-end",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
   "scripts": {
     "dev": "vite --open",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@bytemd/plugin-gfm": "^1.21.0",
+    "@bytemd/plugin-highlight": "^1.21.0",
+    "@bytemd/vue-next": "^1.21.0",
+    "axios": "^1.7.2",
     "element-plus": "^2.7.6",
+    "monaco-editor": "^0.50.0",
     "sass": "^1.77.7",
     "sass-loader": "^14.2.1",
     "unplugin-element-plus": "^0.8.0",
@@ -17,12 +21,15 @@
     "vue-router": "^4.4.0"
   },
   "devDependencies": {
+    "@arco-design/web-vue": "^2.55.3",
+    "@arco-plugins/vite-vue": "^1.4.5",
     "@types/node": "^20.14.10",
     "@vitejs/plugin-vue": "^5.0.5",
     "typescript": "^5.2.2",
     "unplugin-auto-import": "^0.17.6",
     "unplugin-vue-components": "^0.27.2",
     "vite": "^5.3.3",
+    "vite-plugin-monaco-editor": "^1.1.0",
     "vue-tsc": "^2.0.21"
   }
 }

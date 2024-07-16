@@ -6,9 +6,16 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import ElementPlus from 'unplugin-element-plus/vite'
+import ViteMonacoPlugin from 'vite-plugin-monaco-editor'
+import { vitePluginForArco } from '@arco-plugins/vite-vue'
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [vue(),
+    vitePluginForArco({
+      style: 'css'
+    }),
+    ViteMonacoPlugin({}),
     AutoImport({
       resolvers: [ElementPlusResolver()],
     }),
@@ -23,5 +30,14 @@ export default defineConfig({
     alias:{
       "@":path.resolve(__dirname,'src')
     }
+  },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://47.120.7.179:8080/',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
   }
 })

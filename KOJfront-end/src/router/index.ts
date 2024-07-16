@@ -1,8 +1,9 @@
 import { createRouter } from "vue-router"
 //引入路由器模式
 import { createWebHistory } from "vue-router";
-import KojLogin from '@/views/KojLogin.vue'
-import KojRegister from '@/views/KojRegister.vue'
+import KojLogin from '@/views/users/KojLogin.vue'
+import KojRegister from '@/views/users/KojRegister.vue'
+import KojHome from '@/views/KojHome.vue'
 //创建路由器
 const router = createRouter({
     history:createWebHistory(),
@@ -21,6 +22,12 @@ const router = createRouter({
             name: 'kojregister',
             //组件绑定
             component: KojRegister,
+        },
+        {
+ 
+            path: '/home',
+            name: 'kojhome',
+            component: KojHome,
         },
         {
             path: "/",
