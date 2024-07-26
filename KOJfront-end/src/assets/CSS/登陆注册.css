@@ -4,7 +4,6 @@
 }
 .pictrueBox {
     position: relative;
-    top: 5%;
     margin: 0 auto;
     height: 160px;
     width: 160px;
@@ -105,7 +104,7 @@ h2 {
     font-size: 13px;
 } */
 .animated-class {
-    animation: focusAnimation .7s ease-in-out;
+    animation: focusAnimation .6s ease-in-out;
     animation-fill-mode: forwards;
     /* 保持动画效果不变 */
 }

@@ -17,7 +17,7 @@
                         v-model="password">
                     <label for="" id="lll" :class="{ 'animated-class': isAnimatedPassword }">Password</label>
                 </div>
-                <button class="btn">enter
+                    <button class="btn">enter
                     <span></span>
                     <span></span>
                     <span></span>
@@ -34,49 +34,57 @@
 </template>
 
 <script setup lang="ts" name="KojLogin">
-import kexielogo from '@/assets/kexielogo.png'
+import kexielogo from '@/assets/img/kexielogo.png'
 import { RouterLink} from 'vue-router';
 import { ElMessage } from 'element-plus';
-// import { useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { ref } from 'vue';
 import axios from 'axios';
-const password = ref('');
-const email = ref('');
-
-const isAnimatedPassword = ref(false);
-const isAnimatedEmail = ref(false);
-function handleFocus(field: any) {
-if (field === 'password') {
+let router = useRouter();
+let password = ref('');
+let email = ref('');
+let isAnimatedPassword = ref(false);
+let isAnimatedEmail = ref(false);
+function handleFocus(content: any) {
+    if (content === 'password') {
         isAnimatedPassword.value = true;
-    } else if (field === 'email') {
+    } else if (content === 'email') {
         isAnimatedEmail.value = true;
     }
 }
 
-function handleBlur(field: any) {
-    if (field === 'password') {
+function handleBlur(content: any) {
+    if (content === 'password') {
         if (!password.value) {
             isAnimatedPassword.value = false;
         }
     } 
-     else if (field === 'email') {
+    else if (content === 'email') {
         if (!email.value) {
             isAnimatedEmail.value = false;
         }
     }
 }
 
-const handleSubmit = async (event: { preventDefault: () => void; }) => {
+let handleSubmit = async (event: { preventDefault: () => void; }) => {
     event.preventDefault();
-    const data = {
+    let data = {
         password: password.value,
         email: email.value
     };
     try {
-        const response = await axios.post('/api/login', data);
+        let response = await axios.post('/api/login', data);
         console.log(response.data);
-        if (response.data.code=200){
-            ElMessage.success("登陆成功！")
+        if (response.data.code === 200 && response.data.data.account.roleId === "管理员")
+        {
+            ElMessage.success("热烈欢迎管理员uu！")
+            router.push('/managerhome')
+        } else if (response.data.code === 200 && response.data.data.account.roleId === "普通用户"){
+            ElMessage.success("登陆成功！欢迎欢迎！")
+            router.push('/userhome')
+        }
+        else{
+            ElMessage.error(response.data.message)
         }
     } catch (error) {
         console.error(error);
@@ -85,19 +93,22 @@ const handleSubmit = async (event: { preventDefault: () => void; }) => {
 </script>
 
 <style scoped>
+.pictrueBox {
+    top: 4.5%;
+}
 .item label {
     top: 17px;
 }
 
 .loginBox {
     position: relative;
-    top: 10.5%;
+    top: 10%;
     width: 400px;
     height: 360px;
     background-color: #f9fdff;
     margin: 0 auto;
     border-radius: 10px;
-    box-shadow: 2px 12px 20px 0 rgba(19, 63, 157, 0.576);
+    box-shadow: 2px 8px 20px 0 rgba(19, 63, 157, 0.576);
     padding: 38px;
     box-sizing: border-box;
     color: #032564;
@@ -109,7 +120,9 @@ const handleSubmit = async (event: { preventDefault: () => void; }) => {
     font-size: 12px;
 
 }
-
+.register span{
+    margin-left: 20px;
+}
 .btn {
     margin-top: 12px;
 }

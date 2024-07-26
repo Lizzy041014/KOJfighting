@@ -3,7 +3,7 @@ import { createRouter } from "vue-router"
 import { createWebHistory } from "vue-router";
 import KojLogin from '@/views/users/KojLogin.vue'
 import KojRegister from '@/views/users/KojRegister.vue'
-import KojHome from '@/views/KojHome.vue'
+import KojUserHome from '@/views/KojUserHome.vue'
 //创建路由器
 const router = createRouter({
     history:createWebHistory(),
@@ -25,9 +25,9 @@ const router = createRouter({
         },
         {
  
-            path: '/home',
-            name: 'kojhome',
-            component: KojHome,
+            path: '/userhome',
+            name: 'kojuserhome',
+            component: KojUserHome,
         },
         {
             path: "/",

@@ -39,14 +39,14 @@
 </template>
 
 <script setup lang="ts" name="KojRegister">
-import kexielogo from '@/assets/kexielogo.png'
+import kexielogo from '@/assets/img/kexielogo.png'
 import { ElMessage } from 'element-plus';
 import { RouterLink} from 'vue-router';
 import axios from 'axios';
 import { ref } from 'vue';
-const username = ref('');
-const password = ref('');
-const email = ref('');
+let username = ref('');
+let password = ref('');
+let email = ref('');
 // 正则匹配
 let uPattern: RegExp = /^[\u4e00-\u9fa5a-zA-Z0-9]{3,12}$/;
 // //至少1个字母(?=.*[A-Za-z])至少1个特殊字符(?=.*[$@$!%*#?&])
@@ -55,10 +55,10 @@ let ePattern: RegExp = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-
 function matchPattern(Pattern: RegExp, str: string) {
     return Pattern.test(str);
 }
-// // 第一种：使用类型注释const handleSubmit = async (event: { preventDefault: () => void; }) => {}
+// // 第一种：使用类型注释let handleSubmit = async (event: { preventDefault: () => void; }) => {}
 //这种语法是 TypeScript 中的类型标注，用于增强类型检查和代码的类型安全性。
 // 第二种：不使用类型注释
-const handleSubmit = async (event: { preventDefault: () => void; }) => {
+let handleSubmit = async (event: { preventDefault: () => void; }) => {
     event.preventDefault();
     let _username = username.value.trim();
     let _password = password.value;
@@ -111,14 +111,14 @@ const handleSubmit = async (event: { preventDefault: () => void; }) => {
         });
         return;
     }
-    const data = {
+    let data = {
         nickname: _username,
         password: _password,
         email: _email
     };
 
     try {
-        const response = await axios.post('/api/register', data); 
+        let response = await axios.post('/api/register', data); 
         // 直接传递对象，不需要 JSON.stringify  
         console.log(data); // 直接打印对象，更易于阅读  
         console.log(response.data);
@@ -127,34 +127,35 @@ const handleSubmit = async (event: { preventDefault: () => void; }) => {
         }
         else{
             ElMessage.success("恭喜uu注册成功，请前往登陆页面进行登录吧！")
+            localStorage.setItem('nickname', _username)
         }
     } catch (error) {
         console.error(error);
     }
 };
-const isAnimatedUsername = ref(false);
-const isAnimatedPassword = ref(false);
-const isAnimatedEmail = ref(false);
-function handleFocus(field: any) {
-    if (field === 'username') {
+let isAnimatedUsername = ref(false);
+let isAnimatedPassword = ref(false);
+let isAnimatedEmail = ref(false);
+function handleFocus(content: any) {
+    if (content === 'username') {
         isAnimatedUsername.value = true;
-    } else if (field === 'password') {
+    } else if (content === 'password') {
         isAnimatedPassword.value = true;
-    } else if (field === 'email') {
+    } else if (content === 'email') {
         isAnimatedEmail.value = true;
     }
 }
 
-function handleBlur(field:any) {
-    if (field === 'username') {
+function handleBlur(content:any) {
+    if (content === 'username') {
         if (!username.value) {
             isAnimatedUsername.value = false;
         }
-    } else if (field === 'password') {
+    } else if (content === 'password') {
         if (!password.value) {
             isAnimatedPassword.value = false;
         }
-    } else if (field === 'email') {
+    } else if (content === 'email') {
         if (!email.value) {
             isAnimatedEmail.value = false;
         }
@@ -162,11 +163,14 @@ function handleBlur(field:any) {
 }
 </script>
 <style scoped>
+.pictrueBox {
+    top: 3.2%;
+}
 .registerBox {
     position: relative;
-    top: 8.5%;
+    top: 6.2%;
     width: 400px;
-    height: 422px;
+    height: 410px;
     background-color: #f9fdff;
     margin: 0 auto;
     border-radius: 10px;
@@ -178,11 +182,11 @@ function handleBlur(field:any) {
 
 h2 {
     margin-bottom: 22px;
-    margin-top: -8px;
+    margin-top: -15px;
 }
 
 .item {
-    height: 38px;
+    height: 37px;
 }
 
 .item label {
@@ -195,4 +199,4 @@ h2 {
     font-size: 12px;
     color: #032564;
 }
-</style>: string: string
+</style>
