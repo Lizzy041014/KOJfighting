@@ -19,7 +19,7 @@
                 </li>
             </ul>
             <div>
-                <div class="figure" v-if="localStorageData !== ''">
+                <div class="figure" v-if="userStore.username !== ''">
                     <div>
                         <a-avatar trigger-type="mask" @click="toggleSidebar">
                             <img alt="avatar"
@@ -52,7 +52,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref,onMounted } from "vue";
 import kexielogo from '@/assets/img/kexielogo.png'
 import sousuo from '@/assets/img/搜索.png'
 import { IconEdit } from '@arco-design/web-vue/es/icon';
@@ -60,6 +60,32 @@ import axios from "axios";
 import ManagerNav from '@/components/ManagerNav.vue'
 import { useUserStore } from '@/stores/userStore';
 const userStore = useUserStore();
+let showSidebar = ref(false);
+let showOverlay = ref(false);
+let showSearch = ref(false);
+let searchText = ref('');
+function toggleSearch() {
+    showSearch.value = !showSearch.value;
+}
+function toggleSidebar() {
+    showSidebar.value = !showSidebar.value;
+    showOverlay.value = !showOverlay.value; // 根据需要是否显示overlay
+}
+
+function hideSidebar() {
+    showSidebar.value = false;
+    showOverlay.value = false;
+}
+function clearInput() {
+    searchText.value = '';
+}
+onMounted(() => {
+    // 在这里可以访问到 userStore 中的 username
+    const savedUsername = localStorage.getItem('managername');
+    if (savedUsername) {
+        userStore.setUsername(savedUsername);
+    }
+});
 </script>
 <style>
 .tag li p {

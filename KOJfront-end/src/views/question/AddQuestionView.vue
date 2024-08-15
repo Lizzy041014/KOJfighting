@@ -35,12 +35,10 @@
                 <a-form-item label="测试用例配置" :content-flex="false" :merge-props="false">
                     <a-form-item v-for="(judgeCaseItem, index) of form.judgeCase" :key="index" no-style>
                         <a-space direction="vertical" style="min-width: 640px">
-                            <a-form-item :field="`form.judgeCase[${index}].input`" :label="`输入用例-${index}`"
-                                :key="index">
+                            <a-form-item :field="`form.judgeCase[${index}].input`" :label="`输入用例-${index}`">
                                 <a-input v-model="judgeCaseItem.input" placeholder="请输入测试输入用例" />
                             </a-form-item>
-                            <a-form-item :field="`form.judgeCase[${index}].output`" :label="`输出用例-${index}`"
-                                :key="index">
+                            <a-form-item :field="`form.judgeCase[${index}].output`" :label="`输出用例-${index}`">
                                 <a-input v-model="judgeCaseItem.output" placeholder="请输入测试输出用例" />
                             </a-form-item>
                             <a-button status="danger" @click="handleDelete(index)">
@@ -65,25 +63,27 @@
 
 <script setup lang="ts">
 import { reactive } from "vue";
+import axios from 'axios';
 import MdEditor from "@/components/MdEditor.vue";
+import { ElMessage } from 'element-plus';
 import CodeEditor from "@/components/CodeEditor.vue";
 // import { QuestionControllerService } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
 const form = reactive({
-    tags: ["栈", "简单"],
-    title: "A + B",
-    answer: "请输入题目答案代码",
-    content: "请输入题目内容",
+    tags: [],
+    title: '',
+    content: '',
+    answer: '',
     judgeCase: [
         {
-            input: "1 2",
-            output: "3 4",
+            input: "",
+            output: "",
         },
     ],
     judgeConfig: {
-        memoryLimit: 1000,
-        stackLimit: 1000,
-        timeLimit: 1000,
+        timeLimit: 0,
+        memoryLimit: 0,
+        stackLimit: 0
     },
 });
 //新增判题用例
@@ -107,12 +107,22 @@ const onContentChange = (value: string) => {
 };
 
 const doSubmit = async () => {
-    // const res = await QuestionControllerService.addQuestionUsingPost(form);
-    // if (res.code === 0) {
-    //     message.success("创建成功");
-    // } else {
-    //     message.error("创建失败");
-    // }
+    try {
+        const response = await axios.put('/admin/topic/update', form);
+        console.log();
+        
+        if (response.status === 200 && response.data.success) {
+            ElMessage.success("创建成功");
+        } else {
+            if (response.data && response.data.errorMessage) {
+                ElMessage.error(response.data.errorMessage);
+            } else {
+                ElMessage.error("创建失败，未知错误");
+            }
+        }
+    }catch (error) {
+        ElMessage.error("创建过程中发生错误");
+    }
 }
 </script>
 <style>
