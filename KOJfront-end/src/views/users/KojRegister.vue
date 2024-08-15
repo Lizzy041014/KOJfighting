@@ -42,15 +42,17 @@
 import kexielogo from '@/assets/img/kexielogo.png'
 import { ElMessage } from 'element-plus';
 import { RouterLink} from 'vue-router';
+import { useUserStore } from '@/stores/userStore';
 import axios from 'axios';
 import { ref } from 'vue';
+const userStore = useUserStore();
 let username = ref('');
 let password = ref('');
 let email = ref('');
 // 正则匹配
 let uPattern: RegExp = /^[\u4e00-\u9fa5a-zA-Z0-9]{3,12}$/;
 // //至少1个字母(?=.*[A-Za-z])至少1个特殊字符(?=.*[$@$!%*#?&])
-let pPattern: RegExp = /^(?=.*[A-Za-z])(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/
+let pPattern: RegExp = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*_-]).{8,20}$/
 let ePattern: RegExp = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
 function matchPattern(Pattern: RegExp, str: string) {
     return Pattern.test(str);
@@ -74,7 +76,7 @@ let handleSubmit = async (event: { preventDefault: () => void; }) => {
     if (!matchPattern(uPattern, _username)) {
         ElMessage({
             type: "error",
-            message: "请输入3到12位用户名:可以包含中文、字母和数字哦",
+            message: "请输入3到12位用户名:可以包含中文、字母和数字",
             duration: 4000,
         });
         return;
@@ -90,7 +92,7 @@ let handleSubmit = async (event: { preventDefault: () => void; }) => {
     if (!matchPattern(pPattern, _password)) {
         ElMessage({
             type: "error",
-            message: "密码至少8个字符，且至少包含1个字母和1个特殊字符哦",
+            message: "数字、字母、符号同时组合，最小长度为8，最大长度不超过20",
             duration: 4000,
         });
         return;
@@ -120,14 +122,15 @@ let handleSubmit = async (event: { preventDefault: () => void; }) => {
     try {
         let response = await axios.post('/api/register', data); 
         // 直接传递对象，不需要 JSON.stringify  
-        console.log(data); // 直接打印对象，更易于阅读  
         console.log(response.data);
         if (response.data.code!=200){
             ElMessage.error(response.data.message)
         }
         else{
             ElMessage.success("恭喜uu注册成功，请前往登陆页面进行登录吧！")
-            localStorage.setItem('nickname', _username)
+            userStore.setUsername(username.value);
+            userStore.setPassword(password.value);
+            userStore.setEmail(email.value);
         }
     } catch (error) {
         console.error(error);
@@ -163,12 +166,9 @@ function handleBlur(content:any) {
 }
 </script>
 <style scoped>
-.pictrueBox {
-    top: 3.2%;
-}
 .registerBox {
     position: relative;
-    top: 6.2%;
+    top: 9%;
     width: 400px;
     height: 410px;
     background-color: #f9fdff;

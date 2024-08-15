@@ -3,16 +3,18 @@ import { createRouter } from "vue-router"
 import { createWebHistory } from "vue-router";
 import KojLogin from '@/views/users/KojLogin.vue'
 import KojRegister from '@/views/users/KojRegister.vue'
+import KojManagerHome from '@/views/KojManagerHome.vue'
 import KojUserHome from '@/views/KojUserHome.vue'
+import AddQuestionView from '@/views/question/AddQuestionView.vue'
 //创建路由器
 const router = createRouter({
-    history:createWebHistory(),
+    history: createWebHistory(),
     //管理路由
     routes: [  //一个一个的路由规则
         {
             //路径
             path: '/login',
-            name:'kojlogin',
+            name: 'kojlogin',
             //组件绑定
             component: KojLogin
         },
@@ -24,10 +26,24 @@ const router = createRouter({
             component: KojRegister,
         },
         {
- 
+
             path: '/userhome',
             name: 'kojuserhome',
             component: KojUserHome,
+        },
+        {
+
+            path: '/managerhome',
+            name: 'kojmanagerhome',
+            component: KojManagerHome,
+        },
+        {
+            path: "/add/question",
+            name: "创建题目",
+            component: AddQuestionView,
+            meta: {
+                hideInMenu: true,
+            },
         },
         {
             path: "/",

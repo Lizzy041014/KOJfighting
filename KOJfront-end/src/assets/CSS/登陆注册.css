@@ -5,6 +5,7 @@
 .pictrueBox {
     position: relative;
     margin: 0 auto;
+    top: 5%;
     height: 160px;
     width: 160px;
     border-radius: 75px;

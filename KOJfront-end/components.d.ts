@@ -9,6 +9,8 @@ declare module 'vue' {
   export interface GlobalComponents {
     CodeEditor: typeof import('./src/components/CodeEditor.vue')['default']
     KojEditor: typeof import('./src/components/KojEditor.vue')['default']
+    ManagerNav: typeof import('./src/components/ManagerNav.vue')['default']
+    Mannagernav: typeof import('./src/components/Mannagernav.vue')['default']
     MdEditor: typeof import('./src/components/MdEditor.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

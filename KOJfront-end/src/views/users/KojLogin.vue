@@ -17,7 +17,7 @@
                         v-model="password">
                     <label for="" id="lll" :class="{ 'animated-class': isAnimatedPassword }">Password</label>
                 </div>
-                    <button class="btn">enter
+                <button class="btn">enter
                     <span></span>
                     <span></span>
                     <span></span>
@@ -35,11 +35,13 @@
 
 <script setup lang="ts" name="KojLogin">
 import kexielogo from '@/assets/img/kexielogo.png'
-import { RouterLink} from 'vue-router';
+import { RouterLink } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { useRouter } from 'vue-router';
 import { ref } from 'vue';
 import axios from 'axios';
+import { useUserStore } from '@/stores/userStore';
+let userStore = useUserStore();
 let router = useRouter();
 let password = ref('');
 let email = ref('');
@@ -58,7 +60,7 @@ function handleBlur(content: any) {
         if (!password.value) {
             isAnimatedPassword.value = false;
         }
-    } 
+    }
     else if (content === 'email') {
         if (!email.value) {
             isAnimatedEmail.value = false;
@@ -75,15 +77,25 @@ let handleSubmit = async (event: { preventDefault: () => void; }) => {
     try {
         let response = await axios.post('/api/login', data);
         console.log(response.data);
-        if (response.data.code === 200 && response.data.data.account.roleId === "管理员")
-        {
-            ElMessage.success("热烈欢迎管理员uu！")
-            router.push('/managerhome')
-        } else if (response.data.code === 200 && response.data.data.account.roleId === "普通用户"){
+        if (response.data.code === 200 && response.data.data.account.roleId === "管理员") {
+            console.log('Login successful, setting username...'); 
+            ElMessage.success("欢迎管理员uu！")
+            router.push({
+                path: "/managerhome",
+                replace: true, //替换当前页面， 就是返回也不会返回到注册页面了
+            });
+            userStore.setUsername(response.data.data.account.nickname);
+            console.log('Username set:', response.data.data.account.nickname);
+        } else if (response.data.code === 200 && response.data.data.account.roleId === "普通用户") {
             ElMessage.success("登陆成功！欢迎欢迎！")
-            router.push('/userhome')
+            router.push({
+                path: "/userhome",
+                replace: true,
+            });
+            userStore.setUsername(response.data.data.account.nickname);
+            console.log('Username set:', response.data.data.account.nickname);
         }
-        else{
+        else {
             ElMessage.error(response.data.message)
         }
     } catch (error) {
@@ -93,16 +105,13 @@ let handleSubmit = async (event: { preventDefault: () => void; }) => {
 </script>
 
 <style scoped>
-.pictrueBox {
-    top: 4.5%;
-}
 .item label {
     top: 17px;
 }
 
 .loginBox {
     position: relative;
-    top: 10%;
+    top: 11%;
     width: 400px;
     height: 360px;
     background-color: #f9fdff;
@@ -120,9 +129,11 @@ let handleSubmit = async (event: { preventDefault: () => void; }) => {
     font-size: 12px;
 
 }
-.register span{
+
+.register span {
     margin-left: 20px;
 }
+
 .btn {
     margin-top: 12px;
 }
