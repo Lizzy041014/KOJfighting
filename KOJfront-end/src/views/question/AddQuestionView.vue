@@ -1,6 +1,6 @@
 <template>
     <div class="home">
-        <ManagerNav />
+        <ManagerNav/>
         <div class="addQuestionView">
             <h2>创建题目</h2>
             <a-form :model="form" label-align="left">
@@ -61,14 +61,14 @@
     </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" name="AddQuestionView">
 import { reactive } from "vue";
 import axios from 'axios';
 import MdEditor from "@/components/MdEditor.vue";
 import { ElMessage } from 'element-plus';
-import CodeEditor from "@/components/CodeEditor.vue";
+// import CodeEditor from "@/components/CodeEditor.vue";
 // import { QuestionControllerService } from "../../../generated";
-import message from "@arco-design/web-vue/es/message";
+// import message from "@arco-design/web-vue/es/message";
 const form = reactive({
     tags: [],
     title: '',

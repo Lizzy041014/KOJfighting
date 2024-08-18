@@ -75,7 +75,17 @@ let handleSubmit = async (event: { preventDefault: () => void; }) => {
         email: email.value
     };
     try {
-        let response = await axios.post('/api/login', data);
+        let response = await axios({
+            method: 'post',
+            url: '/api/login',
+            headers: {
+                'Content-Type': "application/json;charset=UTF-8",
+            },
+            data
+        })
+        // axios.post('/api/login', data);
+        console.log(response.data);
+        const authorization =response.data.data.Authorization;
         if (response.data.code === 200 && response.data.data.account.roleId === "管理员") {
             ElMessage.success("欢迎管理员uu！")
             router.push({
@@ -83,9 +93,10 @@ let handleSubmit = async (event: { preventDefault: () => void; }) => {
                 replace: true, //替换当前页面， 就是返回也不会返回到注册页面了
             }); 
             localStorage.setItem('managername', response.data.data.account.nickname);
-            userStore.setUsername(response.data.data.account.nickname);
+            userStore.setManagername(response.data.data.account.nickname);
         } else if (response.data.code === 200 && response.data.data.account.roleId === "普通用户") {
             ElMessage.success("登陆成功！欢迎欢迎！")
+            localStorage.setItem('token', authorization);
             router.push({
                 path: "/userhome",
                 replace: true,

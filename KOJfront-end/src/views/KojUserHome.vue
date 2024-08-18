@@ -121,6 +121,11 @@ let isInputVisiblepassword = ref(false)
 let uPattern: RegExp = /^[\u4e00-\u9fa5a-zA-Z0-9]{3,12}$/;
 // //至少1个字母(?=.*[A-Za-z])至少1个特殊字符(?=.*[$@$!%*#?&])
 let pPattern: RegExp = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*_-]).{8,20}$/
+let token = localStorage.getItem('token');
+
+let headers = {
+  Authorization: token
+};
 function showinput(content: string) {
   if (content === 'username') {
     isInputVisibleusername.value = !isInputVisibleusername.value
@@ -167,32 +172,38 @@ let handleSubmit = async (event: { preventDefault: () => void; }) => {
     });
     return;
   }
-  if (!password.value) {
-    ElMessage({
-      type: "error",
-      message: "请输入您的密码",
-      duration: 2000,
-    });
-    return;
-  }
-  if (!matchPattern(pPattern, _password)) {
-    ElMessage({
-      type: "error",
-      message: "数字、字母、符号同时组合，最小长度为8，最大长度不超过20",
-      duration: 4000,
-    });
-    return;
-  }
+  // if (!password.value) {
+  //   ElMessage({
+  //     type: "error",
+  //     message: "请输入您的密码",
+  //     duration: 2000,
+  //   });
+  //   return;
+  // }
+  // if (!matchPattern(pPattern, _password)) {
+  //   ElMessage({
+  //     type: "error",
+  //     message: "数字、字母、符号同时组合，最小长度为8，最大长度不超过20",
+  //     duration: 4000,
+  //   });
+  //   return;
+  // }
   let data = {
     nickname: _username,
-    password: _password,
+    // password: _password,
     qq:qq.value,
     gender:gender.value,
     // avarta:''
   };
   try {
-    let response = await axios.post('/api/user/update', data);
+    let response = await axios({
+      method: 'put',
+      url: '/api/user/update',
+      headers, data
+    }) 
+    // axios.post('/api/user/update', data);
     // 直接传递对象，不需要 JSON.stringify  
+    console.log(data);
     console.log(response.data);
     if (response.data.code != 200) {
       ElMessage.error(response.data.message)
