@@ -53,11 +53,12 @@
     <div class="line"></div>
     <div class="sidebar" :class="{ 'show': showSidebar }">
         <div class="one">
-            <span class="touxiang"><a-avatar trigger-type="mask">
-                    <img alt="avatar"
-                        src="https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp" />
+            <span class="touxiang">
+                <a-avatar trigger-type="mask" @click="triggerFileUpload">
+                    <img alt="avatar" :src="selectedAvatar" />
+                    <input type="file" id="headUrl" name="headUrl" style="display: none" accept="images/*" />
                     <template #trigger-icon>
-                        <IconEdit />
+                        <IconEdit id="choiceImage" />
                     </template>
                 </a-avatar></span>
             <span class="username">{{ userStore.username }}</span>
@@ -72,13 +73,12 @@
     <div class="overlay" v-if="showOverlay" @click="hideSidebar"></div>
 </template>
 
-<script setup name="ManagerNav">
+<script setup name="ManagerNav" lang="ts">
 import { ref,onMounted } from "vue";
 import kexielogo from '@/assets/img/kexielogo.png'
 import sousuo from '@/assets/img/搜索.png'
 import { IconEdit } from '@arco-design/web-vue/es/icon';
 import axios from "axios";
-import ManagerNav from '@/components/ManagerNav.vue'
 import { useUserStore } from '@/stores/userStore';
 import router from "@/router";
 const userStore = useUserStore();
@@ -86,6 +86,26 @@ let showSidebar = ref(false);
 let showOverlay = ref(false);
 let showSearch = ref(false);
 let searchText = ref('');
+let selectedAvatar = ref('https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp');
+
+const saveSelectedAvatarToLocalStorage = () => {
+    localStorage.setItem('selectedManagerAvatar', selectedAvatar.value);
+};
+const triggerFileUpload = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = (e) => {
+        const file = (e.target as HTMLInputElement).files![0];
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            selectedAvatar.value = event.target!.result as string;
+            saveSelectedAvatarToLocalStorage();
+        };
+        reader.readAsDataURL(file);
+    };
+    input.click();
+};
 function switchAccount() {
     userStore.logout();
     router.push({
@@ -116,12 +136,17 @@ function clearInput() {
     searchText.value = '';
 }
 onMounted(() => {
+    const savedAvatarUrl = localStorage.getItem('selectedManagerAvatar');
+    if (savedAvatarUrl) {
+        selectedAvatar.value = savedAvatarUrl;
+    }
     // 在这里可以访问到 userStore 中的 username
     const savedManagername = localStorage.getItem('managername');
     if (savedManagername) {
         userStore.setUsername(savedManagername);
     }
 });
+
 </script>
 <style>
 .tag li p {

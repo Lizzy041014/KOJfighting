@@ -16,12 +16,12 @@
         <div class="figure" v-if="userStore.username !== ''">
           <div>
             <a-avatar trigger-type="mask" @click="toggleSidebar">
-              <img alt="avatar"
-                src="https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp" />
+              <img alt="avatar" :src="selectedAvatar" />
               <template #trigger-icon>
                 <IconEdit />
               </template>
-            </a-avatar><span class="nickname">{{ userStore.username }}</span>
+            </a-avatar>
+            <span class="nickname">{{ userStore.username }}</span>
           </div>
         </div>
         <div class="right" v-else>
@@ -44,11 +44,12 @@
       <div class="line"></div>
       <div class="sidebar" :class="{ 'show': showSidebar }">
         <div class="one">
-          <span class="touxiang"><a-avatar trigger-type="mask">
-              <img alt="avatar"
-                src="https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp" />
+          <span class="touxiang">
+            <a-avatar trigger-type="mask" @click="triggerFileUpload">
+              <img alt="avatar" :src="selectedAvatar" />
+              <input type="file" id="headUrl" name="headUrl" style="display: none" accept="images/*" />
               <template #trigger-icon>
-                <IconEdit />
+                <IconEdit id="choiceImage" />
               </template>
             </a-avatar></span>
           <span class="username">{{ userStore.username }}</span>
@@ -58,9 +59,9 @@
         <div class="two">
           <form @submit.prevent="handleSubmit">
             <div class="editPersonalone"> <icon-user-group />&nbsp; 性别&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <label><input type="radio" name="gender" value="female" v-model="gender"> <icon-woman />
+              <label><input type="radio" name="gender" value="女" v-model="gender"> <icon-woman />
                 女</label>&nbsp;&nbsp;&nbsp;&nbsp;
-              <label><input type="radio" name="gender" value="male" v-model="gender"> <icon-man />
+              <label><input type="radio" name="gender" value="男" v-model="gender"> <icon-man />
                 男</label>
             </div>
             <div>
@@ -74,6 +75,12 @@
                 v-show="isInputVisibleusername">
               </input><icon-edit @click="showinput('username')" class="editPersonaltwo" />
             </div>
+            <button type="submit" class="xiugai-button">保存提交</button>
+          </form>
+        </div>
+        <a-divider :size="3" style="border-bottom-style: dotted" />
+        <div class="two">
+          <form @submit.prevent="handleSubmitPwd">
             <div>
               <icon-unlock /> &nbsp;修改密码
               <input type="password" v-model="password" class="ainput" v-show="isInputVisiblepassword"
@@ -81,8 +88,8 @@
               </input>
               <icon-edit @click="showinput('password')" class="editPersonaltwo" />
             </div>
-            <button type="submit" class="xiugai-button">保存提交</button>
           </form>
+          <button type="submit" class="xiugai-button">保存提交</button>
         </div>
         <a-divider :size="3" style="border-bottom-style: dotted" />
         <div class="two">
@@ -93,7 +100,7 @@
       </div>
       <div class="overlay" v-if="showOverlay" @click="hideSidebar"></div>
     </header>
-    <MainBanner/>
+    <MainBanner />
   </div>
 </template>
 <script setup lang="ts">
@@ -114,14 +121,38 @@ let searchText = ref('');
 let username = ref('');
 let qq = ref('');
 let password = ref('');
-let gender = ref('male');
+let gender = ref('男');
 let isInputVisibleusername = ref(false)
 let isInputVisibleqq = ref(false)
 let isInputVisiblepassword = ref(false)
 let uPattern: RegExp = /^[\u4e00-\u9fa5a-zA-Z0-9]{3,12}$/;
 // //至少1个字母(?=.*[A-Za-z])至少1个特殊字符(?=.*[$@$!%*#?&])
-let pPattern: RegExp = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*_-]).{8,20}$/
+let pPattern: RegExp = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*_-]).{8,16}$/
+let genderPattern: RegExp = /^(男|女)$/;
+
 let token = localStorage.getItem('token');
+// 初始默认头像
+let selectedAvatar = ref('https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp'); 
+//将头像存到localStorage里面
+const saveSelectedAvatarToLocalStorage = () => {
+  localStorage.setItem('selectedAvatar', selectedAvatar.value);
+};
+const triggerFileUpload = () => {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.onchange = (e) => {
+    const file = (e.target as HTMLInputElement).files![0];
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      selectedAvatar.value = event.target!.result as string;
+      saveSelectedAvatarToLocalStorage();
+    };
+    reader.readAsDataURL(file);
+  };
+  input.click();
+};
+
 
 let headers = {
   Authorization: token
@@ -152,10 +183,53 @@ function logout() {
 function matchPattern(Pattern: RegExp, str: string) {
   return Pattern.test(str);
 }
+let handleSubmitPwd = async (event: { preventDefault: () => void; }) => {
+  event.preventDefault();
+  let newPwd = password.value;
+  let oldPwd = localStorage.getItem('userpassword')
+  if (!newPwd) {
+    ElMessage({
+      type: "error",
+      message: "请输入您的密码",
+      duration: 2000,
+    });
+    return;
+  }
+  if (!matchPattern(pPattern, newPwd)) {
+    ElMessage({
+      type: "error",
+      message: "数字、字母、符号同时组合，最小长度为8，最大长度不超过16",
+      duration: 4000,
+    });
+    return;
+  }
+  let dataPwd = {
+    "oldPwd": oldPwd,
+    "newPwd": newPwd
+  }
+  let requestConfig = {
+    method: 'PUT',
+    url: '/api/user/pwd',
+    headers,
+    data: dataPwd
+  };
+  axios(requestConfig)
+    .then(response => {
+      if (response.data.code != 200) {
+        ElMessage.error(response.data.message)
+      }
+      else {
+        ElMessage.success("修改密码成功！请重新登录")
+        userStore.setPassword(password.value);
+      }
+    })
+    .catch(error => {
+      console.error(error);
+    });
+}
 let handleSubmit = async (event: { preventDefault: () => void; }) => {
   event.preventDefault();
   let _username = username.value.trim();
-  let _password = password.value;
   if (username.value.trim() === '') {
     ElMessage({
       type: "error",
@@ -172,27 +246,18 @@ let handleSubmit = async (event: { preventDefault: () => void; }) => {
     });
     return;
   }
-  // if (!password.value) {
-  //   ElMessage({
-  //     type: "error",
-  //     message: "请输入您的密码",
-  //     duration: 2000,
-  //   });
-  //   return;
-  // }
-  // if (!matchPattern(pPattern, _password)) {
-  //   ElMessage({
-  //     type: "error",
-  //     message: "数字、字母、符号同时组合，最小长度为8，最大长度不超过20",
-  //     duration: 4000,
-  //   });
-  //   return;
-  // }
+  if (!matchPattern(genderPattern, gender.value)) {  // 新增性别正则匹配判断
+    ElMessage({
+      type: "error",
+      message: "性别只能是男或女",
+      duration: 2000
+    });
+    return;
+  }
   let data = {
     nickname: _username,
-    // password: _password,
-    qq:qq.value,
-    gender:gender.value,
+    qq: qq.value,
+    gender: gender.value,
     // avarta:''
   };
   try {
@@ -200,22 +265,19 @@ let handleSubmit = async (event: { preventDefault: () => void; }) => {
       method: 'put',
       url: '/api/user/update',
       headers, data
-    }) 
-    // axios.post('/api/user/update', data);
-    // 直接传递对象，不需要 JSON.stringify  
-    console.log(data);
-    console.log(response.data);
+    })
     if (response.data.code != 200) {
       ElMessage.error(response.data.message)
     }
     else {
-      ElMessage.success("恭喜uu修改信息成功，请重新登录")
+      ElMessage.success("修改信息成功！")
       userStore.setUsername(username.value);
-      userStore.setPassword(password.value);
+      // userStore.setPassword(password.value);
     }
   } catch (error) {
     console.error(error);
   }
+
 };
 function toggleSearch() {
   showSearch.value = !showSearch.value;
@@ -233,6 +295,10 @@ function clearInput() {
   searchText.value = '';
 }
 onMounted(() => {
+  const savedAvatarUrl = localStorage.getItem('selectedAvatar');
+  if (savedAvatarUrl) {
+    selectedAvatar.value = savedAvatarUrl;
+  }
   // 在这里可以访问到 userStore 中的 username
   const savedUsername = localStorage.getItem('username');
   if (savedUsername) {
@@ -253,20 +319,20 @@ onMounted(() => {
   width: 169px;
   background-color: #e6edf4;
   border-radius: 3px;
-  color:#052070;
-  padding-left:6px ;
+  color: #052070;
+  padding-left: 6px;
 }
+
 .two form div:nth-child(2)>input {
   margin-left: 6px;
 }
 
 .two form div:nth-child(3)>input {
-  margin-left:5px;
+  margin-left: 5px;
 }
 
 .xiugai-button {
-  margin-top: 25px;
-  margin-bottom: 12px;
+  margin-top: 10px;
   height: 30px;
   width: 80px;
   background-color: #ffffff;

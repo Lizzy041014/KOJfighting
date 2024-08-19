@@ -101,6 +101,7 @@ let handleSubmit = async (event: { preventDefault: () => void; }) => {
                 path: "/userhome",
                 replace: true,
             });
+            localStorage.setItem('userpassword', response.data.data.account.password);
             userStore.setUsername(response.data.data.account.nickname);
         }
         else {
