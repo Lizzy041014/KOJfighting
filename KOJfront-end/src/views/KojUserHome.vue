@@ -44,17 +44,38 @@
       <div class="line"></div>
       <div class="sidebar" :class="{ 'show': showSidebar }">
         <div class="one">
-          <span class="touxiang">
-            <a-avatar trigger-type="mask" @click="triggerFileUpload">
-              <img alt="avatar" :src="selectedAvatar" />
-              <input type="file" id="headUrl" name="headUrl" style="display: none" accept="images/*" />
-              <template #trigger-icon>
-                <IconEdit id="choiceImage" />
-              </template>
-            </a-avatar></span>
-          <span class="username">{{ userStore.username }}</span>
-          <span class="close" @click="hideSidebar">×</span>
-          <a-divider :size="3" style="border-bottom-style: dotted" />
+          <div class="touxiang">
+            <a-space direction="vertical" :style="{ width: '100%' }">
+              <a-upload action="/" :fileList="file ? [file] : []" :show-file-list="false" @change="onChange"
+                @progress="onProgress">
+                <template #upload-button>
+                  <div :class="`arco-upload-list-item${file && file.status === 'error' ? ' arco-upload-list-item-error' : ''
+                    }`">
+                    <div class="arco-upload-list-picture-hao custom-upload-avatar" v-if="file && file.url">
+                      <img :src="file.url" height="45px" width="45px" />
+                      <div class="arco-upload-list-picture-mask">
+                        <IconEdit />
+                      </div>
+                      <a-progress v-if="file.status === 'uploading' && file.percent < 100" :percent="file.percent"
+                        type="circle" size="mini" :style="{
+                          position: 'absolute',
+                          left: '50%',
+                          top: '50%',
+                          transform: 'translateX(-50%) translateY(-50%)',
+                        }" />
+                    </div>
+                    <div class="arco-upload-picture-card" v-else>
+                      <div class="arco-upload-picture-card-text">
+                        <IconEdit />
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </a-upload>
+            </a-space>
+          </div>
+          <div class="username">{{ userStore.username }}</div>
+          <div class="close" @click="hideSidebar">×</div>
         </div>
         <div class="two">
           <form @submit.prevent="handleSubmit">
@@ -126,31 +147,25 @@ let isInputVisibleusername = ref(false)
 let isInputVisibleqq = ref(false)
 let isInputVisiblepassword = ref(false)
 let uPattern: RegExp = /^[\u4e00-\u9fa5a-zA-Z0-9]{3,12}$/;
-// //至少1个字母(?=.*[A-Za-z])至少1个特殊字符(?=.*[$@$!%*#?&])
+//至少1个字母(?=.*[A-Za-z])至少1个特殊字符(?=.*[$@$!%*#?&])
 let pPattern: RegExp = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*_-]).{8,16}$/
 let genderPattern: RegExp = /^(男|女)$/;
 
 let token = localStorage.getItem('token');
+// let sharp = require('sharp');
 // 初始默认头像
 let selectedAvatar = ref('https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp'); 
-//将头像存到localStorage里面
-const saveSelectedAvatarToLocalStorage = () => {
-  localStorage.setItem('selectedAvatar', selectedAvatar.value);
-};
-const triggerFileUpload = () => {
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = 'image/*';
-  input.onchange = (e) => {
-    const file = (e.target as HTMLInputElement).files![0];
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      selectedAvatar.value = event.target!.result as string;
-      saveSelectedAvatarToLocalStorage();
-    };
-    reader.readAsDataURL(file);
+const file = ref();
+
+const onChange = (_: any, currentFile: any) => {
+  file.value = {
+    ...currentFile,
+    url: URL.createObjectURL(currentFile.file),
   };
-  input.click();
+};
+
+const onProgress = (currentFile: any) => {
+  file.value = currentFile;
 };
 
 
@@ -230,21 +245,15 @@ let handleSubmitPwd = async (event: { preventDefault: () => void; }) => {
 let handleSubmit = async (event: { preventDefault: () => void; }) => {
   event.preventDefault();
   let _username = username.value.trim();
-  if (username.value.trim() === '') {
-    ElMessage({
-      type: "error",
-      message: "请输入您的用户名",
-      duration: 2000,
-    });
-    return;
-  }
-  if (!matchPattern(uPattern, _username)) {
-    ElMessage({
-      type: "error",
-      message: "请输入3到12位用户名:可以包含中文、字母和数字",
-      duration: 4000,
-    });
-    return;
+  if (username.value.trim() !== '') {
+    if (!matchPattern(uPattern, _username)) {
+      ElMessage({
+        type: "error",
+        message: "请输入3到12位用户名:可以包含中文、字母和数字",
+        duration: 4000,
+      });
+      return;
+    }
   }
   if (!matchPattern(genderPattern, gender.value)) {  // 新增性别正则匹配判断
     ElMessage({
@@ -254,12 +263,19 @@ let handleSubmit = async (event: { preventDefault: () => void; }) => {
     });
     return;
   }
-  let data = {
-    nickname: _username,
-    qq: qq.value,
-    gender: gender.value,
-    // avarta:''
-  };
+  let data = { };
+  if (username.value.trim() !== '') {
+    data = Object.assign(data, { nickname: username.value.trim() });
+  }
+  if (qq.value !== '') {
+    data = Object.assign(data, { qq: qq.value });
+  }
+  if (gender.value !== '') {
+    data = Object.assign(data, { gender: gender.value });
+  }
+  if (file.value && file.value.url) {
+    data = Object.assign(data, { avatar: file.value.url });
+  }
   try {
     let response = await axios({
       method: 'put',
@@ -271,13 +287,21 @@ let handleSubmit = async (event: { preventDefault: () => void; }) => {
     }
     else {
       ElMessage.success("修改信息成功！")
-      userStore.setUsername(username.value);
+      if (file.value.url!==''){
+        userStore.setAvartaUrl(file.value.url);
+      }
+      if (username.value!==''){
+        userStore.setUsername(username.value);
+      }
+      setTimeout(() => {
+        location.reload();
+      }, 1000); 
+      userStore.setGender(gender.value)
       // userStore.setPassword(password.value);
     }
   } catch (error) {
     console.error(error);
   }
-
 };
 function toggleSearch() {
   showSearch.value = !showSearch.value;
@@ -295,6 +319,11 @@ function clearInput() {
   searchText.value = '';
 }
 onMounted(() => {
+  window.addEventListener('genderUpdated', () => {
+    // 在这里重新获取或更新页面中显示的性别
+    const savedGender = userStore.gender||'';
+    gender.value = savedGender;
+  });
   const savedAvatarUrl = localStorage.getItem('selectedAvatar');
   if (savedAvatarUrl) {
     selectedAvatar.value = savedAvatarUrl;
@@ -304,10 +333,41 @@ onMounted(() => {
   if (savedUsername) {
     userStore.setUsername(savedUsername);
   }
+  if (savedAvatarUrl && savedAvatarUrl !== '') {
+    file.value = { url: savedAvatarUrl };
+  }
 });
 
 </script>
 <style>
+.arco-upload-list-picture-mask {
+  top: -0px!important;
+  line-height: 45px!important;
+  width: 45px!important;
+  height: 45px!important;
+  border-radius: 22.5px!important;
+}
+.arco-upload-list-picture-hao {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 45px;
+  height: 45px;
+  overflow: hidden;
+  border-radius: 22.5px;
+}
+
+.arco-upload-list-picture{
+  height: 45px !important;
+    width: 45px !important;
+    border-radius: 22.5px !important;
+}
+.arco-upload-picture-card{
+ height: 45px!important;
+ min-width: 45px!important;
+ border-radius: 22.5px!important;
+}
 .editPersonaltwo {
   position: absolute;
   right: 2px;
@@ -332,17 +392,17 @@ onMounted(() => {
 }
 
 .xiugai-button {
-  margin-top: 10px;
-  height: 30px;
-  width: 80px;
+  margin-top: 12px;
+  height: 28px;
+  width: 70px;
   background-color: #ffffff;
   position: relative;
-  left: 119px;
+  left: 125px;
   border-radius: 4px;
   letter-spacing: 1px;
   box-shadow: 0px 0px 1px 1px rgba(9, 26, 121, 0.278);
   color: rgb(5, 32, 112);
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .xiugai-button:hover {
@@ -640,30 +700,37 @@ li {
 .sidebar span {
   display: inline-block;
 }
-
+.one{
+  height: 55px;
+}
 .touxiang {
+  position: relative;
   height: 30px;
-  margin-top: 10px;
-  margin-left: 10px;
+  margin:5px 10px;
+  width: 10%;
 }
 
 .username {
+  position: relative;
   font-size: 17px;
-  margin-bottom: 5px;
+  margin-top: -10px;
   width: 70%;
-  margin-left: 10px;
+  margin-left: 65px;
 }
 
 .close {
+  position: relative;
   width: 5%;
   font-size: 22px;
+  margin-left: 280px;
+  top: -22px;
 }
 
 .two div {
-  margin-left: 20px;
+  margin-left: 10px;
   margin-top: 30px;
-  height: 30px;
-  font-size: 16px;
+  height: 25px;
+  font-size: 15px;
 }
 
 .nickname {

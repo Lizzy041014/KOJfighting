@@ -35,9 +35,10 @@ const router = createRouter({
             path: '/manager',
             name: 'kojmanagerhome',
             component: KojManagerHome,
-            // meta: {
-            //     access: ACCESS_ENUM.ADMIN
-            // },
+            meta: {
+                access: 'canAdmin'
+                // access: ACCESS_ENUM.ADMIN
+            },
         },
         {
             path: "/manager/add/question",
@@ -58,14 +59,15 @@ const router = createRouter({
     ]
 })
 // router.beforeEach((to, from, next) => {
-//     const authStore = useAuthStore();
-//     if (to.meta.requiresAdmin && !authStore.checkPermission(ACCESS_ENUM.ADMIN)) {
-//         next('/login');
-//     } else if (to.meta.requiresUser && !authStore.checkPermission(ACCESS_ENUM.USER)) {
-//         next('/login');
-//     } else {
-//         next();
-//     }
+    // const authStore = useAuthStore();
+    // if (to.meta.requiresAdmin && !authStore.checkPermission(ACCESS_ENUM.ADMIN)) {
+    //     next('/login');
+    // } else if (to.meta.requiresUser && !authStore.checkPermission(ACCESS_ENUM.USER)) {
+    //     next('/login');
+    // } else {
+    //     next();
+    // }
+    // console.log(to);
 // });
 export default router
 

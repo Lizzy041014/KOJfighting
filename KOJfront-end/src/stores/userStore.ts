@@ -1,4 +1,4 @@
-// src/stores/userStore.ts
+// actions执行异步操作，并且触发mutations的更改（actions调用mutations）
 import { defineStore } from 'pinia';
 import ACCESS_ENUM from '@/access/accessEnum';
 import checkAccess from '@/access/checkAccess';
@@ -7,8 +7,9 @@ interface UserInfo {
     password?: string;
     email?:string;
     qq?: string;
-    gender: string;
-    managername: string;
+    gender?: string;
+    managername?: string;
+    avartaUrl?:string
 }
 export const useAuthStore = defineStore('auth', {
     state: () => ({
@@ -31,9 +32,14 @@ export const useUserStore = defineStore('user', {
         managername: '', 
         qq: '',
         password: '',
-        gender: ''
+        gender: '',
+        avartaUrl:''
     }),
     actions: {
+        setAvartaUrl(avartaUrl:string){
+            this.avartaUrl = avartaUrl
+            localStorage.setItem('selectedAvatar', avartaUrl);
+        },
         setUsername(username: string) {
             this.username = username
             localStorage.setItem('username', username);
@@ -59,6 +65,8 @@ export const useUserStore = defineStore('user', {
         },
         setGender(gender: string) {
             this.gender = gender;
+            // 触发一个自定义事件
+            window.dispatchEvent(new CustomEvent('genderUpdated'));
         },
         async fetchUserInfo() {
             // 这里可以添加API请求逻辑来获取用户信息

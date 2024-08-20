@@ -16,7 +16,7 @@
             <div>
                 <div>
                     <table class="table index-list">
-                        <thead>
+                        <thead class="thead">
                             <tr>
                                 <th></th>
                                 <th><a href="#">题号</a></th>
@@ -114,22 +114,34 @@
 
 </script>
 <style>
+.tag-group-two li{
+    height: 30px;
+    font-size: 15px;
+    padding-top: 10px;
+    padding-left: 15px;
+}
+
+.tag-group-two li:nth-child(2n){
+    background-color: rgba(238, 238, 238, 0.567);
+}
+.tag-group-two li:hover {
+    background-color: #efefef;
+}
 .taggroup-item-index {
     display: inline-block;
     margin-right: 3px;
     margin-bottom: 5px;
-    padding: 5px 7px;
+    padding: 6px 9px;
     border-radius: 2px;
-    font-size: 12px;
+    font-size: 13px;
     text-decoration: none;
     white-space: nowrap;
-    transition-timing-function: ease;
-    transition-duration: 0.2s;
-    transition-property: background-color;
-    color: #757575;
-    background-color: #e9ecf9;
+    background-color: #e6eff8;
 }
-
+.taggroup-item-index:hover{
+    background-color:rgb(247, 251, 255);
+    color: black;
+}
 .tag-group {
     padding: 0;
 }
@@ -159,11 +171,11 @@
 }
 
 .panel-heading {
-    font-size: 16px;
+    font-size: 18px;
     color: #333333;
     font-weight: bold;
     color: #333;
-    background-color: rgba(223, 231, 240);
+    background-color: #e6eff8;
     border-color: #ddd;
     padding: 10px 15px;
     border-bottom: 1px solid transparent;
@@ -205,13 +217,14 @@
 }
 
 .list-head {
-    background-color: #dfe7f0;
+    background-color: #e6eff8;
     color: rgb(27, 71, 125);
-    padding: 15px 0;
+    padding: 10px 15px;
+    border-radius: 2px;
 }
 
 .index-list th {
-    background-color: #dfe7f0;
+    background-color: #e6eff8;
     color: white;
 }
 
@@ -256,7 +269,7 @@
 
 .index-list th,
 .index-list td {
-    border: 1px solid #dee2e6;
+    border: 1.5px solid #bec7d180;
     padding: 10px;
     text-align: left;
 }
@@ -274,7 +287,7 @@
 
 .index-list,
 .table-top-border {
-    border-top: 2px solid #134c89;
+    border-top: 2px solid #7897b7;
 }
 
 .table {

@@ -41,7 +41,7 @@ const userStore = useUserStore();
 </script>
 <style scoped>
 .tag li p{
-  font-size: 14px;
+  font-size: 16px;
   width: 9vw;
 }
 </style>

@@ -150,7 +150,7 @@ onMounted(() => {
 </script>
 <style>
 .tag li p {
-    font-size: 14px;
+    font-size: 16px;
     width: 9vw;
 }
 .line{
