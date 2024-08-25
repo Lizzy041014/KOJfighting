@@ -10,6 +10,7 @@ interface UserInfo {
     gender?: string;
     managername?: string;
     avartaUrl?:string
+    role?:string
 }
 export const useAuthStore = defineStore('auth', {
     state: () => ({
@@ -33,7 +34,8 @@ export const useUserStore = defineStore('user', {
         qq: '',
         password: '',
         gender: '',
-        avartaUrl:''
+        avartaUrl:'',
+        role:''
     }),
     actions: {
         setAvartaUrl(avartaUrl:string){
@@ -48,10 +50,12 @@ export const useUserStore = defineStore('user', {
           this.managername = managername;
             localStorage.setItem('managername', managername);
         },
-        logout() {
+        logoutUser() {
             this.username = '';
-            this.managername = '';
             localStorage.removeItem('username');
+        },
+        logoutManager() {
+            this.managername = '';
             localStorage.removeItem('managername');
         },
         setPassword(password:string){
@@ -60,18 +64,19 @@ export const useUserStore = defineStore('user', {
         setEmail(email:string){
             this.email = email;
         },
-        setQq(qq: string) {
+        setQQ(qq: string) {
             this.qq = qq;
         },
         setGender(gender: string) {
             this.gender = gender;
-            // 触发一个自定义事件
-            window.dispatchEvent(new CustomEvent('genderUpdated'));
+            localStorage.setItem('gender', gender);
+        },
+        setRole(role:string){
+            this.role=role;
+            localStorage.setItem('role',role)
         },
         async fetchUserInfo() {
-            // 这里可以添加API请求逻辑来获取用户信息
-            // 假设返回一个Promise<UserInfo>
-            // this.userInfo = await getUserInfoFromApi();
+            // 可以添加API请求逻辑来获取用户信息,但素没有获取用户信息的api捏
         },
     },
 });

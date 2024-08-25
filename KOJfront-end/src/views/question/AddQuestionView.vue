@@ -11,24 +11,24 @@
                     <a-input-tag v-model="form.tags" placeholder="请选择标签" allow-clear />
                 </a-form-item>
                 <a-form-item field="content" label="题目内容">
-                    <MdEditor :value="form.content" :handle-change="onContentChange" />
+                    <MdEditor :value="form.content" :handle-change="onContentChange" mode=""/>
                 </a-form-item>
                 <a-form-item field="answer" label="答案">
-                    <MdEditor :value="form.answer" :handle-change="onAnswerChange" />
+                    <MdEditor :value="form.answer" :handle-change="onAnswerChange" mode=""/>
                 </a-form-item>
                 <a-form-item label="判题配置" :content-flex="false" :merge-props="false">
                     <a-space direction="vertical" style="min-width: 480px">
                         <a-form-item field="judgeConfig.timeLimit" label="时间限制">
                             <a-input-number v-model="form.judgeConfig.timeLimit" placeholder="请输入时间限制" mode="button"
-                                min="0" size="large" />
+                                :min="0" size="large" />
                         </a-form-item>
                         <a-form-item field="judgeConfig.memoryLimit" label="内存限制">
                             <a-input-number v-model="form.judgeConfig.memoryLimit" placeholder="请输入内存限制" mode="button"
-                                min="0" size="large" />
+                                :min="0" size="large" />
                         </a-form-item>
                         <a-form-item field="judgeConfig.stackLimit" label="堆栈限制">
                             <a-input-number v-model="form.judgeConfig.stackLimit" placeholder="请输入堆栈限制" mode="button"
-                                min="0" size="large" />
+                                :min="0" size="large" />
                         </a-form-item>
                     </a-space>
                 </a-form-item>
@@ -66,6 +66,7 @@ import { reactive } from "vue";
 import axios from 'axios';
 import MdEditor from "@/components/MdEditor.vue";
 import { ElMessage } from 'element-plus';
+import { log } from "console";
 // import CodeEditor from "@/components/CodeEditor.vue";
 // import { QuestionControllerService } from "../../../generated";
 // import message from "@arco-design/web-vue/es/message";
@@ -108,8 +109,9 @@ const onContentChange = (value: string) => {
 
 const doSubmit = async () => {
     try {
-        const response = await axios.put('/admin/topic/update', form);
-        console.log();
+        const response = await axios.put('/admin/topic/add', form);
+        console.log(response);
+        console.log(form);
         
         if (response.status === 200 && response.data.success) {
             ElMessage.success("创建成功");

@@ -25,6 +25,11 @@ display: none;
   </div> -->
   <div class="home">
     <ManagerNav />
+    <div style="height: 91.8vh;width: 90vw; margin-left: 5%; background-color:rgb(237, 240, 242);margin-top: 5px;">
+      <div class="empty">
+        <a-empty />
+      </div>
+    </div>
   </div>
 </template>
 <script setup name="KojManagerHome">
@@ -35,13 +40,15 @@ import axios from "axios";
 import { useUserStore } from '@/stores/userStore';
 import { useAuthStore } from '@/stores/userStore';
 import ACCESS_ENUM from '@/access/accessEnum'
+import kexielogo from '@/assets/img/kexielogo.png'
 const authStore = useAuthStore();
 const hasAdminPermission = authStore.checkPermission(ACCESS_ENUM.ADMIN);
 const userStore = useUserStore();
 </script>
 <style scoped>
-.tag li p{
-  font-size: 16px;
-  width: 9vw;
+.empty{
+  position: relative;
+  top: 40%;
+  background-color: rgb(237, 240, 242);
 }
 </style>

@@ -122,14 +122,11 @@ let handleSubmit = async (event: { preventDefault: () => void; }) => {
     try {
         let response = await axios.post('/api/register', data); 
         // 直接传递对象，不需要 JSON.stringify  
-        console.log(response.data);
         if (response.data.code!=200){
             ElMessage.error(response.data.message)
         }
         else{
             ElMessage.success("恭喜uu注册成功，请前往登陆页面进行登录吧！")
-            userStore.setUsername(username.value);
-            userStore.setPassword(password.value);
             userStore.setEmail(email.value);
         }
     } catch (error) {

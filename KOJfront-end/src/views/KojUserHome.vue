@@ -1,14 +1,14 @@
 <template>
   <div class="home">
     <header class="header">
-      <div class="kexielogo"><img :src="kexielogo"></div>
+      <div class="kexielogo"><img alt="kexielogo" :src="kexielogo"></div>
       <div class="title">KexieOJ</div>
       <ul class="tag">
         <li>
-          <p href="#">习题</p>
+          <p href="#"><icon-highlight />&nbsp;习题</p>
         </li>
         <li>
-          <p href="#">考试</p>
+          <p href="#"><icon-book />&nbsp;考试</p>
         </li>
         <li></li>
       </ul>
@@ -45,10 +45,15 @@
       <div class="sidebar" :class="{ 'show': showSidebar }">
         <div class="one">
           <div class="touxiang">
-            <a-space direction="vertical" :style="{ width: '100%' }">
-              <a-upload action="/" :fileList="file ? [file] : []" :show-file-list="false" @change="onChange"
-                @progress="onProgress">
-                <template #upload-button>
+            <a-avatar trigger-type="mask" @click="triggerFileUpload">
+              <img alt="avatar" :src="selectedAvatar" />
+              <input type="file" id="headUrl" name="headUrl" style="display: none" accept="images/*" />
+              <template #trigger-icon>
+                <IconEdit id="choiceImage" />
+              </template>
+            </a-avatar>
+            <!--这是用arco design组件上传并提交给后端的头像，但素嘞，这样解决了后端字符串位数的问题，关闭页面再打开就没了，
+            所以打算还是用原来那个方法。。。。。。<a-space direction="vertical" :style="{ width: '100%' }"> <a-upload action="/" :fileList="file ? [file] : []" :show-file-list="false" @change="onChange"@progress="onProgress"><template #upload-button>
                   <div :class="`arco-upload-list-item${file && file.status === 'error' ? ' arco-upload-list-item-error' : ''
                     }`">
                     <div class="arco-upload-list-picture-hao custom-upload-avatar" v-if="file && file.url">
@@ -69,10 +74,7 @@
                         <IconEdit />
                       </div>
                     </div>
-                  </div>
-                </template>
-              </a-upload>
-            </a-space>
+                  </div></template></a-upload></a-space> -->
           </div>
           <div class="username">{{ userStore.username }}</div>
           <div class="close" @click="hideSidebar">×</div>
@@ -109,8 +111,8 @@
               </input>
               <icon-edit @click="showinput('password')" class="editPersonaltwo" />
             </div>
+            <button type="submit" class="xiugai-button">保存提交</button>
           </form>
-          <button type="submit" class="xiugai-button">保存提交</button>
         </div>
         <a-divider :size="3" style="border-bottom-style: dotted" />
         <div class="two">
@@ -125,7 +127,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onBeforeMount} from "vue";
 import kexielogo from '@/assets/img/kexielogo.png'
 import sousuo from '@/assets/img/搜索.png'
 import { IconEdit } from '@arco-design/web-vue/es/icon';
@@ -134,6 +136,7 @@ import { useUserStore } from '@/stores/userStore';
 import router from "@/router";
 import { ElMessage } from 'element-plus';
 import MainBanner from "@/components/MainBanner.vue";
+import { log } from "console";
 const userStore = useUserStore();
 let showSidebar = ref(false);
 let showOverlay = ref(false);
@@ -142,33 +145,32 @@ let searchText = ref('');
 let username = ref('');
 let qq = ref('');
 let password = ref('');
-let gender = ref('男');
+let gender = ref('');
 let isInputVisibleusername = ref(false)
 let isInputVisibleqq = ref(false)
 let isInputVisiblepassword = ref(false)
 let uPattern: RegExp = /^[\u4e00-\u9fa5a-zA-Z0-9]{3,12}$/;
-//至少1个字母(?=.*[A-Za-z])至少1个特殊字符(?=.*[$@$!%*#?&])
 let pPattern: RegExp = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*_-]).{8,16}$/
 let genderPattern: RegExp = /^(男|女)$/;
-
 let token = localStorage.getItem('token');
-// let sharp = require('sharp');
 // 初始默认头像
 let selectedAvatar = ref('https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp'); 
 const file = ref();
-
-const onChange = (_: any, currentFile: any) => {
-  file.value = {
-    ...currentFile,
-    url: URL.createObjectURL(currentFile.file),
+const triggerFileUpload = () => {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.onchange = (e) => {
+    const file = (e.target as HTMLInputElement).files![0];
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      selectedAvatar.value = event.target!.result as string;
+      localStorage.setItem('selectedAvatar', selectedAvatar.value); 
+    }
+    reader.readAsDataURL(file);
   };
+  input.click();
 };
-
-const onProgress = (currentFile: any) => {
-  file.value = currentFile;
-};
-
-
 let headers = {
   Authorization: token
 };
@@ -182,14 +184,14 @@ function showinput(content: string) {
   }
 }
 function switchAccount() {
-  userStore.logout();
+  userStore.logoutUser();
   router.push({
     path: "/login",
     replace: true,
   });
 }
 function logout() {
-  userStore.logout();
+  userStore.logoutUser();
   router.push({
     path: "/userhome",
   });
@@ -222,25 +224,28 @@ let handleSubmitPwd = async (event: { preventDefault: () => void; }) => {
     "oldPwd": oldPwd,
     "newPwd": newPwd
   }
-  let requestConfig = {
-    method: 'PUT',
-    url: '/api/user/pwd',
-    headers,
-    data: dataPwd
-  };
-  axios(requestConfig)
-    .then(response => {
-      if (response.data.code != 200) {
-        ElMessage.error(response.data.message)
-      }
-      else {
-        ElMessage.success("修改密码成功！请重新登录")
-        userStore.setPassword(password.value);
-      }
+  try {
+    let response = await axios({
+      method: 'PUT',
+      url: '/api/user/changePassword',
+      headers,
+      data: dataPwd
     })
-    .catch(error => {
+    if (response.data.code === 200) {
+      ElMessage.success("修改密码成功！请重新登录")
+      userStore.setPassword(password.value);
+      localStorage.setItem('userpassword', password.value);
+      userStore.logoutUser();
+      router.push({
+        path: "/login",
+        replace: true,
+      });
+    }
+    else {
+      ElMessage.error(response.data.message)
+    }}catch(error) {
       console.error(error);
-    });
+    };
 }
 let handleSubmit = async (event: { preventDefault: () => void; }) => {
   event.preventDefault();
@@ -273,19 +278,16 @@ let handleSubmit = async (event: { preventDefault: () => void; }) => {
   if (gender.value !== '') {
     data = Object.assign(data, { gender: gender.value });
   }
-  if (file.value && file.value.url) {
-    data = Object.assign(data, { avatar: file.value.url });
-  }
   try {
     let response = await axios({
-      method: 'put',
+      method: 'PUT',
       url: '/api/user/update',
       headers, data
     })
     if (response.data.code != 200) {
       ElMessage.error(response.data.message)
     }
-    else {
+    else if (response.data.code === 200){
       ElMessage.success("修改信息成功！")
       if (file.value.url!==''){
         userStore.setAvartaUrl(file.value.url);
@@ -293,11 +295,10 @@ let handleSubmit = async (event: { preventDefault: () => void; }) => {
       if (username.value!==''){
         userStore.setUsername(username.value);
       }
-      setTimeout(() => {
-        location.reload();
-      }, 1000); 
+      // setTimeout(() => {
+      //   location.reload();
+      // }, 1000); 
       userStore.setGender(gender.value)
-      // userStore.setPassword(password.value);
     }
   } catch (error) {
     console.error(error);
@@ -319,55 +320,25 @@ function clearInput() {
   searchText.value = '';
 }
 onMounted(() => {
-  window.addEventListener('genderUpdated', () => {
-    // 在这里重新获取或更新页面中显示的性别
-    const savedGender = userStore.gender||'';
-    gender.value = savedGender;
-  });
-  const savedAvatarUrl = localStorage.getItem('selectedAvatar');
-  if (savedAvatarUrl) {
-    selectedAvatar.value = savedAvatarUrl;
-  }
   // 在这里可以访问到 userStore 中的 username
   const savedUsername = localStorage.getItem('username');
   if (savedUsername) {
     userStore.setUsername(savedUsername);
   }
+  const savedAvatarUrl = localStorage.getItem('selectedAvatar');
+  if (savedAvatarUrl) {
+    selectedAvatar.value = savedAvatarUrl;
+  }
   if (savedAvatarUrl && savedAvatarUrl !== '') {
     file.value = { url: savedAvatarUrl };
   }
 });
-
+onBeforeMount(()=>{
+  const savedGender= localStorage.getItem('gender');
+  gender.value = savedGender||''
+})
 </script>
 <style>
-.arco-upload-list-picture-mask {
-  top: -0px!important;
-  line-height: 45px!important;
-  width: 45px!important;
-  height: 45px!important;
-  border-radius: 22.5px!important;
-}
-.arco-upload-list-picture-hao {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  box-sizing: border-box;
-  width: 45px;
-  height: 45px;
-  overflow: hidden;
-  border-radius: 22.5px;
-}
-
-.arco-upload-list-picture{
-  height: 45px !important;
-    width: 45px !important;
-    border-radius: 22.5px !important;
-}
-.arco-upload-picture-card{
- height: 45px!important;
- min-width: 45px!important;
- border-radius: 22.5px!important;
-}
 .editPersonaltwo {
   position: absolute;
   right: 2px;
@@ -443,7 +414,7 @@ body {
 .header {
   font-family: "微软雅黑";
   width: 100%;
-  height: 50px;
+  height: 48px;
   color: rgb(5, 32, 112);
 }
 
@@ -458,7 +429,7 @@ body {
   top: 6px;
   right: 0px;
   height: 100%;
-  width: 14%;
+  width: 15%;
 }
 
 .kexielogo {
@@ -553,7 +524,7 @@ li {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgb(228, 229, 232);
+  background: rgb(237, 240, 242);
   transform: scale(0);
   transition: 0.5s;
   z-index: -1;
@@ -701,19 +672,19 @@ li {
   display: inline-block;
 }
 .one{
-  height: 55px;
+  height: 40px;
 }
 .touxiang {
   position: relative;
   height: 30px;
-  margin:5px 10px;
+  margin:10px 10px;
   width: 10%;
 }
 
 .username {
   position: relative;
   font-size: 17px;
-  margin-top: -10px;
+  margin-top: -28px;
   width: 70%;
   margin-left: 65px;
 }
@@ -727,7 +698,7 @@ li {
 }
 
 .two div {
-  margin-left: 10px;
+  margin-left: 15px;
   margin-top: 30px;
   height: 25px;
   font-size: 15px;
@@ -740,8 +711,8 @@ li {
 
 @media screen and (max-width: 708px) {
   .tag li p {
-    font-size: 13px;
-    letter-spacing: 1px;
+    font-size: 12px;
+    letter-spacing: .5px;
   }
 
   .tag {
