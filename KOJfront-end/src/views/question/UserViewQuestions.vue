@@ -50,6 +50,7 @@
                 </a-col>
             </a-row>
         </div>
+        <BasicFooter />
     </div>
 </template>
 <script setup lang="ts">

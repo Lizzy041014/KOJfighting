@@ -186,8 +186,8 @@
 .panel-two {
     width: 22vw;
     position: absolute;
-    right: 6%;
-    top: 113px;
+    right: 5.8%;
+    top: 86px;
     background-color: #fefefe;
     border: 1px solid #bbc9d4;
     border-radius: 4px;
@@ -197,8 +197,8 @@
 .panel {
     width: 22vw;
     position: absolute;
-    right: 6%;
-    top: 313px;
+    right: 5.8%;
+    top: 290px;
     background-color: #fefefe;
     border: 1px solid #bbc9d4;
     border-radius: 4px;
@@ -207,8 +207,8 @@
 
 .question {
     width: 61vw;
-    margin-left: 6%;
-    margin-top: 40px;
+    margin-left: 5.5%;
+    margin-top: 15px;
     padding: 20px;
 }
 

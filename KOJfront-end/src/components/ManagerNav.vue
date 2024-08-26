@@ -56,6 +56,13 @@
 
 </ul>
 <div>
+    <div class="searchBar" :class="{ 'changeWidth': showSearch }">
+        <div class="icon" @click="toggleSearch"><img :src="sousuo" alt="" width="20"></div>
+        <div class="textInput" v-if="showSearch">
+            <input type=" text" placeholder="Search Here..." v-model="searchText">
+            <div class="clear" @click="clearInput">×</div>
+        </div>
+    </div>
     <div class="figure" v-if="userStore.username !== ''">
         <div>
             <a-avatar trigger-type="mask" @click="toggleSidebar">
@@ -68,17 +75,6 @@
         </div>
     </div>
     <div class="right" v-else>
-        <div class="searchBar" :class="{ 'changeWidth': showSearch }">
-            <div class="icon" @click="toggleSearch"><img :src="sousuo" alt="" width="20"></div>
-            <div class="textInput" v-if="showSearch">
-                <input type=" text" placeholder="Search Here..." v-model="searchText">
-                <div class="clear" @click="clearInput">×</div>
-            </div>
-        </div>
-        <RouterLink to="/register" active-class="active">
-            <div class="link">注册</div>
-        </RouterLink>
-        <div>或</div>
         <RouterLink to="/login" active-class="active">
             <div class="link">登录</div>
         </RouterLink>
@@ -109,7 +105,7 @@ import { ref, onMounted } from "vue";
 import kexielogo from '@/assets/img/kexielogo.png'
 import sousuo from '@/assets/img/搜索.png'
 import { IconEdit } from '@arco-design/web-vue/es/icon';
-import axios from "axios";
+import { ElMessage } from 'element-plus';
 import { useUserStore } from '@/stores/userStore';
 import router from "@/router";
 const userStore = useUserStore();
@@ -118,7 +114,7 @@ let showOverlay = ref(false);
 let showSearch = ref(false);
 let searchText = ref('');
 let selectedAvatar = ref('https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp');
-
+let tokenmanager=localStorage.getItem('tokenmanager')
 // const saveSelectedAvatarToLocalStorage = () => {
 //     localStorage.setItem('selectedManagerAvatar', selectedAvatar.value);
 // };
@@ -176,14 +172,26 @@ onMounted(() => {
     if (savedManagername) {
         userStore.setUsername(savedManagername);
     }
+    if (!tokenmanager) {
+            setTimeout(() => {
+                router.push('/login');
+                ElMessage.warning('无权限，请登录管理员账号')
+            }, 1500);
+    }
 });
 
 </script>
 <style scoped>
+.right div {
+    float: right;
+    margin: 0px 35px;
+}
 .header {
     height: 48px;
 }
-
+.searchBar{
+    right: 12%;
+}
 .tag li p {
     font-size: 15px;
     width: 11vw;

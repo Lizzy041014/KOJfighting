@@ -1,6 +1,6 @@
 <template>
     <div class="home">
-        <ManagerNav/>
+        <ManagerNav />
         <div class="addQuestionView">
             <h2>创建题目</h2>
             <a-form :model="form" label-align="left">
@@ -11,10 +11,10 @@
                     <a-input-tag v-model="form.tags" placeholder="请选择标签" allow-clear />
                 </a-form-item>
                 <a-form-item field="content" label="题目内容">
-                    <MdEditor :value="form.content" :handle-change="onContentChange" mode=""/>
+                    <MdEditor :value="form.content" :handle-change="onContentChange" mode="" />
                 </a-form-item>
                 <a-form-item field="answer" label="答案">
-                    <MdEditor :value="form.answer" :handle-change="onAnswerChange" mode=""/>
+                    <MdEditor :value="form.answer" :handle-change="onAnswerChange" mode="" />
                 </a-form-item>
                 <a-form-item label="判题配置" :content-flex="false" :merge-props="false">
                     <a-space direction="vertical" style="min-width: 480px">
@@ -58,15 +58,15 @@
                 </a-form-item>
             </a-form>
         </div>
+        <BasicFooter />
     </div>
-</template>
 
+</template>
 <script setup lang="ts" name="AddQuestionView">
 import { reactive } from "vue";
 import axios from 'axios';
 import MdEditor from "@/components/MdEditor.vue";
 import { ElMessage } from 'element-plus';
-import { log } from "console";
 // import CodeEditor from "@/components/CodeEditor.vue";
 // import { QuestionControllerService } from "../../../generated";
 // import message from "@arco-design/web-vue/es/message";
@@ -127,7 +127,10 @@ const doSubmit = async () => {
     }
 }
 </script>
-<style>
+<style scoped>
+.footer{
+    bottom: -197%;
+}
 .addQuestionView {
  position: absolute;
  margin-top: 30px;
@@ -135,7 +138,7 @@ const doSubmit = async () => {
  width: 81vw;
 }
 h2{
-    margin-top: 120px;
+    margin-top: -8px;
     font-weight: 400;
     font-size: 30px!important;
 }

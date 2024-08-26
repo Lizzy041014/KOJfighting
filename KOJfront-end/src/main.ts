@@ -14,8 +14,6 @@ import { createPinia } from 'pinia';
 const app = createApp(App);
 const pinia = createPinia();
 app.use(pinia);
-
-
 app.use(router);
 app.use(ArcoVue, {
     // 用于改变使用组件时的前缀名称

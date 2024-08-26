@@ -16,36 +16,34 @@
 display: none;
 }  -->
 <template>
-  <!-- <div v-if="hasAdminPermission" class="home">
-    管理员页面内容
-    <ManagerNav />
-  </div>
-  <div v-else>
-    <p>您没有管理员权限，无法访问此页面</p>
-  </div> -->
   <div class="home">
     <ManagerNav />
-    <div style="height: 91.8vh;width: 90vw; margin-left: 5%; background-color:rgb(237, 240, 242);margin-top: 5px;">
+    <div style="height: 91.8vh;width: 90vw; margin-left: 5%; background-color:rgb(237, 240, 242);margin-top: 12px;">
       <div class="empty">
         <a-empty />
       </div>
     </div>
+    <BasicFooter />
   </div>
 </template>
 <script setup name="KojManagerHome">
 import ManagerNav from '@/components/ManagerNav.vue'
-import {ref} from "vue";
+import { ref } from "vue";
 import {IconEdit} from '@arco-design/web-vue/es/icon';
 import axios from "axios";
 import { useUserStore } from '@/stores/userStore';
 import { useAuthStore } from '@/stores/userStore';
 import ACCESS_ENUM from '@/access/accessEnum'
 import kexielogo from '@/assets/img/kexielogo.png'
+import { useRouter } from 'vue-router'
 const authStore = useAuthStore();
 const hasAdminPermission = authStore.checkPermission(ACCESS_ENUM.ADMIN);
 const userStore = useUserStore();
 </script>
 <style scoped>
+.footer{
+  bottom:-3%;
+}
 .empty{
   position: relative;
   top: 40%;

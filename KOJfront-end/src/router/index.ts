@@ -31,7 +31,8 @@ const router = createRouter({
             name: 'kojuserhome',
             component: KojUserHome,
             meta: {
-                roles:['普通用户']
+                roles:['普通用户'],
+                access:'canAdmin'
             }
         },
         {
@@ -76,16 +77,6 @@ const router = createRouter({
         },
     ]
 })
-// router.beforeEach((to, from, next) => {
-    // const authStore = useAuthStore();
-    // if (to.meta.requiresAdmin && !authStore.checkPermission(ACCESS_ENUM.ADMIN)) {
-    //     next('/login');
-    // } else if (to.meta.requiresUser && !authStore.checkPermission(ACCESS_ENUM.USER)) {
-    //     next('/login');
-    // } else {
-    //     next();
-    // }
-    // console.log(to);
-// });
+
 export default router
 

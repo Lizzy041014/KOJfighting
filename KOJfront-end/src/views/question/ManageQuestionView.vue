@@ -7,7 +7,7 @@
                 current: searchParams.current,
                 total: total,
                 showTotal: true,
-            }" >
+            }">
                 <template #tags="{ record }">
                     <a-space wrap>
                         <a-tag v-for="(tag, index) of record.tags" :key="index" color="green">{{ tag }}</a-tag>
@@ -23,6 +23,7 @@
                 </template>
             </a-table>
         </div>
+        <BasicFooter />
     </div>
 </template>
 <script setup lang="ts">

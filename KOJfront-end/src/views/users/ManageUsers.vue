@@ -4,8 +4,7 @@
         <div>
             <a-list>
                 <a-list-item v-for="idx in 10" :key="idx">
-                    <a-list-item-meta title="Beijing Bytedance"
-                        description="Beijing is an enterprise located in China.">
+                    <a-list-item-meta title="用户名" description="个人信息">
                         <template #avatar>
                             <a-avatar shape="square">
                                 <img alt="avatar"
@@ -25,6 +24,7 @@
         <a-space direction="vertical" size="large">
             <a-pagination :total="50" show-total show-jumper show-page-size />
         </a-space>
+        <BasicFooter />
     </div>
 </template>
 
@@ -40,11 +40,21 @@ function deleteUser(){
 }
 </script>
 <style scoped>
+.footer{
+    bottom: 0;
+}
+.arco-list-item-action {
+    margin-right: 20px!important;
+    padding: 5px!important;
+    margin:6px!important;
+}
+ .arco-list-item-meta {
+     padding: 5px 10px;
+ }
 .arco-space-vertical{
-    /* position: relative; */
     margin-left: 30%;
     margin-top: 2%;
-    margin-bottom: 4%;
+    margin-bottom: 3%;
 
 }
 .demo-arrow {

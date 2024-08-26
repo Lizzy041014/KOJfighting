@@ -13,6 +13,13 @@
         <li></li>
       </ul>
       <div>
+        <div class="searchBar" :class="{ 'changeWidth': showSearch }">
+          <div class="icon" @click="toggleSearch"><img :src="sousuo" alt="" width="20"></div>
+          <div class="textInput" v-if="showSearch">
+            <input type="text" placeholder="Search Here..." v-model="searchText">
+            <div class="clear" @click="clearInput">×</div>
+          </div>
+        </div>
         <div class="figure" v-if="userStore.username !== ''">
           <div>
             <a-avatar trigger-type="mask" @click="toggleSidebar">
@@ -25,13 +32,7 @@
           </div>
         </div>
         <div class="right" v-else>
-          <div class="searchBar" :class="{ 'changeWidth': showSearch }">
-            <div class="icon" @click="toggleSearch"><img :src="sousuo" alt="" width="20"></div>
-            <div class="textInput" v-if="showSearch">
-              <input type=" text" placeholder="Search Here..." v-model="searchText">
-              <div class="clear" @click="clearInput">×</div>
-            </div>
-          </div>
+
           <RouterLink to="/register" active-class="active">
             <div class="link">注册</div>
           </RouterLink>
@@ -124,6 +125,7 @@
       <div class="overlay" v-if="showOverlay" @click="hideSidebar"></div>
     </header>
     <MainBanner />
+    <BasicFooter/>
   </div>
 </template>
 <script setup lang="ts">
@@ -137,6 +139,7 @@ import router from "@/router";
 import { ElMessage } from 'element-plus';
 import MainBanner from "@/components/MainBanner.vue";
 import { log } from "console";
+import BasicFooter from "@/components/BasicFooter.vue";
 const userStore = useUserStore();
 let showSidebar = ref(false);
 let showOverlay = ref(false);
@@ -332,6 +335,12 @@ onMounted(() => {
   if (savedAvatarUrl && savedAvatarUrl !== '') {
     file.value = { url: savedAvatarUrl };
   }
+  // if (!token) {
+  //   setTimeout(() => {
+  //     router.push('/login');
+  //     ElMessage.warning('请uu先登录！')
+  //   }, 5000); 
+  // }
 });
 onBeforeMount(()=>{
   const savedGender= localStorage.getItem('gender');
@@ -582,10 +591,11 @@ li {
 .searchBar {
   width: 28px;
   height: 28px;
-  right: 10px;
+  right: 14%;
+  top: 13px;
   box-shadow: 0 0 6px cornflowerblue;
   border-radius: 25px;
-  position: relative;
+  position: absolute;
   overflow: hidden;
   transition: .7s;
 }
@@ -602,7 +612,7 @@ li {
   align-items: center;
   position: absolute;
   top: 0;
-  left: 5px;
+  left: 25px;
 }
 
 .textInput input {
@@ -630,7 +640,7 @@ li {
 }
 
 .searchBar img {
-  transform: translate(2.5%, -58%);
+  transform: translate(20%, 16%);
 }
 
 .sidebar {

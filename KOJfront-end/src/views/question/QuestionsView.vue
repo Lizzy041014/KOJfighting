@@ -4,17 +4,17 @@
         <div id="QuestionsView">
             <a-form layout="inline">
                 <a-form-item field="title" label="名称" style="min-width: 240px">
-                    <a-input  placeholder="请输入题目名称" />
+                    <a-input placeholder="请输入题目名称" />
                 </a-form-item>
                 <a-form-item field="tags" label="标签" style="min-width: 240px">
-                    <a-input-tag  placeholder="请输入题目标签" />
+                    <a-input-tag placeholder="请输入题目标签" />
                 </a-form-item>
                 <a-form-item>
                     <a-button type="primary">查询</a-button>
                 </a-form-item>
             </a-form>
             <a-divider size="0" />
-            <a-table :ref="tableRef" :columns="columns" :data="dataList" >
+            <a-table :ref="tableRef" :columns="columns" :data="dataList">
                 <template #tags="{ record }">
                     <a-space wrap>
                         <a-tag v-for="(tag, index) of record.tags" :key="index" color="green">{{ tag }}</a-tag>
@@ -22,8 +22,8 @@
                 </template>
                 <template #acceptedRate="{ record }">
                     {{
-                        `${record.submitNum ? record.acceptedNum / record.submitNum : "0"
-                        }% (${record.acceptedNum}/${record.submitNum})`
+                    `${record.submitNum ? record.acceptedNum / record.submitNum : "0"
+                    }% (${record.acceptedNum}/${record.submitNum})`
                     }}
                 </template>
                 <template #createTime="{ record }">
@@ -36,6 +36,7 @@
                 </template>
             </a-table>
         </div>
+        <BasicFooter />
     </div>
 </template>
 

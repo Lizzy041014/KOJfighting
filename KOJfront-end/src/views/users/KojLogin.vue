@@ -111,6 +111,8 @@ let handleSubmit = async (event: { preventDefault: () => void; }) => {
         console.error(error);
     }
 };
+
+
 </script>
 
 <style scoped>
