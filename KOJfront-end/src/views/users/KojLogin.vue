@@ -83,18 +83,18 @@ let handleSubmit = async (event: { preventDefault: () => void; }) => {
             },
             data
         })
-        if (response.data.code === 200 && response.data.data.account.roleId === "管理员") {
+        if (response.data.code === 200 && response.data.data.roleName === "管理员") {
             ElMessage.success("欢迎管理员uu！")
             router.push({
                 path: "/manager",
                 replace: true, //替换当前页面， 就是返回也不会返回到注册页面了
             }); 
-            const authorizationmanager = response.data.data.Authorization;
+            const authorizationmanager = response.data.data.token;
             localStorage.setItem('tokenmanager', authorizationmanager);
-            userStore.setManagername(response.data.data.account.nickname);
-        } else if (response.data.code === 200 && response.data.data.account.roleId === "普通用户") {
+            userStore.setManagername(response.data.data.nickname);
+        } else if (response.data.code === 200 && response.data.data.roleName === "普通用户") {
             ElMessage.success("登陆成功！欢迎欢迎！")
-            const authorization = response.data.data.Authorization;
+            const authorization = response.data.data.token;
             localStorage.setItem('token', authorization);
             localStorage.setItem('userpassword', password.value);
             router.push({
@@ -102,7 +102,7 @@ let handleSubmit = async (event: { preventDefault: () => void; }) => {
                 replace: true,
             });
             userStore.setPassword(password.value);
-            userStore.setUsername(response.data.data.account.nickname);
+            userStore.setUsername(response.data.data.nickname);
         }
         else {
             ElMessage.error(response.data.message)

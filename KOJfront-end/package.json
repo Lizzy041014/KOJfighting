@@ -13,6 +13,7 @@
     "@bytemd/vue-next": "^1.21.0",
     "axios": "^1.7.2",
     "element-plus": "^2.7.6",
+    "github-markdown-css": "^5.6.1",
     "monaco-editor": "^0.50.0",
     "pinia": "^2.2.1",
     "sass": "^1.77.7",

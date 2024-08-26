@@ -230,7 +230,7 @@ let handleSubmitPwd = async (event: { preventDefault: () => void; }) => {
   try {
     let response = await axios({
       method: 'PUT',
-      url: '/api/user/changePassword',
+      url: '/api/user/pwd',
       headers,
       data: dataPwd
     })
@@ -291,10 +291,12 @@ let handleSubmit = async (event: { preventDefault: () => void; }) => {
       ElMessage.error(response.data.message)
     }
     else if (response.data.code === 200){
+      console.log(response.data);
+      
       ElMessage.success("修改信息成功！")
-      if (file.value.url!==''){
-        userStore.setAvartaUrl(file.value.url);
-      }
+      // if (file.value.url!==''){
+      //   userStore.setAvartaUrl(file.value.url);
+      // }
       if (username.value!==''){
         userStore.setUsername(username.value);
       }
@@ -443,7 +445,7 @@ body {
 
 .kexielogo {
   display: flex;
-  margin-left: 95px;
+  margin-left: 110px;
   margin-top: 8px;
   margin-bottom: 3px;
   width: 5%;
@@ -451,7 +453,7 @@ body {
 }
 
 .title {
-  left: 135px;
+  left: 155px;
   top: 0px;
   line-height: 55px;
   position: absolute;
@@ -478,7 +480,7 @@ li {
 }
 
 .tag li:first-child {
-  margin-left: 60px;
+  margin-left: 80px;
 }
 
 .tag li {
@@ -491,10 +493,12 @@ li {
   letter-spacing: 5px;
   display: block;
   flex-grow: 1;
+  
   /* 设置为1，表示盒子会根据剩余空间自动调整宽度 */
 }
 
 .tag li p {
+  width: 11vw;
   position: relative;
   display: block;
   text-decoration: none;
@@ -556,7 +560,7 @@ li {
 
 .right div {
   float: right;
-  margin: 0 4px;
+  margin-right: 15px;
   color: rgb(58, 58, 58);
 }
 
@@ -591,7 +595,7 @@ li {
 .searchBar {
   width: 28px;
   height: 28px;
-  right: 14%;
+  right: 16%;
   top: 13px;
   box-shadow: 0 0 6px cornflowerblue;
   border-radius: 25px;
@@ -726,19 +730,17 @@ li {
   }
 
   .tag {
-    left: 128px;
+    left: 110px;
   }
 
   .kexielogo {
     display: flex;
-    margin-left: 60px;
+    margin-left: 65px;
   }
-
-  .title {
-    font-size: 16px;
-    margin-left: -25px;
-  }
-
+ .title{
+  font-size: 16px;
+  margin-left: -50px;
+ }
   .tag li {
     margin-left: -7px;
   }

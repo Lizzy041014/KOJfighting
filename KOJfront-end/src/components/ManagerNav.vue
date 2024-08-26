@@ -183,14 +183,15 @@ onMounted(() => {
 </script>
 <style scoped>
 .right div {
+    width: 30px;
     float: right;
-    margin: 0px 35px;
+    margin-right: 60px;
 }
 .header {
     height: 48px;
 }
 .searchBar{
-    right: 12%;
+    right:15%;
 }
 .tag li p {
     font-size: 15px;
@@ -198,7 +199,9 @@ onMounted(() => {
     letter-spacing: 2px;
     color: #032564;
 }
-
+.tag li:nth-child(1){
+    margin-left: 100px;
+}
 .line {
     height: 1px;
     margin: 0 70px;
@@ -207,10 +210,12 @@ onMounted(() => {
 
 .kexielogo {
     display: flex;
-    /* margin-left: -515px; */
+    margin-left: 105px;
     margin-top: 10px;
 }
-
+.title{
+    margin-left: 20px;
+}
 .two div {
     margin-left: 20px;
     margin-top: 30px;
@@ -229,5 +234,8 @@ onMounted(() => {
 }
 .touxiang{
     margin: 14px 12px;
+}
+.figure{
+    right: -25px;
 }
 </style>

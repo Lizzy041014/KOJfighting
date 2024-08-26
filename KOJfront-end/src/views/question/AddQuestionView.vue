@@ -10,11 +10,23 @@
                 <a-form-item field="tags" label="标签">
                     <a-input-tag v-model="form.tags" placeholder="请选择标签" allow-clear />
                 </a-form-item>
-                <a-form-item field="content" label="题目内容">
-                    <MdEditor :value="form.content" :handle-change="onContentChange" mode="" />
+                <a-form-item field="tags" label="难度">
+                    <a-space direction="vertical" size="large">
+                        <a-radio-group>
+                            <a-radio value="低">低</a-radio>
+                            <a-radio value="中">中</a-radio>
+                            <a-radio value="高">高</a-radio>
+                        </a-radio-group>
+                    </a-space>
                 </a-form-item>
-                <a-form-item field="answer" label="答案">
-                    <MdEditor :value="form.answer" :handle-change="onAnswerChange" mode="" />
+                <a-form-item field="content" label="题目内容">
+                    <MdEditor :value="form.content" />
+                </a-form-item>
+                <a-form-item field="answer" label="输入描述">
+                    <MdEditor :value="form.answer" :handle-change="onAnswerChange"  />
+                </a-form-item>
+                <a-form-item field="answer" label="输出描述">
+                    <MdEditor/>
                 </a-form-item>
                 <a-form-item label="判题配置" :content-flex="false" :merge-props="false">
                     <a-space direction="vertical" style="min-width: 480px">
@@ -128,8 +140,12 @@ const doSubmit = async () => {
 }
 </script>
 <style scoped>
+.textarea{
+  width: 650px;
+  height: 150px;
+}
 .footer{
-    bottom: -197%;
+    bottom: -250%;
 }
 .addQuestionView {
  position: absolute;
