@@ -138,7 +138,6 @@ import { useUserStore } from '@/stores/userStore';
 import router from "@/router";
 import { ElMessage } from 'element-plus';
 import MainBanner from "@/components/MainBanner.vue";
-import { log } from "console";
 import BasicFooter from "@/components/BasicFooter.vue";
 const userStore = useUserStore();
 let showSidebar = ref(false);
@@ -292,11 +291,7 @@ let handleSubmit = async (event: { preventDefault: () => void; }) => {
     }
     else if (response.data.code === 200){
       console.log(response.data);
-      
       ElMessage.success("修改信息成功！")
-      // if (file.value.url!==''){
-      //   userStore.setAvartaUrl(file.value.url);
-      // }
       if (username.value!==''){
         userStore.setUsername(username.value);
       }
@@ -325,10 +320,9 @@ function clearInput() {
   searchText.value = '';
 }
 onMounted(() => {
-  // 在这里可以访问到 userStore 中的 username
   const savedUsername = localStorage.getItem('username');
   if (savedUsername) {
-    userStore.setUsername(savedUsername);
+    userStore.setUsername(savedUsername);// 在这里可以访问到 userStore 中的 username
   }
   const savedAvatarUrl = localStorage.getItem('selectedAvatar');
   if (savedAvatarUrl) {

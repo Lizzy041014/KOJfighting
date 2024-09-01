@@ -8,9 +8,14 @@ interface UserInfo {
     email?:string;
     qq?: string;
     gender?: string;
+    avartaUrl?:string;
+    role?:string;
+    managerToken?: string,
     managername?: string;
-    avartaUrl?:string
-    role?:string
+    managerpassword?: string;
+    manageremail?: string;
+    managerrole?: string
+    managerid?:number
 }
 export const useAuthStore = defineStore('auth', {
     state: () => ({
@@ -48,12 +53,17 @@ export const useAuthStore = defineStore('auth', {
 export const useUserStore = defineStore('user', {
     state: (): UserInfo => ({
         username: '', 
-        managername: '', 
         qq: '',
         password: '',
         gender: '',
         avartaUrl:'',
-        role:''
+        role:'',
+        managerToken: '',
+        managername: '',
+        managerpassword:'',
+        manageremail: '',
+        managerrole: '',
+        managerid:0
     }),
     actions: {
         setAvartaUrl(avartaUrl:string){
@@ -64,17 +74,9 @@ export const useUserStore = defineStore('user', {
             this.username = username
             localStorage.setItem('username', username);
         },
-        setManagername(managername: string) {
-          this.managername = managername;
-            localStorage.setItem('managername', managername);
-        },
         logoutUser() {
             this.username = '';
             localStorage.removeItem('username');
-        },
-        logoutManager() {
-            this.managername = '';
-            localStorage.removeItem('managername');
         },
         setPassword(password:string){
             this.password = password;
@@ -93,8 +95,28 @@ export const useUserStore = defineStore('user', {
             this.role=role;
             localStorage.setItem('role',role)
         },
-        async fetchUserInfo() {
-            // 可以添加API请求逻辑来获取用户信息,但素没有获取用户信息的api捏
+        setManagername(managername: string) {
+            this.managername = managername
+            localStorage.setItem('managername', managername);
         },
+        logoutManager() {
+            this.managername = '';
+            localStorage.removeItem('managername');
+        },
+        setManagerPassword(password: string) {
+            this.password = password;
+        },
+        setManagerRole(role: string) {
+            this.role = role;
+            localStorage.setItem('role', role)
+        },
+        setManagerToken(storedManagerToken: string) {
+            localStorage.getItem('tokenmanager');
+            this.managerToken = storedManagerToken;
+        },
+        setManagerId(id:any) {
+            localStorage.setItem('uploadUserId', id)
+            this.managerid = id
+        }
     },
 });

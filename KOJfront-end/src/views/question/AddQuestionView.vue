@@ -3,159 +3,219 @@
         <ManagerNav />
         <div class="addQuestionView">
             <h2>创建题目</h2>
-            <a-form :model="form" label-align="left">
-                <a-form-item field="title" label="标题">
-                    <a-input v-model="form.title" placeholder="请输入标题" />
-                </a-form-item>
-                <a-form-item field="tags" label="标签">
-                    <a-input-tag v-model="form.tags" placeholder="请选择标签" allow-clear />
-                </a-form-item>
-                <a-form-item field="tags" label="难度">
-                    <a-space direction="vertical" size="large">
-                        <a-radio-group>
+            <form action="" @submit="handleSubmit">
+                <a-form ref="formRef" :model="form" :style="{ width: '1000px' }" label-align="left">
+                    <a-form-item field="题目Id" label="题目Id">
+                        <a-input placeholder="请输入题目id" minlength="0" v-model="topicId" />
+                        <template #extra>
+                            <div>&nbsp;随便一个整数，提交时如果提示id重复再修改</div>
+                        </template>
+                    </a-form-item>
+                    <a-form-item field="name" label="题目标题" :validate-trigger="['change', 'input']">
+                        <a-input v-model="form.title" placeholder="请输入标题" />
+                    </a-form-item>
+                    <form action="">
+                         <a-form-item field="tags" label="标签">
+                            <a-input-tag placeholder="请输入标签" allow-clear />
+                            <template #extra>
+                                <div>&nbsp;输入一个标签后按Enter键</div>
+                            </template>
+                        </a-form-item>
+                        <button></button>
+                    </form>
+                    <a-form-item field="radio" label="难度" :rules="[{ match: /one/, message: 'must select one' }]">
+                        <a-radio-group v-model="form.difficulty">
                             <a-radio value="低">低</a-radio>
                             <a-radio value="中">中</a-radio>
                             <a-radio value="高">高</a-radio>
                         </a-radio-group>
-                    </a-space>
-                </a-form-item>
-                <a-form-item field="content" label="题目内容">
-                    <MdEditor :value="form.content" />
-                </a-form-item>
-                <a-form-item field="answer" label="输入描述">
-                    <MdEditor :value="form.answer" :handle-change="onAnswerChange"  />
-                </a-form-item>
-                <a-form-item field="answer" label="输出描述">
-                    <MdEditor/>
-                </a-form-item>
-                <a-form-item label="判题配置" :content-flex="false" :merge-props="false">
-                    <a-space direction="vertical" style="min-width: 480px">
-                        <a-form-item field="judgeConfig.timeLimit" label="时间限制">
-                            <a-input-number v-model="form.judgeConfig.timeLimit" placeholder="请输入时间限制" mode="button"
-                                :min="0" size="large" />
-                        </a-form-item>
-                        <a-form-item field="judgeConfig.memoryLimit" label="内存限制">
-                            <a-input-number v-model="form.judgeConfig.memoryLimit" placeholder="请输入内存限制" mode="button"
-                                :min="0" size="large" />
-                        </a-form-item>
-                        <a-form-item field="judgeConfig.stackLimit" label="堆栈限制">
-                            <a-input-number v-model="form.judgeConfig.stackLimit" placeholder="请输入堆栈限制" mode="button"
-                                :min="0" size="large" />
-                        </a-form-item>
-                    </a-space>
-                </a-form-item>
-                <a-form-item label="测试用例配置" :content-flex="false" :merge-props="false">
-                    <a-form-item v-for="(judgeCaseItem, index) of form.judgeCase" :key="index" no-style>
-                        <a-space direction="vertical" style="min-width: 640px">
-                            <a-form-item :field="`form.judgeCase[${index}].input`" :label="`输入用例-${index}`">
-                                <a-input v-model="judgeCaseItem.input" placeholder="请输入测试输入用例" />
-                            </a-form-item>
-                            <a-form-item :field="`form.judgeCase[${index}].output`" :label="`输出用例-${index}`">
-                                <a-input v-model="judgeCaseItem.output" placeholder="请输入测试输出用例" />
-                            </a-form-item>
-                            <a-button status="danger" @click="handleDelete(index)">
-                                删除
-                            </a-button>
+                    </a-form-item>
+                    <a-form-item field="content" label="题目内容">
+                        <a-space direction="vertical" size="large" fill>
+                            <a-textarea class="textarea" placeholder="请输入题目详情内容" :max-length="20" allow-clear
+                                show-word-limit v-model="form.content" />
                         </a-space>
                     </a-form-item>
-                    <div style="margin-top: 32px">
-                        <a-button @click="handleAdd" type="outline" status="success">新增测试用例
-                        </a-button>
-                    </div>
-                </a-form-item>
-                <div style="margin-top: 16px"></div>
+                    <a-form-item field="inputDescribe" label="输入描述">
+                        <a-space direction="vertical" size="large" fill>
+                            <a-textarea v-model="form.inputDescribe" class="textarea" minlength="2"
+                                placeholder="请输入输入描述" :max-length="20" allow-clear show-word-limit />
+                        </a-space>
+                    </a-form-item>
+                    <a-form-item field="outputDescribe" label="输出描述">
+                        <a-space direction="vertical" size="large" fill>
+                            <a-textarea v-model="form.outputDescribe" class="textarea" placeholder="请输入输出描述"
+                                minlength="2" :max-length="20" allow-clear show-word-limit />
+                        </a-space>
+                    </a-form-item>
+                    <a-form-item label="判题配置" :content-flex="false" :merge-props="false">
+                        <a-space direction="vertical" style="min-width: 480px">
+                            <a-form-item field="judgeConfig.timeLimit" label="时间限制">
+                                <a-input-number v-model="form.limitedTime" placeholder="请输入时间限制" mode="button" :min="1"
+                                    size="large" />
+                            </a-form-item>
+                            <a-form-item field="judgeConfig.memoryLimit" label="内存限制">
+                                <a-input-number v-model="form.limitedMemory" placeholder="请输入内存限制" mode="button"
+                                    :min="1" size="large" />
+                            </a-form-item>
+                        </a-space>
+                    </a-form-item>
+                    <a-form-item label="测试用例配置" :content-flex="false" :merge-props="false">
+                        <a-form-item v-for="(examplesItem, index) of form.examples" :key="index" no-style>
+                            <a-space direction="vertical" style="min-width: 640px">
+                                <a-form-item :field="`form.examples[${index}].input`" :label="`输入用例-${index}`">
+                                    <a-input v-model="examplesItem.input" placeholder="请输入测试输入用例" />
+                                </a-form-item>
+                                <a-form-item :field="`form.examples[${index}].output`" :label="`输出用例-${index}`">
+                                    <a-input v-model="examplesItem.output" placeholder="请输入测试输出用例" />
+                                </a-form-item>
+                                <a-button status="danger" class="delete" @click="handleDelete(index)">
+                                    删除
+                                </a-button>
+                            </a-space>
+                        </a-form-item>
+                        <div style="margin-bottom: 10px;margin-top: -10px;">
+                            <a-button @click="handleAdd" type="outline" status="success">新增测试用例</a-button>
+                        </div>
+                    </a-form-item>
+                    <a-form-item field="from" label="来源" :validate-trigger="['change', 'input']"
+                        style="margin-bottom: 30px;">
+                        <a-input v-model="form.from" placeholder="" />
+                        <template #extra>
+                            <div>&nbsp;必填（可随意填）</div>
+                        </template>
+                    </a-form-item>
+                </a-form>
                 <a-form-item>
-                    <a-button type="primary" style="min-width: 200px" @click="doSubmit">提交
-                    </a-button>
+                    <a-space>
+                        <button type="submit" class="abutton">提交</button>
+                    </a-space>
                 </a-form-item>
-            </a-form>
+            </form>
         </div>
-        <BasicFooter />
     </div>
-
 </template>
-<script setup lang="ts" name="AddQuestionView">
-import { reactive } from "vue";
+<script setup lang="ts">
+import { reactive,ref } from "vue";
 import axios from 'axios';
 import MdEditor from "@/components/MdEditor.vue";
 import { ElMessage } from 'element-plus';
-// import CodeEditor from "@/components/CodeEditor.vue";
-// import { QuestionControllerService } from "../../../generated";
-// import message from "@arco-design/web-vue/es/message";
+import { useUserStore } from '@/stores/userStore';
+let uploadUserId = localStorage.getItem('uploadUserId')
+let topicId=ref('')
 const form = reactive({
-    tags: [],
-    title: '',
-    content: '',
-    answer: '',
-    judgeCase: [
+    uploadUserId: uploadUserId,
+    title:'',
+    content:'',
+    difficulty:'',
+    limitedMemory:1,
+    limitedTime:1,
+    inputDescribe:'',
+    outputDescribe:'',
+    // precautions: "",
+    from:'',
+    examples: [
         {
-            input: "",
-            output: "",
-        },
+            topicId: '',
+            input: '',
+            output: '',
+            showed: true,
+            assessed: true
+        }
     ],
-    judgeConfig: {
-        timeLimit: 0,
-        memoryLimit: 0,
-        stackLimit: 0
-    },
+    labelsId: []
 });
-//新增判题用例
+
 const handleAdd = () => {
-    form.judgeCase.push({
-        input: "",
-        output: "",
+    form.examples.push({
+        input: '',
+        output: '',
+        topicId:topicId.value,
+        showed: true,
+        assessed: true
     });
 };
-//删除判题用例
 const handleDelete = (index: number) => {
-    form.judgeCase.splice(index, 1);
-};
-
-const onAnswerChange = (value: string) => {
-    form.answer = value;
-};
-
-const onContentChange = (value: string) => {
-    form.content = value;
-};
-
-const doSubmit = async () => {
-    try {
-        const response = await axios.put('/admin/topic/add', form);
-        console.log(response);
-        console.log(form);
-        
-        if (response.status === 200 && response.data.success) {
-            ElMessage.success("创建成功");
-        } else {
-            if (response.data && response.data.errorMessage) {
-                ElMessage.error(response.data.errorMessage);
-            } else {
-                ElMessage.error("创建失败，未知错误");
-            }
-        }
-    }catch (error) {
-        ElMessage.error("创建过程中发生错误");
-    }
+    form.examples.splice(index, 1);
 }
+let tokenmanager = localStorage.getItem('tokenmanager');
+let headers = {
+    Authorization: tokenmanager
+};
+let handleSubmit = async (event: Event) => {
+    event.preventDefault(); // 阻止浏览器执行表单提交的默认操作
+    form.examples.forEach(item => {
+        item.topicId = topicId.value.toString();  // 将 topicId 转换为字符串
+    });
+    console.log(form);
+    try {
+        let response = await axios({
+            method: 'POST',
+            url: '/api/admin/topic/add',
+            headers: headers,
+            data: form
+        })
+        console.log(response.data);
+        if (response.data.code === 200) {
+            ElMessage.success("创建题目成功")
+            // setTimeout(()=>{
+            //     location.reload() 
+            // },2000)
+        } else {
+            ElMessage.error(response.data.message)
+        }
+    } catch (error) {
+        console.error(error);
+    }
+};
 </script>
 <style scoped>
-.textarea{
-  width: 650px;
-  height: 150px;
+.arco-form{
+    margin-left: 5%;
 }
-.footer{
+.textarea{
+    width: 680px;
+    height: 140px;
+}
+.arco-space-vertical {
+    margin-bottom: 8px;
+    position: relative;
+}
+.delete{
+    position: absolute;
+    right: -100px;
+    bottom: 58px;
+}
+.abutton {
+    margin-left: 124%;
+    margin-top: 15px;
+    margin-bottom: 50px;
+    min-width: 200px;
+    height: 35px;
+    background-color: rgb(44, 44, 247);
+    color: white;
+    font-size: 15px;
+    letter-spacing: 3px;
+}
+
+.abutton:hover {
+    background-color: rgb(28, 28, 181);
+}
+
+.footer {
     bottom: -250%;
 }
+
 .addQuestionView {
- position: absolute;
- margin-top: 30px;
- margin-left: 150px;
- width: 81vw;
+    position: absolute;
+    margin-top: 30px;
+    margin-left: 150px;
+    width: 81vw;
 }
-h2{
+
+h2 {
     margin-top: -8px;
     font-weight: 400;
-    font-size: 30px!important;
+    font-size: 30px !important;
 }
 </style>

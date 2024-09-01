@@ -20,15 +20,15 @@
             </a-doption>
             <a-doption>
                 <li>
-                    <RouterLink to="/manager/managequestions" active-class="active">
-                        <p><icon-file />&nbsp;&nbsp;浏览题目提交</p>
+                    <RouterLink to="/manager/viewquestions" active-class="active">
+                        <p><icon-align-left />&nbsp;&nbsp;题目列表</p>
                     </RouterLink>
                 </li>
             </a-doption>
             <a-doption>
                 <li>
-                    <RouterLink to="/manager/viewquestions" active-class="active">
-                        <p><icon-align-left />&nbsp;&nbsp;题目列表</p>
+                    <RouterLink to="/manager/managequestions" active-class="active">
+                        <p><icon-file />&nbsp;&nbsp;浏览题目提交</p>
                     </RouterLink>
                 </li>
             </a-doption>
