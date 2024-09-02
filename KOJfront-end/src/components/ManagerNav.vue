@@ -115,24 +115,6 @@ let showSearch = ref(false);
 let searchText = ref('');
 let selectedAvatar = ref('https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp');
 let tokenmanager=localStorage.getItem('tokenmanager')
-// const saveSelectedAvatarToLocalStorage = () => {
-//     localStorage.setItem('selectedManagerAvatar', selectedAvatar.value);
-// };
-// const triggerFileUpload = () => {
-//     const input = document.createElement('input');
-//     input.type = 'file';
-//     input.accept = 'image/*';
-//     input.onchange = (e) => {
-//         const file = (e.target as HTMLInputElement).files![0];
-//         const reader = new FileReader();
-//         reader.onload = (event) => {
-//             selectedAvatar.value = event.target!.result as string;
-//             saveSelectedAvatarToLocalStorage();
-//         };
-//         reader.readAsDataURL(file);
-//     };
-//     input.click();
-// };
 function switchAccount() {
     userStore.logoutManager();
     router.push({

@@ -19,7 +19,17 @@
                             @keyup.enter="changeUserPwd(user.userId)" />
                         <icon-edit @click="toggleInputForUser(user.userId)" />
                         <icon-delete @click="deleteUser()" />
-                        <a-switch checked-color="#f45e5e" unchecked-color="#2e69fd" checked-value="0"
+                        <a-switch unchecked-color="#f45e5e" checked-color="#2e69fd" 
+                            v-if="user.switchValue===0" v-model="user.switchValue"
+                            @click="changeUserStatus(user.userId)">
+                            <template #checked>
+                                ON
+                            </template>
+                            <template #unchecked>
+                                OFF
+                            </template>
+                        </a-switch>
+                        <a-switch checked-color="#f45e5e" unchecked-color="#2e69fd" checked-value="0" v-else
                             unchecked-value="1" v-model="user.switchValue" @click="changeUserStatus(user.userId)">
                             <template #checked>
                                 OFF
@@ -108,9 +118,7 @@ let fetchUsers = async () => {
         console.error(error);
     }
 };
-
 onMounted(fetchUsers);
-
 function changeUserPwd(userId: any) {
     const newPassword = newPasswordForUser.value[userId];
     if (newPassword) {
@@ -123,9 +131,8 @@ function changeUserPwd(userId: any) {
             .then((response) => {
                 if (response.data.code === 200) {
                     ElMessage.success("密码修改成功");
-                    // 密码修改成功后，清除输入框的值
+                    // 密码修改成功后,清除输入框的值
                     newPasswordForUser.value[userId] = "";
-                    // 关闭输入框显示
                     showInputForUserMap.value[userId] = false;
                 } else {
                     console.log(response);
@@ -161,7 +168,6 @@ let changeUserStatus = async (userId: any) => {
             console.error(error);
         };
 }
-  
 }
 function toggleInputForUser(userId: string) {
     showInputForUserMap.value[userId] = !showInputForUserMap.value[userId];

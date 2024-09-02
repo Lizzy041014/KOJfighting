@@ -14,14 +14,13 @@
                     <a-form-item field="name" label="题目标题" :validate-trigger="['change', 'input']">
                         <a-input v-model="form.title" placeholder="请输入标题" />
                     </a-form-item>
-                    <form action="">
-                         <a-form-item field="tags" label="标签">
+                    <form action="" @keyup="addlabeltotopic">
+                        <a-form-item field="tags" label="标签">
                             <a-input-tag placeholder="请输入标签" allow-clear />
                             <template #extra>
                                 <div>&nbsp;输入一个标签后按Enter键</div>
                             </template>
                         </a-form-item>
-                        <button></button>
                     </form>
                     <a-form-item field="radio" label="难度" :rules="[{ match: /one/, message: 'must select one' }]">
                         <a-radio-group v-model="form.difficulty">
@@ -158,9 +157,9 @@ let handleSubmit = async (event: Event) => {
         console.log(response.data);
         if (response.data.code === 200) {
             ElMessage.success("创建题目成功")
-            // setTimeout(()=>{
-            //     location.reload() 
-            // },2000)
+            setTimeout(()=>{
+                location.reload() 
+            },2000)
         } else {
             ElMessage.error(response.data.message)
         }
@@ -168,6 +167,24 @@ let handleSubmit = async (event: Event) => {
         console.error(error);
     }
 };
+function addlabeltotopic(topicId: any) {
+        const data = {
+            topicId: topicId,
+            labelIds: [],
+        };
+        axios
+            .put('/api/admin/topic/add_label', data, { headers })
+            .then((response) => {
+                if (response.data.code === 200) {
+                } else {
+                    console.log(response);
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+                ElMessage.error("密码修改失败");
+            });
+}
 </script>
 <style scoped>
 .arco-form{
