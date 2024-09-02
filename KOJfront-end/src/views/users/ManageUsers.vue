@@ -14,12 +14,19 @@
                         </template>
                     </a-list-item-meta>
                     <template #actions>
-                        <a-input :style="{ width: '230px' }" placeholder="修改该用户的密码" allow-clear class="changepwd"
-                            v-show="showInputForUser(user.userId)" />
+                        <a-input v-if="showInputForUser(user.userId)" :style="{ width: '230px' }" placeholder="修改该用户的密码"
+                            allow-clear class="changepwd" v-model="newPasswordForUser[user.userId]"
+                            @keyup.enter="changeUserPwd(user.userId)" />
                         <icon-edit @click="toggleInputForUser(user.userId)" />
                         <icon-delete @click="deleteUser()" />
                         <a-switch checked-color="#f45e5e" unchecked-color="#2e69fd" checked-value="0"
-                            unchecked-value="1" v-model="user.switchValue" @click="changeUserStatus(user.userId)" />
+                            unchecked-value="1" v-model="user.switchValue" @click="changeUserStatus(user.userId)">
+                            <template #checked>
+                                OFF
+                            </template>
+                            <template #unchecked>
+                                ON
+                            </template></a-switch>
                     </template>
                 </a-list-item>
             </a-list>
@@ -32,7 +39,7 @@
     </div>
 </template>
 <script setup lang="ts" name="ManageUsers">
-import { ref, onMounted} from "vue";
+import { ref, onMounted } from "vue";
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
 interface User {
@@ -50,6 +57,8 @@ interface User {
     roleDescribe: string;
     createTime: string;
     switchValue: number;
+    switchColorChecked: string;
+    switchColorUnchecked: string;
 }
 interface DataResponse {
     pageNumber: number;
@@ -65,7 +74,9 @@ let headers = {
 let users = ref<User[]>([]);
 let totalUsers = ref(0);
 let showInputForUserMap = ref<Record<string, boolean>>({});
-let searchname=ref('')
+let searchname = ref('')
+let newPasswordForUser = ref<Record<string, string>>({});
+
 let fetchUsers = async () => {
     let data = {
         "search": searchname.value,
@@ -80,7 +91,13 @@ let fetchUsers = async () => {
             data
         })
         const backendData = response.data.data as DataResponse;
-        backendData.records.forEach(user => user.switchValue = 1);
+        backendData.records.forEach((user) => {
+            const storedValue = localStorage.getItem(`userSwitchValue_${user.userId}`);
+            user.switchValue = storedValue ? Number(storedValue) : 0;
+            user.switchColorChecked = "#f45e5e";
+            user.switchColorUnchecked = "#2e69fd";
+            console.log(user.switchColorChecked);
+        });
         users.value = backendData.records;
         totalUsers.value = backendData.totalRow;
     } catch (error) {
@@ -91,23 +108,56 @@ let fetchUsers = async () => {
 onMounted(fetchUsers);
 
 function changeUserPwd(userId: any) {
-    // 实现修改用户密码的逻辑
-    
+    const newPassword = newPasswordForUser.value[userId];
+    if (newPassword) {
+        const data = {
+            userId: userId,
+            password: newPassword,
+        };
+        axios
+            .put('/api/admin/pwd', data, { headers })
+            .then((response) => {
+                if (response.data.code === 200) {
+                    ElMessage.success("密码修改成功");
+                    // 密码修改成功后，清除输入框的值
+                    newPasswordForUser.value[userId] = "";
+                    // 关闭输入框显示
+                    showInputForUserMap.value[userId] = false;
+                } else {
+                    console.log(response);
+                    
+                    ElMessage.error("密码修改失败");
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+                ElMessage.error("密码修改失败");
+            });
+    }
 }
-function deleteUser(){}
-let changeUserStatus = async (userId:any) => {
-    try {
-        let response =await axios({
-            method: 'PUT',
-            url: `/api/admin/status/${userId}?action=${users.value.find((user) => user.userId === userId)?.switchValue}`,
-            headers,
-        })
-if(response.data.code===200){
-        ElMessage.warning('修改用户状态成功')
+function deleteUser() { }
+let changeUserStatus = async (userId: any) => {
+    const user = users.value.find((u) => u.userId === userId);
+    if (user) {
+        try {
+            let response = await axios({
+                method: 'PUT',
+                url: `/api/admin/status/${userId}?action=${users.value.find((user) => user.userId === userId)?.switchValue}`,
+                headers,
+            })
+            if (response.data.code === 200) {
+                localStorage.setItem(`userSwitchValue_${userId}`, user.switchValue.toString());
+                ElMessage.warning('修改用户状态成功')
+                console.log(user.switchValue);
+                if (user.switchValue===1){
+                    user.switchColorChecked = "#2e69fd";
+                } 
+            }
+        } catch (error) {
+            console.error(error);
+        };
 }
-    } catch (error) {
-        console.error(error);
-    };
+  
 }
 function toggleInputForUser(userId: string) {
     showInputForUserMap.value[userId] = !showInputForUserMap.value[userId];
@@ -117,33 +167,40 @@ function showInputForUser(userId: string) {
 }
 </script>
 <style scoped>
-.changepwd{
-    padding-top:0px!important;
-    padding-bottom:0px!important;
+.changepwd {
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
 }
-.nickname{
+
+.nickname {
     color: black;
 }
-.usesearch{
- position: relative;
- left: 3%;
+
+.usesearch {
+    position: relative;
+    left: 3%;
 }
-.footer{
+
+.footer {
     bottom: 0;
 }
+
 .arco-list-item-action {
-    margin-right: 20px!important;
-    padding: 5px!important;
-    margin:6px!important;
+    margin-right: 20px !important;
+    padding: 5px !important;
+    margin: 6px !important;
 }
- .arco-list-item-meta {
-     padding: 5px 10px;
- }
-.arco-space-vertical{
+
+.arco-list-item-meta {
+    padding: 5px 10px;
+}
+
+.arco-space-vertical {
     margin-left: 36%;
     margin-top: 2%;
     margin-bottom: 3%;
 }
+
 .demo-arrow {
     box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.15);
     padding: 10px;
@@ -151,22 +208,26 @@ function showInputForUser(userId: string) {
     background-color: var(--color-bg-popup);
     border-radius: 4px;
 }
- .arco-list-wrapper{
+
+.arco-list-wrapper {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 90vw;
     margin-left: 5%;
     margin-top: -16px;
- }
- .arco-list-medium .arco-list-content-wrapper .arco-list-content>.arco-list-item{
+}
+
+.arco-list-medium .arco-list-content-wrapper .arco-list-content>.arco-list-item {
     width: 82vw;
     padding: 15px 20px
- }
- .arco-list-item-action{
-    margin: 50px!important;
- }
- .arco-list-item-action>li:not(:last-child) {
-     margin-right: 190px!important;
- }
+}
+
+.arco-list-item-action {
+    margin: 50px !important;
+}
+
+.arco-list-item-action>li:not(:last-child) {
+    margin-right: 190px !important;
+}
 </style>
