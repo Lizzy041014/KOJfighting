@@ -13,7 +13,7 @@
                             <icon-user />
                         </template>
                     </a-list-item-meta>
-                    <template #actions>
+                    <template v-if="isNormalUser(user.roleDescribe)" #actions>
                         <a-input v-if="showInputForUser(user.userId)" :style="{ width: '230px' }" placeholder="修改该用户的密码"
                             allow-clear class="changepwd" v-model="newPasswordForUser[user.userId]"
                             @keyup.enter="changeUserPwd(user.userId)" />
@@ -26,7 +26,11 @@
                             </template>
                             <template #unchecked>
                                 ON
-                            </template></a-switch>
+                            </template>
+                        </a-switch>
+                    </template>
+                    <template v-else #actions>
+                        <div>管理员无法修改此的用户密码和状态</div>
                     </template>
                 </a-list-item>
             </a-list>
@@ -164,6 +168,9 @@ function toggleInputForUser(userId: string) {
 }
 function showInputForUser(userId: string) {
     return showInputForUserMap.value[userId] || false;
+}
+function isNormalUser(roleDescribe: string) {
+    return roleDescribe === "普通用户";
 }
 </script>
 <style scoped>
