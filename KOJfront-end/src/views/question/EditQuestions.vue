@@ -2,7 +2,7 @@
     <div class="home">
         <ManagerNav />
         <div class="addQuestionView">
-            <h2>创建题目</h2>
+            <h2>编辑题目</h2>
             <form action="" @submit="handleSubmit">
                 <a-form ref="formRef" :model="form" :style="{ width: '1000px' }" label-align="left">
                     <a-form-item field="题目Id" label="题目Id">
@@ -13,25 +13,6 @@
                     </a-form-item>
                     <a-form-item field="name" label="题目标题" :validate-trigger="['change', 'input']">
                         <a-input v-model="form.title" placeholder="请输入标题" />
-                    </a-form-item>
-                    <a-form-item field="tags" label="标签">
-                        <div class="m-4">
-                            <el-select v-model="value1" multiple placeholder="Select" style="width: 240px">
-                                <el-option v-for="item in options" :key="item.value" :label="item.label"
-                                    :value="item.value">
-                                </el-option>
-                            </el-select>
-                            <el-input v-if="inputVisible" ref="InputRef" v-model="inputValue" class="w-20" size="small"
-                                @keyup.enter="handleInputConfirm" />
-                            <el-button v-else class="button-new-tag" @click="showInput">
-                                + 新标签
-                            </el-button>
-                            <el-input v-if="inputVisibledelete" ref="InputRefdelete" v-model="inputValuedelete" class="w-20" size="small"
-                                @keyup.enter="handleInputConfirmdelete" />
-                            <el-button v-else class="button-new-tag" @click="showInput">
-                                - 删除标签
-                            </el-button>
-                        </div>
                     </a-form-item>
                     <a-form-item field="radio" label="难度" :rules="[{ match: /one/, message: 'must select one' }]">
                         <a-radio-group v-model="form.difficulty">
@@ -70,24 +51,6 @@
                             </a-form-item>
                         </a-space>
                     </a-form-item>
-                    <a-form-item label="测试用例配置" :content-flex="false" :merge-props="false">
-                        <a-form-item v-for="(examplesItem, index) of form.examples" :key="index" no-style>
-                            <a-space direction="vertical" style="min-width: 640px">
-                                <a-form-item :field="`form.examples[${index}].input`" :label="`输入用例-${index}`">
-                                    <a-input v-model="examplesItem.input" placeholder="请输入测试输入用例" />
-                                </a-form-item>
-                                <a-form-item :field="`form.examples[${index}].output`" :label="`输出用例-${index}`">
-                                    <a-input v-model="examplesItem.output" placeholder="请输入测试输出用例" />
-                                </a-form-item>
-                                <a-button status="danger" class="delete" @click="handleDelete(index)">
-                                    删除
-                                </a-button>
-                            </a-space>
-                        </a-form-item>
-                        <div style="margin-bottom: 10px;margin-top: -10px;">
-                            <a-button @click="handleAdd" type="outline" status="success">新增测试用例</a-button>
-                        </div>
-                    </a-form-item>
                     <a-form-item field="from" label="来源" :validate-trigger="['change', 'input']"
                         style="margin-bottom: 30px;">
                         <a-input v-model="form.from" placeholder="" />
@@ -108,13 +71,9 @@
 <script setup lang="ts">
 import { reactive, ref, nextTick,onMounted} from "vue";
 import axios from 'axios';
-import { ElInput } from 'element-plus'
-import type { InputInstance } from 'element-plus'
 import { ElMessage } from 'element-plus';
-let uploadUserId = localStorage.getItem('uploadUserId')
 let topicId=ref('')
 const form = reactive({
-    uploadUserId: uploadUserId,
     title:'',
     content:'',
     difficulty:'',
@@ -122,40 +81,17 @@ const form = reactive({
     limitedTime:1,
     inputDescribe:'',
     outputDescribe:'',
-    // precautions: "",
     from:'',
-    examples: [
-        {
-            topicId: '',
-            input: '',
-            output: '',
-            showed: true,
-            assessed: true
-        }
-    ],
-    labelsId: []
+    topicId: '',
 });
-const handleAdd = () => {
-    form.examples.push({
-        input: '',
-        output: '',
-        topicId:topicId.value,
-        showed: true,
-        assessed: true
-    });
-};
-const handleDelete = (index: number) => {
-    form.examples.splice(index, 1);
-}
+
 let tokenmanager = localStorage.getItem('tokenmanager');
 let headers = {
     Authorization: tokenmanager
 };
 let handleSubmit = async (event: Event) => {
     event.preventDefault(); // 阻止浏览器执行表单提交的默认操作
-    form.examples.forEach(item => {
-        item.topicId = topicId.value.toString();  // 将 topicId 转换为字符串
-    });
+
     console.log(form);
     try {
         let response = await axios({
@@ -177,112 +113,51 @@ let handleSubmit = async (event: Event) => {
         console.error(error);
     }
 };
-const inputValue = ref('')
-const inputVisible = ref(false)
-const inputValuedelete = ref('')
-const inputVisibledelete = ref(false)
-const InputRef = ref<InputInstance>()
-interface OptionType {
-    value: number;
-    label: string;
-}
-const value1 = ref<number[]>([]);
-const options = ref<OptionType[]>([]);
-const showInput = () => {
-    inputVisible.value = true
-    nextTick(() => {
-        InputRef.value!.input!.focus()
-    })
-}
-
-const handleInputConfirm = async () => {
-    try {
-        const data={
-            labelName: inputValue.value
-        }
-        const response = await axios({
-            method:'POST',
-            url:'/api/admin/label/add',
-            headers,
-            data
-        })
-        console.log(response.data.code);
-        console.log(data);
-        if(response.data.code===200){
-            ElMessage.success('标签添加成功')
-        inputVisible.value = false
-        inputValue.value = '' 
-        }
-       else{
-        ElMessage.error('添加失败或已有该标签')
-       }
-    } catch (error) {
-        console.error(error);
-    }
-}
-const handleInputConfirmdelete = async () => {
-    try {
-        const data = {
-            labelName: inputValuedelete.value
-        }
-        const response = await axios({
-            method: 'DELETE',
-            url: '/api/root/label/delete/{labelId}',
-            headers,
-            data
-        })
-        console.log(response.data.code);
-        console.log(data);
-        if (response.data.code === 200) {
-            ElMessage.success('成功删除该标签')
-            inputVisibledelete.value = false
-            inputValuedelete.value = ''
-        }
-        else {
-            ElMessage.error('删除失败或还未有该标签的存在')
-        }
-    } catch (error) {
-        console.error(error);
-    }
-}
 onMounted(async () => {
     try {
-        const response = await axios.get('/api/label/gets');
+        const response = await axios.get(`/topic/get/${topicId}`);
         const data = response.data.data.records;
         console.log(data);
-        options.value = data.map((item: { labelId: any; labelName: any; }) => ({ value: item.labelId, label: item.labelName }));
+       
     } catch (error) {
         console.error(error);
     }
 });
 </script>
 <style scoped>
-.w-20{
-margin-top: 10px;
-line-height: 40px;
+.w-20 {
+    margin-top: 10px;
+    line-height: 40px;
 }
-.button-new-tag{
+
+.button-new-tag {
     margin-left: 15px;
 }
-.el-tag.is-closable{
-margin-right: 8px;
+
+.el-tag.is-closable {
+    margin-right: 8px;
 }
-.arco-form{
+
+.arco-form {
     margin-left: 5%;
 }
-.textarea{
+
+.textarea {
     width: 680px;
     height: 140px;
 }
+
 .arco-space-vertical {
     margin-bottom: 8px;
     position: relative;
 }
-.delete{
+
+.delete {
     position: absolute;
     right: -100px;
     bottom: 58px;
 }
+
 .abutton {
     margin-left: 124%;
     margin-top: 15px;

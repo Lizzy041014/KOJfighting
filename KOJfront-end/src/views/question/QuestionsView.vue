@@ -17,7 +17,7 @@
                     </a-space>
                 </template>
                 <template #no="{ record }">
-                    <span v-if="isCurrentUser(record)" class="edittimu" @click="toQuestionEditPage(topicId)"><icon-edit
+                    <span v-if="isCurrentUser(record)" class="edittimu" @click="toQuestionEditPage(record.topicId)"><icon-edit
                             size="large" /></span>
                     <span v-if="isCurrentUser(record)" style="margin-left: 50px;" class="edittimu"><icon-delete
                             size="large" /></span>
@@ -36,7 +36,6 @@ import axios from 'axios';
 import router from '@/router';
 import { useUserStore } from '@/stores/userStore';
 import { ElMessage } from 'element-plus';
-import { RefSymbol } from '@vue/reactivity';
 let userStore = useUserStore();
 let dataList = ref([]);
 let tableRef = ref();
@@ -100,11 +99,21 @@ watchEffect(() => {
 onMounted(() => {
     loadData();
 });
-
-let toQuestionEditPage = (topicId:any) => {
+let toQuestionEditPage = async (topicId:any) => {
     router.push({
         path: `/view/question/${topicId}`,
     });
+    let data = { search: search.value };
+    try {
+        const response = await axios.post('/api/topic/gets', data, { headers });
+        dataList.value = response.data.data.records;
+        for (let i = 0; i >= 0; i++) {
+            nickname.value = response.data.data.records[i].uploadUser.nickname;
+            managername = nickname.value;
+        }
+    } catch (error) {
+        console.log(error);
+    }
 };
 let doSearch = async () => {
     let data = { search: search.value };
