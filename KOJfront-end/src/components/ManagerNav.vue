@@ -3,35 +3,36 @@
         <div class="kexielogo"><img :src="kexielogo" alt="kexielogo"></div>
         <div class="title">KexieOJ</div>
         <ul class="tag">
-            <li>
-                <RouterLink to="/manager/managerusers" active-class="active">
+            <RouterLink to="/manager/managerusers" active-class="active">
+                <li>
                     <p><icon-user />&nbsp;用户管理</p>
-                </RouterLink>
-            </li>
+                </li>
+            </RouterLink>
             <li> <a-dropdown trigger="hover">
                     <p><icon-down-circle />&nbsp;题目</p>
                     <template #content>
-                        <a-doption>
+                        <RouterLink to="/manager/add/question" active-class="active">
+                            <a-doption>
             <li>
-                <RouterLink to="/manager/add/question" active-class="active">
-                    <p><icon-link />&nbsp;&nbsp;创建题目</p>
-                </RouterLink>
+                <p><icon-link />&nbsp;&nbsp;创建题目</p>
             </li>
             </a-doption>
-            <a-doption>
-                <li>
-                    <RouterLink to="/manager/viewquestions" active-class="active">
+            </RouterLink>
+            <RouterLink to="/manager/viewquestions" active-class="active">
+                <a-doption>
+                    <li>
                         <p><icon-align-left />&nbsp;&nbsp;题目列表</p>
-                    </RouterLink>
-                </li>
-            </a-doption>
-            <a-doption>
-                <li>
-                    <RouterLink to="/manager/managequestions" active-class="active">
+                    </li>
+                </a-doption>
+            </RouterLink>
+            <RouterLink to="/manager/managequestions" active-class="active">
+                <a-doption>
+                    <li>
+
                         <p><icon-file />&nbsp;&nbsp;浏览题目提交</p>
-                    </RouterLink>
-                </li>
-            </a-doption>
+                    </li>
+                </a-doption>
+            </RouterLink>
 </template>
 </a-dropdown></li>
 <li> <a-dropdown trigger="hover">
@@ -114,7 +115,7 @@ let showOverlay = ref(false);
 let showSearch = ref(false);
 let searchText = ref('');
 let selectedAvatar = ref('https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp');
-let tokenmanager=localStorage.getItem('tokenmanager')
+let tokenmanager = localStorage.getItem('tokenmanager')
 function switchAccount() {
     userStore.logoutManager();
     router.push({
@@ -155,10 +156,10 @@ onMounted(() => {
         userStore.setUsername(savedManagername);
     }
     if (!tokenmanager) {
-            setTimeout(() => {
-                router.push('/login');
-                ElMessage.warning('无权限，请登录管理员账号')
-            }, 1500);
+        setTimeout(() => {
+            router.push('/login');
+            ElMessage.warning('无权限，请登录管理员账号')
+        }, 1500);
     }
 });
 
@@ -169,21 +170,26 @@ onMounted(() => {
     float: right;
     margin-right: 60px;
 }
+
 .header {
     height: 48px;
 }
-.searchBar{
-    right:15%;
+
+.searchBar {
+    right: 15%;
 }
+
 .tag li p {
     font-size: 15px;
     width: 11vw;
     letter-spacing: 2px;
     color: #032564;
 }
-.tag li:nth-child(1){
+
+.tag li:nth-child(1) {
     margin-left: 100px;
 }
+
 .line {
     height: 1px;
     margin: 0 70px;
@@ -192,12 +198,10 @@ onMounted(() => {
 
 .kexielogo {
     display: flex;
-    margin-left: 105px;
+    margin-left: 100px;
     margin-top: 10px;
 }
-.title{
-    margin-left: 20px;
-}
+
 .two div {
     margin-left: 20px;
     margin-top: 30px;
@@ -214,10 +218,46 @@ onMounted(() => {
 .close {
     color: rgb(105, 105, 105);
 }
-.touxiang{
+
+.touxiang {
     margin: 14px 12px;
 }
-.figure{
-    right: -25px;
+
+.figure {
+    right: -15px;
+}
+
+.title {
+    margin-left: -9px;
+}
+
+@media screen and (max-width: 708px) {
+    .tag li p {
+        font-size: 12px;
+        letter-spacing: .5px;
+    }
+
+    .tag {
+        left: 110px;
+    }
+
+    .kexielogo {
+        display: flex;
+        margin-left: 55px;
+    }
+
+    .title {
+        font-size: 16px;
+        margin-left: -50px;
+    }
+
+    .tag li {
+        margin-left: -7px;
+    }
+
+    .right {
+        font-size: 12px;
+        right: 4.5%;
+    }
 }
 </style>

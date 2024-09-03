@@ -14,14 +14,25 @@
                     <a-form-item field="name" label="题目标题" :validate-trigger="['change', 'input']">
                         <a-input v-model="form.title" placeholder="请输入标题" />
                     </a-form-item>
-                    <form action="" @keyup="addlabeltotopic">
-                        <a-form-item field="tags" label="标签">
-                            <a-input-tag placeholder="请输入标签" allow-clear />
-                            <template #extra>
-                                <div>&nbsp;输入一个标签后按Enter键</div>
-                            </template>
-                        </a-form-item>
-                    </form>
+                    <a-form-item field="tags" label="标签">
+                        <div class="m-4">
+                            <el-select v-model="value1" multiple placeholder="Select" style="width: 240px">
+                                <el-option v-for="item in options" :key="item.value" :label="item.label"
+                                    :value="item.value">
+                                </el-option>
+                            </el-select>
+                            <el-input v-if="inputVisible" ref="InputRef" v-model="inputValue" class="w-20" size="small"
+                                @keyup.enter="handleInputConfirm" />
+                            <el-button v-else class="button-new-tag" @click="showInput">
+                                + 新标签
+                            </el-button>
+                            <el-input v-if="inputVisibledelete" ref="InputRefdelete" v-model="inputValuedelete" class="w-20" size="small"
+                                @keyup.enter="handleInputConfirmdelete" />
+                            <el-button v-else class="button-new-tag" @click="showInput">
+                                - 删除标签
+                            </el-button>
+                        </div>
+                    </a-form-item>
                     <a-form-item field="radio" label="难度" :rules="[{ match: /one/, message: 'must select one' }]">
                         <a-radio-group v-model="form.difficulty">
                             <a-radio value="低">低</a-radio>
@@ -95,8 +106,10 @@
     </div>
 </template>
 <script setup lang="ts">
-import { reactive,ref } from "vue";
+import { reactive, ref, nextTick,onMounted} from "vue";
 import axios from 'axios';
+import { ElInput } from 'element-plus'
+import type { InputInstance } from 'element-plus'
 import MdEditor from "@/components/MdEditor.vue";
 import { ElMessage } from 'element-plus';
 import { useUserStore } from '@/stores/userStore';
@@ -124,7 +137,6 @@ const form = reactive({
     ],
     labelsId: []
 });
-
 const handleAdd = () => {
     form.examples.push({
         input: '',
@@ -167,26 +179,97 @@ let handleSubmit = async (event: Event) => {
         console.error(error);
     }
 };
-function addlabeltotopic(topicId: any) {
-        const data = {
-            topicId: topicId,
-            labelIds: [],
-        };
-        axios
-            .put('/api/admin/topic/add_label', data, { headers })
-            .then((response) => {
-                if (response.data.code === 200) {
-                } else {
-                    console.log(response);
-                }
-            })
-            .catch((error) => {
-                console.error(error);
-                ElMessage.error("密码修改失败");
-            });
+const inputValue = ref('')
+const inputVisible = ref(false)
+const inputValuedelete = ref('')
+const inputVisibledelete = ref(false)
+const InputRef = ref<InputInstance>()
+interface OptionType {
+    value: number;
+    label: string;
 }
+const value1 = ref<number[]>([]);
+const options = ref<OptionType[]>([]);
+const showInput = () => {
+    inputVisible.value = true
+    nextTick(() => {
+        InputRef.value!.input!.focus()
+    })
+}
+
+const handleInputConfirm = async () => {
+    try {
+        const data={
+            labelName: inputValue.value
+        }
+        const response = await axios({
+            method:'POST',
+            url:'/api/admin/label/add',
+            headers,
+            data
+        })
+        console.log(response.data.code);
+        console.log(data);
+        if(response.data.code===200){
+            ElMessage.success('标签添加成功')
+        inputVisible.value = false
+        inputValue.value = '' 
+        }
+       else{
+        ElMessage.error('添加失败或已有该标签')
+       }
+    } catch (error) {
+        console.error(error);
+    }
+}
+const handleInputConfirmdelete = async () => {
+    try {
+        const data = {
+            labelName: inputValuedelete.value
+        }
+        const response = await axios({
+            method: 'DELETE',
+            url: '/api/root/label/delete/{labelId}',
+            headers,
+            data
+        })
+        console.log(response.data.code);
+        console.log(data);
+        if (response.data.code === 200) {
+            ElMessage.success('成功删除该标签')
+            inputVisibledelete.value = false
+            inputValuedelete.value = ''
+        }
+        else {
+            ElMessage.error('删除失败或还未有该标签的存在')
+        }
+    } catch (error) {
+        console.error(error);
+    }
+}
+onMounted(async () => {
+    try {
+        const response = await axios.get('/api/label/gets');
+        const data = response.data.data.records;
+        console.log(data);
+        options.value = data.map((item: { labelId: any; labelName: any; }) => ({ value: item.labelId, label: item.labelName }));
+    } catch (error) {
+        console.error(error);
+    }
+});
 </script>
 <style scoped>
+
+.w-20{
+margin-top: 10px;
+line-height: 40px;
+}
+.button-new-tag{
+    margin-left: 15px;
+}
+.el-tag.is-closable{
+margin-right: 8px;
+}
 .arco-form{
     margin-left: 5%;
 }
