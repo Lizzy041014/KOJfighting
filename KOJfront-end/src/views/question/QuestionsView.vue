@@ -43,7 +43,6 @@ let nickname = ref()
 let managername=''
 let formData=ref([])
 let search=ref('')
-
 const columns = [
     {
         title: '题号',
@@ -99,21 +98,10 @@ watchEffect(() => {
 onMounted(() => {
     loadData();
 });
-let toQuestionEditPage = async (topicId:any) => {
-    router.push({
+let toQuestionEditPage = async (topicId: any) => {
+    await router.push({
         path: `/view/question/${topicId}`,
     });
-    let data = { search: search.value };
-    try {
-        const response = await axios.post('/api/topic/gets', data, { headers });
-        dataList.value = response.data.data.records;
-        for (let i = 0; i >= 0; i++) {
-            nickname.value = response.data.data.records[i].uploadUser.nickname;
-            managername = nickname.value;
-        }
-    } catch (error) {
-        console.log(error);
-    }
 };
 let doSearch = async () => {
     let data = { search: search.value };

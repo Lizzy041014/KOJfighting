@@ -6,15 +6,15 @@
             <form action="" @submit="handleSubmit">
                 <a-form ref="formRef" :model="form" :style="{ width: '1000px' }" label-align="left">
                     <a-form-item field="题目Id" label="题目Id">
-                        <a-input placeholder="请输入题目id" minlength="0" v-model="topicId" />
+                        <a-input placeholder="请输入题目 id" minlength="0" v-model="form.topicId" />
                         <template #extra>
-                            <div>&nbsp;随便一个整数，提交时如果提示id重复再修改</div>
+                            <div>&nbsp;随便一个整数，提交时如果提示 id 重复再修改</div>
                         </template>
                     </a-form-item>
                     <a-form-item field="name" label="题目标题" :validate-trigger="['change', 'input']">
                         <a-input v-model="form.title" placeholder="请输入标题" />
                     </a-form-item>
-                    <a-form-item field="radio" label="难度" :rules="[{ match: /one/, message: 'must select one' }]">
+                    <a-form-item field="radio" label="难度">
                         <a-radio-group v-model="form.difficulty">
                             <a-radio value="低">低</a-radio>
                             <a-radio value="中">中</a-radio>
@@ -29,8 +29,8 @@
                     </a-form-item>
                     <a-form-item field="inputDescribe" label="输入描述">
                         <a-space direction="vertical" size="large" fill>
-                            <a-textarea v-model="form.inputDescribe" class="textarea" minlength="2"
-                                placeholder="请输入输入描述" :max-length="20" allow-clear show-word-limit />
+                            <a-textarea v-model="form.inputDescribe" class="textarea" minlength="2" :max-length="20"
+                                allow-clear show-word-limit />
                         </a-space>
                     </a-form-item>
                     <a-form-item field="outputDescribe" label="输出描述">
@@ -69,56 +69,70 @@
     </div>
 </template>
 <script setup lang="ts">
-import { reactive, ref, nextTick,onMounted} from "vue";
-import axios from 'axios';
-import { ElMessage } from 'element-plus';
-let topicId=ref('')
+import { reactive, onMounted } from "vue";
+import axios from "axios";
+import { ElMessage } from "element-plus";
+import router from "@/router";
+import { useRoute } from "vue-router";
 const form = reactive({
-    title:'',
-    content:'',
-    difficulty:'',
-    limitedMemory:1,
-    limitedTime:1,
-    inputDescribe:'',
-    outputDescribe:'',
-    from:'',
-    topicId: '',
+    title: "",
+    content: "",
+    difficulty: "",
+    limitedMemory: 1,
+    limitedTime: 1,
+    inputDescribe: "",
+    outputDescribe: "",
+    from: "",
+    topicId: "",
 });
 
-let tokenmanager = localStorage.getItem('tokenmanager');
+let tokenmanager = localStorage.getItem("tokenmanager");
 let headers = {
-    Authorization: tokenmanager
+    Authorization: tokenmanager,
 };
-let handleSubmit = async (event: Event) => {
-    event.preventDefault(); // 阻止浏览器执行表单提交的默认操作
 
+let handleSubmit = async (event: Event) => {
+    event.preventDefault();
     console.log(form);
     try {
         let response = await axios({
-            method: 'POST',
-            url: '/api/admin/topic/add',
+            method: "put",
+            url: "/api/admin/topic/update",
             headers: headers,
-            data: form
-        })
+            data: form,
+        });
         console.log(response.data);
         if (response.data.code === 200) {
-            ElMessage.success("创建题目成功")
+            ElMessage.success("修改题目成功");
             setTimeout(()=>{
-                location.reload() 
-            },2000)
+                router.push({
+                    path: "/manager/viewquestions",
+                });
+            },1000)
         } else {
-            ElMessage.error(response.data.message)
+            ElMessage.error(response.data.message);
         }
     } catch (error) {
         console.error(error);
     }
 };
+const route = useRoute();
 onMounted(async () => {
+    const pathSegments = route.path.split("/");
+    const topicId = pathSegments[pathSegments.length - 1];
     try {
-        const response = await axios.get(`/topic/get/${topicId}`);
-        const data = response.data.data.records;
+        const response = await axios.get(`/api/topic/get/${topicId}`);
+        const data = response.data.data;
         console.log(data);
-       
+        form.title = data.title;
+        form.content = data.content;
+        form.difficulty = data.difficulty;
+        form.limitedMemory = data.limitedMemory;
+        form.limitedTime = data.limitedTime;
+        form.inputDescribe = data.inputDescribe;
+        form.outputDescribe = data.outputDescribe;
+        form.from = data.from;
+        form.topicId = data.topicId;
     } catch (error) {
         console.error(error);
     }
