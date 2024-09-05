@@ -108,7 +108,7 @@ let handleSubmit = async (event: Event) => {
                 router.push({
                     path: "/manager/viewquestions",
                 });
-            },1000)
+            },1200)
         } else {
             ElMessage.error(response.data.message);
         }

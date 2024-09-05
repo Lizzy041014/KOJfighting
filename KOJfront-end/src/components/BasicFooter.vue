@@ -16,7 +16,7 @@
     color: #052070;
     display: flex;
     position: relative;
-    bottom: -50%;
+    bottom: -30%;
     left: 0;
     right: 0;
     text-align:center;

@@ -9,8 +9,8 @@ import ManageUsers from '@/views/users/ManageUsers.vue'
 import AddQuestionView from '@/views/question/AddQuestionView.vue'
 import ManageQuestionView from "@/views/question/ManageQuestionView.vue";
 import QuestionsView from "@/views/question/QuestionsView.vue";
-import Error from "@/views/Error.vue";
 import EditQuestions from "@/views/question/EditQuestions.vue";
+import ViewTotalDetailQusetions from '@/views/question/ViewTotalDetailQusetions.vue'
 // import { useAuthStore } from '@/stores/userStore';
 // import ACCESS_ENUM from '@/access/accessEnum';
 //创建路由器
@@ -72,9 +72,9 @@ const router = createRouter({
             props: true 
         },
         {
-            path: '/404',
-            name: 'error',
-            component: Error
+            path: '/view/total/detailquestions',
+            name: 'viewtotaldetailqusetions',
+            component: ViewTotalDetailQusetions
         },
         {
             path: "/",

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="bigone">
         <div class="question">
             <div class="smallfix"></div>
             <div class="list-head">
@@ -9,57 +9,52 @@
                         <div class="listtag-muted">List Of Questions</div>
                     </div>
                 </div>
-                <div class="question">
-                    <!-- 。。。。。。 -->
-                </div>
+                <div class="question"></div>
             </div>
             <div>
-                <div>
-                    <table class="table index-list">
-                        <thead class="thead">
-                            <tr>
-                                <th></th>
-                                <th><a href="#">题号</a></th>
-                                <th><a href="#">标题</a></th>
-                                <th><a href="#">标签</a></th>
-                                <th><a href="#">难度</a></th>
-                                <th><a href="#">正确</a></th>
-                            </tr>
-                        </thead>
-                        <tbody class="tbody">
-                            <tr>
-                                <td></td>
-                                <td><a href="#" target="_blank">001</a></td>
-                                <td><a href="#" target=" _blank">编程求解1+2+3+...+n</a></td>
-                                <td><span class="problem-list-tags"><a href="#"><span
-                                                class="label label-warning">简单循环</span></a></span>
-                                </td>
-                                <td><span class="label label-success">入门</span></td>
-                                <td style="text-align:center;vertical-align: middle;"><a href="#">880</a></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td><a href="#" target=" _blank">002</a></td>
-                                <td><a href="#" target="_blank">编程求1+3+5+...+n</a></td>
-                                <td><span class="problem-list-tags"><a href="#"><span
-                                                class="label label-info">简单循环</span></a></span>
-                                </td>
-                                <td><span class="label label-success">入门</span></td>
-                                <td style="text-align:center;vertical-align: middle;"><a href="#">661</a></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <ul class="page">
-                        <li><span>«</span></li>
-                        <li class="active"><a href="#">1</a></li>
-                        <li><a href="#">2</a></li>
-                        <li><a href="#">3</a></li>
-                        <li><a href="#">4</a></li>
-                        <li><a href="#">5</a></li>
-                        <li><a href="#">6</a></li>
-                        <li class="next"><a href="#">»</a></li>
-                    </ul>
-                </div>
+                <table class="table index-list">
+                    <thead class="thead">
+                        <tr>
+                            <th></th>
+                            <th><a href="#">题号</a></th>
+                            <th><a href="#">标题</a></th>
+                            <th><a href="#">标签</a></th>
+                            <th><a href="#">难度</a></th>
+                            <th><a href="#"></a></th>
+                        </tr>
+                    </thead>
+                    <tbody class="tbody">
+                        <tr v-for="question in questionsStore.questions" :key="question.topicId">
+                            <td> </td>
+                            <td>{{ question.topicId }}</td>
+                            <td>{{ question.title }}</td>
+                            <td>
+                                <span class="problem-list-tags">
+                                    <a href="#" v-for="label in question.labels" :key="label.labelId">
+                                        <span class="label" :class="getLabelClass(question.difficulty)">{{
+                                            label.labelName }}</span>
+                                    </a>
+                                </span>
+                            </td>
+                            <td><span class="label" :class="getLabelClass(question.difficulty)">{{ question.difficulty
+                                    }}</span></td>
+                            <td style="text-align:center;vertical-align: middle;"> <el-button type="primary" plain
+                                    class="doquestion">做题</el-button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <a-pagination :total="totalpagesize" size="large" @change="handlePageChange">
+                    <template #page-item="{ page }" :v-model="currentPage">
+                        {{ page }}
+                    </template>
+                    <template #page-item-step="{ type }">
+                        <icon-send :style="type === 'previous' ? { transform: `rotate(180deg)` } : undefined" />
+                    </template>
+                    <template #page-item-ellipsis>
+                        <icon-sun-fill />
+                    </template>
+                </a-pagination>
             </div>
         </div>
         <div class="panel-two">
@@ -70,6 +65,8 @@
                         <li>基础入门栏目</li>
                         <li>突破进阶栏目</li>
                         <li>终极提升栏目</li>
+                        <li>综和应用题</li>
+                        <li>......</li>
                     </ul>
                 </div>
             </div>
@@ -79,29 +76,8 @@
                 <div class="panel-heading">标签</div>
                 <div class="panel-body">
                     <ul class="tag-group">
-                        <li class="taggroup-item-index"><a href="#">字符串</a>
-                        </li>
-                        <li class="taggroup-item-index"><a href="#">结构体</a>
-                        </li>
-                        <li class="taggroup-item-index"><a href="#">循环</a>
-                        </li>
-                        <li class="taggroup-item-index"><a href="#">数组问题</a>
-                        </li>
-                        <li class="taggroup-item-index"><a href="#">链表</a>
-                        </li>
-                        <li class="taggroup-item-index"><a href="#">指针</a>
-                        </li>
-                        <li class="taggroup-item-index"><a href="#">字符串</a>
-                        </li>
-                        <li class="taggroup-item-index"><a href="#">结构体</a>
-                        </li>
-                        <li class="taggroup-item-index"><a href="#">循环</a>
-                        </li>
-                        <li class="taggroup-item-index"><a href="#">数组问题</a>
-                        </li>
-                        <li class="taggroup-item-index"><a href="#">链表</a>
-                        </li>
-                        <li class="taggroup-item-index"><a href="#">指针</a>
+                        <li class="taggroup-item-index" v-for="item in options" :key="item.value" :label="item.label" @click="labelquestion(item.value)">
+                            <span>{{ item.label }}</span>
                         </li>
                     </ul>
                 </div>
@@ -109,11 +85,83 @@
         </div>
     </div>
 </template>
-
 <script setup lang="ts" name="MainBanner">
+import { onMounted,ref } from "vue";
+import axios from "axios";
+import { useQuestionsStore } from '@/stores/questions'
+import router from "@/router";
+interface Question {
+    topicId: number;
+    title: string;
+    difficulty: string;
+    from: string;
+    labels?: { labelId: number; labelName: string }[];
+}
+let totalpagesize=ref(0)
+let questionsStore = useQuestionsStore();
+let currentPage=ref(1)
+interface OptionType {
+    value: number;
+    label: string;
+}
+const options = ref<OptionType[]>([]);
+const optionsid = ref<OptionType[]>([]);
+onMounted(async () => {
+    await fetchData(currentPage.value);
+});
 
+const fetchData = async (pageNo: number) => {
+    let data = {
+        pageNo,
+        pageSize: 10,
+    }
+    try {
+        const response = await axios.post("/api/topic/gets", data);
+        questionsStore.setQuestions(response.data.data.records as Question[]);
+        totalpagesize.value = response.data.data.totalRow; 
+    } catch (error) {
+        console.error(error);
+    }
+    try{
+        const response = await axios.get("/api/label/gets");
+        options.value = response.data.data.records.map((item: { labelId: any; labelName: any; }) =>
+            ({ value: item.labelId, label: item.labelName }));
+        optionsid.value = response.data.data.records.map((item: { labelId: any; }) =>
+            ({ value: item.labelId }));
+            console.log(optionsid.value);
+            
+    }catch(error){
+        console.error(error);
+    }
+};
+const handlePageChange = (page: number) => {
+    currentPage.value = page;  
+    fetchData(page);
+};
+const labelquestion = async (labelId: number) => {
+    console.log(`${labelId}`);
+    router.push('/view/total/detailquestions')
+};
+const getLabelClass = (difficulty: string) => {
+    switch (difficulty) {
+        case "低":
+            return "label-success";
+        case "中":
+            return "label-info";
+        case "高":
+            return "label-warning";
+        default:
+            return "";
+    }
+};
 </script>
 <style>
+.bigone{
+    position: relative;
+}
+.doquestion{
+    width: 60px;
+}
 .tag-group-two li{
     height: 30px;
     font-size: 15px;
@@ -137,6 +185,7 @@
     text-decoration: none;
     white-space: nowrap;
     background-color: #e6eff8;
+    color: #083b71;
 }
 .taggroup-item-index:hover{
     background-color:rgb(247, 251, 255);
@@ -185,9 +234,10 @@
 
 .panel-two {
     width: 22vw;
+    float: right;
     position: absolute;
     right: 5.8%;
-    top: 86px;
+    top: 20px;
     background-color: #fefefe;
     border: 1px solid #bbc9d4;
     border-radius: 4px;
@@ -195,10 +245,11 @@
     color: #134c89;
 }
 .panel {
+    float: right;
     width: 22vw;
     position: absolute;
     right: 5.8%;
-    top: 290px;
+    top: 300px;
     background-color: #fefefe;
     border: 1px solid #bbc9d4;
     border-radius: 4px;
@@ -210,9 +261,11 @@
     margin-left: 5.5%;
     margin-top: 15px;
     padding: 20px;
+    font-size: 15px;
 }
 
 .tbody {
+    color: #134c89;
     background-color: #fff;
 }
 
@@ -250,14 +303,14 @@
     float: left;
 }
 
-.page li a {
+.page li  {
     color: #134c89;
     padding: 8px 16px;
     border: 1px solid #134c89;
     border-radius: 5px;
 }
 
-.page li.active a {
+.page li.active  {
     background-color: #134c89;
     color: white;
 }

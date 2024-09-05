@@ -21,5 +21,6 @@ declare module 'vue' {
     MdEditor: typeof import('./src/components/MdEditor.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    UserNav: typeof import('./src/components/UserNav.vue')['default']
   }
 }

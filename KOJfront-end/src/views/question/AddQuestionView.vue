@@ -16,8 +16,9 @@
                     </a-form-item>
                     <a-form-item field="tags" label="标签">
                         <div class="m-4">
-                            <el-select v-model="value1" multiple placeholder="Select" style="width: 240px">
-                                <el-option v-for="item in options" :key="item.value" :label="item.label"
+                            <el-select v-model="value1" multiple placeholder="Select" style="width: 240px"
+                                @change="onSelectChange">
+                                <el-option v-for="item in options" :key="item.value" :label="item.label"             
                                     :value="item.value">
                                 </el-option>
                             </el-select>
@@ -26,9 +27,9 @@
                             <el-button v-else class="button-new-tag" @click="showInput">
                                 + 新标签
                             </el-button>
-                            <el-input v-if="inputVisibledelete" ref="InputRefdelete" v-model="inputValuedelete" class="w-20" size="small"
-                                @keyup.enter="handleInputConfirmdelete" />
-                            <el-button v-else class="button-new-tag" @click="showInput">
+                            <el-input v-if="inputVisibledelete" ref="InputRefdelete" v-model="inputValuedelete"
+                                class="w-20" size="small" @keyup.enter="handleInputConfirmdelete" />
+                            <el-button v-else class="button-new-tag" @click="showdeleteInput">
                                 - 删除标签
                             </el-button>
                         </div>
@@ -111,6 +112,7 @@ import axios from 'axios';
 import { ElInput } from 'element-plus'
 import type { InputInstance } from 'element-plus'
 import { ElMessage } from 'element-plus';
+import router from "@/router";
 let uploadUserId = localStorage.getItem('uploadUserId')
 let topicId=ref('')
 const form = reactive({
@@ -122,7 +124,6 @@ const form = reactive({
     limitedTime:1,
     inputDescribe:'',
     outputDescribe:'',
-    // precautions: "",
     from:'',
     examples: [
         {
@@ -133,7 +134,7 @@ const form = reactive({
             assessed: true
         }
     ],
-    labelsId: []
+    labelsId: [] as number[]
 });
 const handleAdd = () => {
     form.examples.push({
@@ -151,8 +152,14 @@ let tokenmanager = localStorage.getItem('tokenmanager');
 let headers = {
     Authorization: tokenmanager
 };
+let onSelectChange = (selectedValues: number[]) => {
+    form.labelsId = selectedValues.map(value => {
+        const option = options.value.find(item => item.value === value);
+        return option ? option.value : null;
+    }).filter((id): id is number => id !== null);
+};
 let handleSubmit = async (event: Event) => {
-    event.preventDefault(); // 阻止浏览器执行表单提交的默认操作
+    event.preventDefault(); 
     form.examples.forEach(item => {
         item.topicId = topicId.value.toString();  // 将 topicId 转换为字符串
     });
@@ -168,8 +175,8 @@ let handleSubmit = async (event: Event) => {
         if (response.data.code === 200) {
             ElMessage.success("创建题目成功")
             setTimeout(()=>{
-                location.reload() 
-            },2000)
+                router.push('/manager/viewquestions')
+            },1000)
         } else {
             ElMessage.error(response.data.message)
         }
@@ -194,7 +201,12 @@ const showInput = () => {
         InputRef.value!.input!.focus()
     })
 }
-
+const showdeleteInput = () => {
+    inputVisibledelete.value = true
+    nextTick(() => {
+        InputRef.value!.input!.focus()
+    })
+}
 const handleInputConfirm = async () => {
     try {
         const data={
@@ -249,8 +261,8 @@ onMounted(async () => {
     try {
         const response = await axios.get('/api/label/gets');
         const data = response.data.data.records;
-        console.log(data);
-        options.value = data.map((item: { labelId: any; labelName: any; }) => ({ value: item.labelId, label: item.labelName }));
+        options.value = data.map((item: { labelId: any; labelName: any; }) => 
+        ({ value: item.labelId, label: item.labelName }));
     } catch (error) {
         console.error(error);
     }
@@ -259,6 +271,9 @@ onMounted(async () => {
 <style scoped>
 .w-20{
 margin-top: 10px;
+margin-left: 20px;
+margin-bottom: 11px;
+width: 190px;
 line-height: 40px;
 }
 .button-new-tag{

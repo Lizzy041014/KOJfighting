@@ -10,13 +10,13 @@
                                 <a-space direction="vertical" size="large" fill>
                                     <a-descriptions title="判题条件" :column="{ xs: 1, md: 2, lg: 3 }">
                                         <a-descriptions-item label="时间限制">
-                                            {{ question.judgeConfig?.timeLimit ?? 0 }}
+                                            {{ question.timeLimit ?? 0 }}
                                         </a-descriptions-item>
                                         <a-descriptions-item label="内存限制">
-                                            {{ question.judgeConfig?.memoryLimit ?? 0 }}
+                                            {{ question.memoryLimit ?? 0 }}
                                         </a-descriptions-item>
                                         <a-descriptions-item label="堆栈限制">
-                                            {{ question.judgeConfig?.stackLimit ?? 0 }}
+                                            {{ question.stackLimit ?? 0 }}
                                         </a-descriptions-item>
                                     </a-descriptions>
                                 </a-space>
@@ -57,7 +57,8 @@
 import { onMounted, ref } from "vue";
 import message from "@arco-design/web-vue/es/message";
 import CodeEditor from "@/components/CodeEditor.vue";
-import MdViewer from "@/components/MdViewer.vue";
+import axios from "axios";
+// import MdViewer from "@/components/MdViewer.vue";
 import { languages } from "monaco-editor/esm/metadata";
 // interface Props {
 //     id: string;
@@ -65,44 +66,36 @@ import { languages } from "monaco-editor/esm/metadata";
 // const props = withDefaults(defineProps<Props>(), {
 //     id: () => "",
 // });
-// const question = ref<QuestionVO>();
-// const loadData = async () => {
-//     const res = await QuestionControllerService.getQuestionVoByIdUsingGet(
-//         props.id as any
-//     );
-//     if (res.code === 0) {
-//         question.value = res.data;
-//     } else {
-//         message.error("加载失败，" + res.message);
-//     }
-// };
+const question = ref('');
+const loadData = async () => {
+    const res = await axios({
 
-// const form = ref<QuestionSubmitAddRequest>({
-//     language: "java",
-//     code: "",
-// });
+    })
+    // if (res.code === 0) {
+    //     question.value = res.data;
+    // } else {
+    //     message.error("加载失败，" + res.message);
+    // }
+};
+
+const form = ({
+    language: "java",
+    code: "",
+});
 // //提交代码
-// const doSubmit = async () => {
-//     if (!question.value?.id) {
-//         return;
-//     }
-//     const res = await QuestionSubmitControllerService.doQuestionSubmitUsingPost({
-//         ...form.value,
-//         questionId: question.value.id,
-//     });
-//     if (res.code === 0) {
-//         message.success("提交成功");
-//     } else {
-//         message.error("提交失败" + res.message);
-//     }
-// };
+const doSubmit = async () => {
+
+    const res = await axios({
+      
+    });
+};
 // //页面加载时请求数据
-// onMounted(() => {
-//     loadData();
-// });
-// const changeCode = (value: string) => {
-//     form.value.code = value;
-// };
+onMounted(() => {
+    loadData();
+});
+const changeCode = (value: string) => {
+   
+};
 </script>
 <style>
 #viewQuestionsView {
