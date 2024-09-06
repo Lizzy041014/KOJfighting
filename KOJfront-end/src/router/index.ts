@@ -8,9 +8,10 @@ import KojUserHome from '@/views/KojUserHome.vue'
 import ManageUsers from '@/views/users/ManageUsers.vue'
 import AddQuestionView from '@/views/question/AddQuestionView.vue'
 import ManageQuestionView from "@/views/question/ManageQuestionView.vue";
-import QuestionsView from "@/views/question/QuestionsView.vue";
+import UserQuestionsView from "@/views/question/UserQuestionsView.vue";
 import EditQuestions from "@/views/question/EditQuestions.vue";
 import ViewTotalDetailQusetions from '@/views/question/ViewTotalDetailQusetions.vue'
+import UserDoQuestions from "@/views/question/UserDoQuestions.vue";
 // import { useAuthStore } from '@/stores/userStore';
 // import ACCESS_ENUM from '@/access/accessEnum';
 //创建路由器
@@ -63,7 +64,7 @@ const router = createRouter({
         {
             path: "/manager/viewquestions",
             name: "manageviewquestions",
-            component: QuestionsView,
+            component: UserQuestionsView,
         },
         {
             path: '/view/question/:topic',
@@ -75,6 +76,11 @@ const router = createRouter({
             path: '/view/total/detailquestions',
             name: 'viewtotaldetailqusetions',
             component: ViewTotalDetailQusetions
+        },
+        {
+            path: '/userdoquestion',
+            name: 'userdoquestion',
+            component: UserDoQuestions
         },
         {
             path: "/",

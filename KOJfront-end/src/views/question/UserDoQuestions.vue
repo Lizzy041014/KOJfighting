@@ -6,28 +6,29 @@
                 <a-col :md="12" :xs="24">
                     <a-tabs default-active-key="question">
                         <a-tab-pane key="question" title="題目">
-                            <a-card v-if="question" :title="question.title">
-                                <a-space direction="vertical" size="large" fill>
-                                    <a-descriptions title="判题条件" :column="{ xs: 1, md: 2, lg: 3 }">
-                                        <a-descriptions-item label="时间限制">
-                                            {{ question.timeLimit ?? 0 }}
-                                        </a-descriptions-item>
-                                        <a-descriptions-item label="内存限制">
-                                            {{ question.memoryLimit ?? 0 }}
-                                        </a-descriptions-item>
-                                        <a-descriptions-item label="堆栈限制">
-                                            {{ question.stackLimit ?? 0 }}
-                                        </a-descriptions-item>
-                                    </a-descriptions>
-                                </a-space>
-                                <MdViewer :value="question.content || ''" />
-                                <template #extra>
-                                    <a-space wrap>
-                                        <a-tag v-for="(tag, index) of question.tags" :key="index" color="green">{{ tag
-                                            }}</a-tag>
+                            <a-card v-if="question">
+                                <!-- <a-card v-if="question" :title="question.title"> -->
+                                    <a-space direction="vertical" size="large" fill>
+                                        <a-descriptions title="判题条件" :column="{ xs: 1, md: 2, lg: 3 }">
+                                            <a-descriptions-item label="时间限制">
+                                                <!-- {{ question.timeLimit ?? 0 }} -->
+                                            </a-descriptions-item>
+                                            <a-descriptions-item label="内存限制">
+                                                <!-- {{ question.memoryLimit ?? 0 }} -->
+                                            </a-descriptions-item>
+                                            <a-descriptions-item label="堆栈限制">
+                                                <!-- {{ question.stackLimit ?? 0 }} -->
+                                            </a-descriptions-item>
+                                        </a-descriptions>
                                     </a-space>
-                                </template>
-                            </a-card>
+                                    <!-- <MdViewer :value="question.content || ''" /> -->
+                                    <template #extra>
+                                        <a-space wrap>
+                                            <!-- <a-tag v-for="(tag, index) of question.tags" :key="index" color="green">{{ tag
+                                            }}</a-tag> -->
+                                        </a-space>
+                                    </template>
+                                </a-card>
                         </a-tab-pane>
                         <a-tab-pane key="comment" title="评论"> 评论区 </a-tab-pane>
                         <a-tab-pane key="answer" title="题解"> 暂时无题解 </a-tab-pane>

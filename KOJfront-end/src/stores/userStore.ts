@@ -17,39 +17,6 @@ interface UserInfo {
     managerrole?: string
     managerid?:number
 }
-export const useAuthStore = defineStore('auth', {
-    state: () => ({
-        loginUser: {
-            userRole: ACCESS_ENUM.NOT_LOGIN
-        }
-    }),
-    actions: {
-        //更新用户登陆状态
-        setLoginUser(user: any) {
-            this.loginUser = user;
-        },
-        checkPermission(needAccess: string) {
-            return checkAccess(this.loginUser, needAccess);
-        }
-        //  const isLoggedIn = ref(false);
-
-        // const login = (role, username) => {
-        //     state.loginUser.userRole = role;
-        //     state.loginUser.username = username;
-        //     isLoggedIn.value = true;
-        // };
-
-        // const logout = () => {
-        //     state.loginUser.userRole = ACCESS_ENUM.NOT_LOGIN;
-        //     state.loginUser.username = '';
-        //     isLoggedIn.value = false;
-        // };
-
-        // const checkLogin = () => {
-        //     return isLoggedIn.value;
-        // };
-    }
-});
 export const useUserStore = defineStore('user', {
     state: (): UserInfo => ({
         username: '', 
@@ -86,6 +53,7 @@ export const useUserStore = defineStore('user', {
         },
         setQQ(qq: string) {
             this.qq = qq;
+            localStorage.setItem('qq',qq);
         },
         setGender(gender: string) {
             this.gender = gender;
@@ -119,4 +87,37 @@ export const useUserStore = defineStore('user', {
             this.managerid = id
         }
     },
+});
+export const useAuthStore = defineStore('auth', {
+    state: () => ({
+        loginUser: {
+            userRole: ACCESS_ENUM.NOT_LOGIN
+        }
+    }),
+    actions: {
+        //更新用户登陆状态
+        setLoginUser(user: any) {
+            this.loginUser = user;
+        },
+        checkPermission(needAccess: string) {
+            return checkAccess(this.loginUser, needAccess);
+        }
+        //  const isLoggedIn = ref(false);
+
+        // const login = (role, username) => {
+        //     state.loginUser.userRole = role;
+        //     state.loginUser.username = username;
+        //     isLoggedIn.value = true;
+        // };
+
+        // const logout = () => {
+        //     state.loginUser.userRole = ACCESS_ENUM.NOT_LOGIN;
+        //     state.loginUser.username = '';
+        //     isLoggedIn.value = false;
+        // };
+
+        // const checkLogin = () => {
+        //     return isLoggedIn.value;
+        // };
+    }
 });

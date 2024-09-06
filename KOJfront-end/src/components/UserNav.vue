@@ -40,7 +40,6 @@
                     </div>
                 </div>
                 <div class="right" v-else>
-
                     <RouterLink to="/register" active-class="active">
                         <div class="link">注册</div>
                     </RouterLink>
@@ -96,7 +95,15 @@
                             <label><input type="radio" name="gender" value="男" v-model="gender"> <icon-man />
                                 男</label>
                         </div>
-                        <div>
+                        <div v-if="userStore.qq!==''">
+                            <icon-qq-circle-fill />&nbsp; 修改QQ
+                            <span style="margin-left: 12px;">{{ userStore.qq }}</span>
+                            <input type="text" v-model="qq" class="ainput" v-show="isInputVisibleqq"
+                                placeholder="请输入您的QQ">
+                            </input>
+                            <icon-edit @click="showinput('qq')" class="editPersonaltwo" />
+                        </div>
+                        <div v-else>
                             <icon-qq-circle-fill />&nbsp; 添加QQ
                             <input type="text" v-model="qq" class="ainput" v-show="isInputVisibleqq"
                                 placeholder="请输入您的QQ">
@@ -136,7 +143,7 @@
     </div>
 </template>
 <script setup lang="ts" name="UserNav">
-import { ref } from 'vue';
+import { ref,onMounted, onBeforeMount } from 'vue';
 import kexielogo from '@/assets/img/kexielogo.png'
 import sousuo from '@/assets/img/搜索.png'
 import { IconEdit } from '@arco-design/web-vue/es/icon';
@@ -277,6 +284,9 @@ let handleSubmit = async (event: { preventDefault: () => void; }) => {
             if (username.value !== '') {
                 userStore.setUsername(username.value);
             }
+            if (qq.value !== '') {
+                userStore.setQQ(qq.value);
+            }
             // setTimeout(() => {
             //   location.reload();
             // }, 1000); 
@@ -326,4 +336,32 @@ function logout() {
     });
     location.reload();
 }
+const file = ref();
+onMounted(() => {
+    const savedUsername = localStorage.getItem('username');
+    if (savedUsername) {
+        userStore.setUsername(savedUsername);// 在这里可以访问到 userStore 中的 username
+    }
+    const savedAvatarUrl = localStorage.getItem('selectedAvatar');
+    if (savedAvatarUrl) {
+        selectedAvatar.value = savedAvatarUrl;
+    }
+    if (savedAvatarUrl && savedAvatarUrl !== '') {
+        file.value = { url: savedAvatarUrl };
+    }
+    const savedQQ = localStorage.getItem('qq');
+    if (savedQQ) {
+        userStore.setQQ(savedQQ);
+    }
+    // if (!token) {
+    //   setTimeout(() => {
+    //     router.push('/login');
+    //     ElMessage.warning('请uu先登录！')
+    //   }, 5000); 
+    // }
+});
+onBeforeMount(() => {
+    const savedGender = localStorage.getItem('gender');
+    gender.value = savedGender || ''
+})
 </script>

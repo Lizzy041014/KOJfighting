@@ -1,45 +1,18 @@
 <template>
   <div class="home">
-    <UserNav/>
-    <MainBanner />
-    <BasicFooter/>
+    <UserNav />
+    <UserMainBanner />
+    <BasicFooter />
   </div>
 </template>
 <script setup lang="ts">
-import { ref, onMounted, onBeforeMount} from "vue";
+import { ref} from "vue";
 import axios from "axios";
 import { useUserStore } from '@/stores/userStore';
-import MainBanner from "@/components/MainBanner.vue";
+import UserMainBanner from "@/components/UserMainBanner.vue";
 import BasicFooter from "@/components/BasicFooter.vue";
 import UserNav from "@/components/UserNav.vue";
-const userStore = useUserStore();
-let gender = ref('');
-// 初始默认头像
-let selectedAvatar = ref('https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp'); 
-const file = ref();
-onMounted(() => {
-  const savedUsername = localStorage.getItem('username');
-  if (savedUsername) {
-    userStore.setUsername(savedUsername);// 在这里可以访问到 userStore 中的 username
-  }
-  const savedAvatarUrl = localStorage.getItem('selectedAvatar');
-  if (savedAvatarUrl) {
-    selectedAvatar.value = savedAvatarUrl;
-  }
-  if (savedAvatarUrl && savedAvatarUrl !== '') {
-    file.value = { url: savedAvatarUrl };
-  }
-  // if (!token) {
-  //   setTimeout(() => {
-  //     router.push('/login');
-  //     ElMessage.warning('请uu先登录！')
-  //   }, 5000); 
-  // }
-});
-onBeforeMount(()=>{
-  const savedGender= localStorage.getItem('gender');
-  gender.value = savedGender||''
-})
+
 </script>
 <style>
 .editPersonaltwo {
