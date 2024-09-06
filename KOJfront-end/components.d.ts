@@ -19,6 +19,7 @@ declare module 'vue' {
     ManagerNav: typeof import('./src/components/ManagerNav.vue')['default']
     Mannagernav: typeof import('./src/components/Mannagernav.vue')['default']
     MdEditor: typeof import('./src/components/MdEditor.vue')['default']
+    MdViewer: typeof import('./src/components/MdViewer.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     UserMainBanner: typeof import('./src/components/UserMainBanner.vue')['default']

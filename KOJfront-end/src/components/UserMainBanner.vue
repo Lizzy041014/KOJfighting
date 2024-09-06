@@ -1,7 +1,6 @@
 <template>
     <div class="bigone">
         <div class="question">
-            <div class="smallfix"></div>
             <div class="list-head">
                 <div>
                     <div class="listtag">
@@ -38,8 +37,9 @@
                             </td>
                             <td><span class="label" :class="getLabelClass(question.difficulty)">{{ question.difficulty
                                     }}</span></td>
-                            <td style="text-align:center;vertical-align: middle;"> <el-button type="primary" plain
-                                    class="doquestion">做题</el-button>
+                            <td style="text-align:center;vertical-align: middle;">
+                                <a-button type="outline" @click="topicquestion(question.topicId)" size="small"
+                                    shape="round">做题</a-button>
                             </td>
                         </tr>
                     </tbody>
@@ -76,7 +76,8 @@
                 <div class="panel-heading">标签</div>
                 <div class="panel-body">
                     <ul class="tag-group">
-                        <li class="taggroup-item-index" v-for="item in options" :key="item.value" :label="item.label" @click="labelquestion(item.value)">
+                        <li class="taggroup-item-index" v-for="item in options" :key="item.value" :label="item.label"
+                            @click="labelquestion(item.value)">
                             <span>{{ item.label }}</span>
                         </li>
                     </ul>
@@ -104,26 +105,29 @@ interface OptionType {
     value: number;
     label: string;
 }
-const options = ref<OptionType[]>([]);
-const optionsid = ref<OptionType[]>([]);
+let options = ref<OptionType[]>([]);
+let optionsid = ref<OptionType[]>([]);
 onMounted(async () => {
     await fetchData(currentPage.value);
 });
-
-const fetchData = async (pageNo: number) => {
+let topicquestion = (topicId: number) => {
+    console.log(`${topicId}`);
+    router.push(`/user/doquestion/${topicId}`)
+};
+let fetchData = async (pageNo: number) => {
     let data = {
         pageNo,
         pageSize: 10,
     }
     try {
-        const response = await axios.post("/api/topic/gets", data);
+        let response = await axios.post("/api/topic/gets", data);
         questionsStore.setQuestions(response.data.data.records as Question[]);
         totalpagesize.value = response.data.data.totalRow; 
     } catch (error) {
         console.error(error);
     }
     try{
-        const response = await axios.get("/api/label/gets");
+        let response = await axios.get("/api/label/gets");
         options.value = response.data.data.records.map((item: { labelId: any; labelName: any; }) =>
             ({ value: item.labelId, label: item.labelName }));
         optionsid.value = response.data.data.records.map((item: { labelId: any; }) =>
@@ -134,15 +138,15 @@ const fetchData = async (pageNo: number) => {
         console.error(error);
     }
 };
-const handlePageChange = (page: number) => {
+let handlePageChange = (page: number) => {
     currentPage.value = page;  
     fetchData(page);
 };
-const labelquestion = async (labelId: number) => {
+let labelquestion = async (labelId: number) => {
     console.log(`${labelId}`);
     router.push('/view/total/detailquestions')
 };
-const getLabelClass = (difficulty: string) => {
+let getLabelClass = (difficulty: string) => {
     switch (difficulty) {
         case "低":
             return "label-success";

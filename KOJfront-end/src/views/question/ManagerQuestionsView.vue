@@ -7,7 +7,7 @@
                     <a-input placeholder="请输入题目名称" v-model="search"/>
                 </a-form-item>
                 <a-form-item>
-                    <a-button type="primary" @click="doSearch" style="margin-top: 10px;">查询</a-button>
+                    <el-button type="primary" @click="doSearch" style="margin-top: 10px;">查询</el-button>
                 </a-form-item>
             </a-form>
             <a-table :ref="tableRef" :columns="columns" :data="dataList" stripe class="table">

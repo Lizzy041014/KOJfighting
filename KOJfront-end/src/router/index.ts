@@ -6,11 +6,11 @@ import KojRegister from '@/views/users/KojRegister.vue'
 import KojManagerHome from '@/views/KojManagerHome.vue'
 import KojUserHome from '@/views/KojUserHome.vue'
 import ManageUsers from '@/views/users/ManageUsers.vue'
-import AddQuestionView from '@/views/question/AddQuestionView.vue'
-import ManageQuestionView from "@/views/question/ManageQuestionView.vue";
-import UserQuestionsView from "@/views/question/UserQuestionsView.vue";
-import EditQuestions from "@/views/question/EditQuestions.vue";
-import ViewTotalDetailQusetions from '@/views/question/ViewTotalDetailQusetions.vue'
+import ManagerAddQuestionView from '@/views/question/ManagerAddQuestionView.vue'
+import ManageQuestionView from "@/views/question/ManageViewSubmit.vue";
+import UserQuestionsView from "@/views/question/ManagerQuestionsView.vue";
+import ManagerEditQuestions from "@/views/question/ManagerEditQuestions.vue";
+import UserViewTotalDetailQusetions from '@/views/question/UserViewTotalDetailQusetions.vue'
 import UserDoQuestions from "@/views/question/UserDoQuestions.vue";
 // import { useAuthStore } from '@/stores/userStore';
 // import ACCESS_ENUM from '@/access/accessEnum';
@@ -53,7 +53,7 @@ const router = createRouter({
         {
             path: "/manager/add/question",
             name: "addquestion",
-            component: AddQuestionView,
+            component: ManagerAddQuestionView,
         },
 
         {
@@ -69,18 +69,19 @@ const router = createRouter({
         {
             path: '/view/question/:topic',
             name: 'viewquestion',
-            component: EditQuestions,
+            component: ManagerEditQuestions,
             props: true 
         },
         {
             path: '/view/total/detailquestions',
             name: 'viewtotaldetailqusetions',
-            component: ViewTotalDetailQusetions
+            component: UserViewTotalDetailQusetions
         },
         {
-            path: '/userdoquestion',
+            path: '/user/doquestion/:topic',
             name: 'userdoquestion',
-            component: UserDoQuestions
+            component: UserDoQuestions,
+            props: true 
         },
         {
             path: "/",

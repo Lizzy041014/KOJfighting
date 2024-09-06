@@ -14,7 +14,6 @@
                     </a-space>
                 </template>
                 <template #createTime="{ record }">
-                    <!-- {{ moment(record.createTime).format("YYYY-MM-DD") }} -->
                 </template>
                 <template #optional="">
                     <a-space>

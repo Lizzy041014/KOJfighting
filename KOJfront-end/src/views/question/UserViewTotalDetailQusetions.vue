@@ -5,7 +5,7 @@
             <a-form layout="inline" class="dosubmit">
                 <a-form-item field="title" label="名称" style="min-width: 260px">
                     <a-input :style="{ width: '280px' }" v-model="title" placeholder="请输入题目名称" allow-clear />
-                    <a-button type="primary" @click="dotitleSubmit" class="chaxunbutton">查询</a-button>
+                    <el-button type="primary" @click="dotitleSubmit" class="chaxunbutton">查询</el-button>
                 </a-form-item>
                 <a-form-item field="tags" label="标签">
                     <div class="m-4">
@@ -15,17 +15,10 @@
                                 :value="item.value"></el-option>
                         </el-select>
                     </div>
-                    <a-button type="primary" @click="dolabelSubmit(selectedLabels)" class="chaxunbutton">查询</a-button>
+                    <el-button type="primary" @click="dolabelSubmit(selectedLabels)" class="chaxunbutton">查询</el-button>
                 </a-form-item>
             </a-form>
-            <div class="smallfix"></div>
             <div class="list-head">
-                <div>
-                    <div class="listtag">
-                        <div class="listtag-title">问题列表</div>
-                        <div class="listtag-muted">List Of Questions</div>
-                    </div>
-                </div>
                 <div class="question"></div>
             </div>
             <div>
@@ -38,7 +31,7 @@
                             <th><a href="#">标签</a></th>
                             <th><a href="#">难度</a></th>
                             <th><a href="#">创建时间</a></th>
-                            <th><a href="#"></a></th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody class="tbody">
@@ -56,14 +49,15 @@
                             </td>
                             <td><span class="label" :class="getLabelClass(question.difficulty)">{{ question.difficulty
                                     }}</span></td>
-                            <td>{{ question.updateTime }}</td>
+                            <td><span>{{ question.updateTime }}</span></td>
                             <td style="text-align:center;vertical-align: middle;">
-                                <el-button type="primary" plain class="doquestion">做题</el-button>
+                                <a-button type="outline" @click="topicquestion(question.topicId)" size="small" shape="round"
+                                  >做题</a-button>
                             </td>
                         </tr>
                     </tbody>
                 </table>
-                <a-pagination :total="totalpagesize" size="large" @change="handlePageChange">
+                <a-pagination :total="totalpagesizeRef" size="large" @change="handlePageChange">
                     <template #page-item="{ page }" :v-model="currentPage">
                         {{ page }}
                     </template>
@@ -95,8 +89,7 @@ interface Question {
     labels?: { labelId: number; labelName: string }[];
     updataTime: string;
 }
-
-let totalpagesize = ref(0);
+let totalpagesizeRef = ref(0);
 let questionsStore = useQuestionsStore();
 let currentPage = ref(1);
 let title = ref('');
@@ -112,50 +105,55 @@ let onSelectChange = (selectedValues: number[]) => {
     selectedLabels.value = selectedValues;
 };
 
-let dotitleSubmit =async () => {
+let dotitleSubmit = async () => {
     let data = { search: title.value };
     try {
-        const response = await axios.post('/api/topic/gets', data);
+        let response = await axios.post('/api/topic/gets', data);
         questionsStore.setQuestions(response.data.data.records as Question[]);
+        totalpagesizeRef.value = response.data.data.totalPage;
     } catch (error) {
         console.log(error);
     }
-}
-let dolabelSubmit = async (labelsid: number[])=> {
-    let data = { labelIds: labelsid };
-    console.log(data);
+};
+
+let dolabelSubmit = async (labelsid: number[]) => {
+    let data = { labelIds: labelsid, pageNo: 1 };
     try {
-        const response = await axios.post('/api/topic/gets', data);
+        let response = await axios.post('/api/topic/gets', data);
+        console.log(response.data.data);
         questionsStore.setQuestions(response.data.data.records as Question[]);
+        totalpagesizeRef.value = response.data.data.totalPage;
+        console.log(totalpagesizeRef.value);
     } catch (error) {
         console.log(error);
     }
-}
+};
 
 onMounted(async () => {
     await fetchData(currentPage.value);
 });
 
-const fetchData = async (pageNo: number) => {
+let fetchData = async (pageNo: number) => {
     let data = {
         pageNo,
         pageSize: 10,
     };
     try {
-        const response = await axios.post('/api/topic/gets', data);
+        let response = await axios.post('/api/topic/gets', data);
         questionsStore.setQuestions(response.data.data.records as Question[]);
-        totalpagesize.value = response.data.data.totalRow;
+        totalpagesizeRef.value = response.data.data.totalRow;
+        console.log(totalpagesizeRef.value);
     } catch (error) {
         console.error(error);
     }
 };
 
-const handlePageChange = (page: number) => {
+let handlePageChange = (page: number) => {
     currentPage.value = page;
     fetchData(page);
 };
 
-const getLabelClass = (difficulty: string) => {
+let getLabelClass = (difficulty: string) => {
     switch (difficulty) {
         case '低':
             return 'label-success';
@@ -167,12 +165,16 @@ const getLabelClass = (difficulty: string) => {
             return '';
     }
 };
-
+let topicquestion = (topicId:number) => {
+    console.log(`${topicId}`);
+    router.push(`/user/doquestion/${topicId}`)
+};
 onMounted(async () => {
     try {
-        const response = await axios.get('/api/label/gets');
-        const data = response.data.data.records;
+        let response = await axios.get('/api/label/gets');
+        let data = response.data.data.records;
         options.value = data.map((item: { labelId: any; labelName: any; }) => ({ value: item.labelId, label: item.labelName }));
+        console.log(options.value);
     } catch (error) {
         console.error(error);
     }
@@ -186,9 +188,8 @@ onMounted(async () => {
 .question {
     width:85vw;
     margin: 0 auto;
-    margin-top: 10px;
-    padding: 20px;
-    font-size: 15px;
+    margin-top: 20px;
+    padding: 5px;
 }
 .dosubmit{
     margin-bottom: 20px;

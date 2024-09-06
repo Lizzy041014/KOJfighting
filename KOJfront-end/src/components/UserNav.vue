@@ -311,8 +311,6 @@ function hideSidebar() {
 function clearInput() {
     searchText.value = '';
 }
-
-
 function showinput(content: string) {
     if (content === 'username') {
         isInputVisibleusername.value = !isInputVisibleusername.value
@@ -353,12 +351,12 @@ onMounted(() => {
     if (savedQQ) {
         userStore.setQQ(savedQQ);
     }
-    // if (!token) {
-    //   setTimeout(() => {
-    //     router.push('/login');
-    //     ElMessage.warning('请uu先登录！')
-    //   }, 5000); 
-    // }
+    if (!token) {
+      setTimeout(() => {
+        router.push('/login');
+        ElMessage.warning('请uu先登录！')
+      }, 5000); 
+    }
 });
 onBeforeMount(() => {
     const savedGender = localStorage.getItem('gender');

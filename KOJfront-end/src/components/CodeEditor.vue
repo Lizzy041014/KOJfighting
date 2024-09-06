@@ -1,5 +1,5 @@
 <template>
-    <div id="code-editor" ref="codeEditorRef" style="min-height: 400px" />
+    <div id="code-editor" ref="codeEditorRef" style="min-height: 560px"></div>
 </template>
 
 <script setup lang="ts">
@@ -35,7 +35,7 @@ onMounted(() => {
     // Hover on each property to see its docs!
     codeEditor.value = monaco.editor.create(codeEditorRef.value, {
         value: value.value,
-        language: "java",
+        language: "C#",
         automaticLayout: true,
         colorDecorators: true,
         minimap: {
@@ -43,9 +43,9 @@ onMounted(() => {
         },
         readOnly: false,
         theme: "vs-dark",
-        // lineNumbers: "off",
-        // roundedSelection: false,
-        // scrollBeyondLastLine: false,
+        lineNumbers: "off",
+        roundedSelection: false,
+        scrollBeyondLastLine: false,
     });
 
     // 编辑 监听内容变化
