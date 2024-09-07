@@ -3,11 +3,16 @@
         <div class="kexielogo"><img :src="kexielogo" alt="kexielogo"></div>
         <div class="title">KexieOJ</div>
         <ul class="tag">
-            <RouterLink to="/manager/managerusers" active-class="active">
-                <li>
+            <li>
+                <RouterLink to="/manager/managerusers" active-class="active">
                     <p @click="handleClick('/manager/managerusers')"><icon-user />&nbsp;用户管理</p>
-                </li>
-            </RouterLink>
+                </RouterLink>
+            </li>
+            <li>
+                <RouterLink to="/manager/column" active-class="active">
+                    <p @click="handleClick('/manager/column')"><icon-nav />&nbsp;栏目</p>
+                </RouterLink>
+            </li>
             <li> <a-dropdown trigger="hover">
                     <p><icon-down-circle />&nbsp;题目</p>
                     <template #content>
@@ -53,6 +58,7 @@
 </a-doption>
 </template>
 </a-dropdown></li>
+
 </ul>
 <div>
     <div class="searchBar" :class="{ 'changeWidth': showSearch }">

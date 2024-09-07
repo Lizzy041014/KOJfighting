@@ -13,9 +13,7 @@ import ManagerEditQuestions from "@/views/question/ManagerEditQuestions.vue";
 import UserViewTotalDetailQusetions from '@/views/question/UserViewTotalDetailQusetions.vue'
 import UserDoQuestions from "@/views/question/UserDoQuestions.vue";
 import UserViewTotalDetailLabelQusetions from "@/views/question/UserViewTotalDetailLabelQusetions.vue";
-// import { useAuthStore } from '@/stores/userStore';
-// import ACCESS_ENUM from '@/access/accessEnum';
-//创建路由器
+import ManagerColumn from "@/views/column/ManagerColumn.vue";
 const router = createRouter({
     history: createWebHistory(),
     routes: [ 
@@ -89,6 +87,11 @@ const router = createRouter({
             name: 'userlabelviewquestion',
             component: UserViewTotalDetailLabelQusetions,
             props: true 
+        },
+        {
+            path: '/manager/column',
+            name: 'managercolumn',
+            component: ManagerColumn,
         },
         {
             path: "/",

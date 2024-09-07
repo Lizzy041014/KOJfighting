@@ -15,20 +15,20 @@
                         <a-input v-model="form.title" placeholder="请输入标题" />
                     </a-form-item>
                     <a-form-item field="tags" label="标签">
-                        <div class="m-4">
+                        <div>
                             <el-select v-model="value1" multiple placeholder="Select" style="width: 240px"
                                 @change="onSelectChange">
                                 <el-option v-for="item in options" :key="item.value" :label="item.label"             
                                     :value="item.value">
                                 </el-option>
                             </el-select>
-                            <el-input v-if="inputVisible" ref="InputRef" v-model="inputValue" class="w-20" size="small"
+                            <el-input v-if="inputVisible" ref="InputRef" v-model="inputValue" class="inputtag" size="small"
                                 @keyup.enter="handleInputConfirm" />
                             <el-button v-else class="button-new-tag" @click="showInput">
                                 + 新标签
                             </el-button>
                             <el-input v-if="inputVisibledelete" ref="InputRefdelete" v-model="inputValuedelete"
-                                class="w-20" size="small" @keyup.enter="handleInputConfirmdelete" />
+                                class="inputtag" size="small" @keyup.enter="handleInputConfirmdelete" />
                             <el-button v-else class="button-new-tag" @click="showdeleteInput">
                                 - 删除标签
                             </el-button>
@@ -109,9 +109,8 @@
 <script setup lang="ts">
 import { reactive, ref, nextTick,onMounted} from "vue";
 import axios from 'axios';
-import { ElInput } from 'element-plus'
 import type { InputInstance } from 'element-plus'
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElInput } from 'element-plus';
 import router from "@/router";
 let uploadUserId = localStorage.getItem('uploadUserId')
 let topicId=ref('')
@@ -157,7 +156,7 @@ let onSelectChange = (selectedValues: number[]) => {
 let handleSubmit = async (event: Event) => {
     event.preventDefault(); 
     form.examples.forEach(item => {
-        item.topicId = topicId.value.toString();  // 将 topicId 转换为字符串
+        item.topicId = topicId.value.toString(); 
     });
     console.log(form);
     try {
@@ -265,7 +264,7 @@ onMounted(async () => {
 });
 </script>
 <style scoped>
-.w-20{
+.inputtag{
 margin-top: 10px;
 margin-left: 20px;
 margin-bottom: 11px;
