@@ -26,44 +26,17 @@
     </div>
 </template>
 <script setup lang="ts">
-import { onMounted, ref, watchEffect } from "vue";
+import { ref} from "vue";
 import message from "@arco-design/web-vue/es/message";
 import { useRouter } from "vue-router";
-const dataList = ref([]);
-const total = ref(0);
-const tableRef = ref();
+let dataList = ref([]);
+let total = ref(0);
+let tableRef = ref();
 let searchParams = ref({
     pageSize: 10,
     current: 1,
 });
-// const OnPageChange = (page: number) => {
-//     searchParams.value = {
-//         ...searchParams.value,
-//         current: page,
-//     };
-// };
-// const loadData = async () => {
-//     const res = await QuestionControllerService.listQuestionVoByPageUsingPost(
-//         searchParams.value
-//     );
-//     if (res.code === 0) {
-//         dataList.value = res.data.records;
-//         total.value = res.data.total;
-//     } else {
-//         message.error("加载失败，" + res.message);
-//     }
-// };
-// watchEffect(() => {
-//     loadData();
-// });
-// //页面加载时请求数据
-// onMounted(() => {
-//     loadData();
-// });
-
-// //更新数据
-// const router = useRouter();
-const doUpdate = () => {
+let doUpdate = () => {
 //     router.push({
 //         path: "/update/question",
 //         query: {
@@ -71,7 +44,7 @@ const doUpdate = () => {
 //         },
 //     });
 };
-const columns = [
+let columns = [
     {
         title: "id",
         dataIndex: "id",

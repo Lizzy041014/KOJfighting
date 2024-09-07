@@ -18,7 +18,7 @@
                             allow-clear class="changepwd" v-model="newPasswordForUser[user.userId]"
                             @keyup.enter="changeUserPwd(user.userId)" />
                         <icon-edit @click="toggleInputForUser(user.userId)" />
-                        <icon-delete @click="deleteUser()" />
+                        <icon-delete />
                         <a-switch unchecked-color="#f45e5e" checked-color="#2e69fd" 
                             v-if="user.switchValue===0" v-model="user.switchValue"
                             @click="changeUserStatus(user.userId)">
@@ -40,7 +40,7 @@
                         </a-switch>
                     </template>
                     <template v-else #actions>
-                        <div>管理员无法修改此的用户密码和状态</div>
+                        <div>管理员无法修改此用户的密码和状态</div>
                     </template>
                 </a-list-item>
             </a-list>
@@ -90,7 +90,6 @@ let totalUsers = ref(0);
 let showInputForUserMap = ref<Record<string, boolean>>({});
 let searchname = ref('')
 let newPasswordForUser = ref<Record<string, string>>({});
-
 let fetchUsers = async () => {
     let data = {
         "search": searchname.value,
@@ -104,9 +103,10 @@ let fetchUsers = async () => {
             headers,
             data
         })
-        const backendData = response.data.data as DataResponse;
+        console.log(response);  
+        let backendData = response.data.data as DataResponse;
         backendData.records.forEach((user) => {
-            const storedValue = localStorage.getItem(`userSwitchValue_${user.userId}`);
+            let storedValue = localStorage.getItem(`userSwitchValue_${user.userId}`);
             user.switchValue = storedValue ? Number(storedValue) : 0;
             user.switchColorChecked = "#f45e5e";
             user.switchColorUnchecked = "#2e69fd";
@@ -120,9 +120,9 @@ let fetchUsers = async () => {
 };
 onMounted(fetchUsers);
 function changeUserPwd(userId: any) {
-    const newPassword = newPasswordForUser.value[userId];
+    let newPassword = newPasswordForUser.value[userId];
     if (newPassword) {
-        const data = {
+        let data = {
             userId: userId,
             password: newPassword,
         };
@@ -131,12 +131,10 @@ function changeUserPwd(userId: any) {
             .then((response) => {
                 if (response.data.code === 200) {
                     ElMessage.success("密码修改成功");
-                    // 密码修改成功后,清除输入框的值
                     newPasswordForUser.value[userId] = "";
                     showInputForUserMap.value[userId] = false;
                 } else {
                     console.log(response);
-                    
                     ElMessage.error("密码修改失败");
                 }
             })
@@ -146,9 +144,8 @@ function changeUserPwd(userId: any) {
             });
     }
 }
-function deleteUser() { }
 let changeUserStatus = async (userId: any) => {
-    const user = users.value.find((u) => u.userId === userId);
+    let user = users.value.find((u) => u.userId === userId);
     if (user) {
         try {
             let response = await axios({

@@ -5,7 +5,7 @@
         <ul class="tag">
             <RouterLink to="/manager/managerusers" active-class="active">
                 <li>
-                    <p><icon-user />&nbsp;用户管理</p>
+                    <p @click="handleClick('/manager/managerusers')"><icon-user />&nbsp;用户管理</p>
                 </li>
             </RouterLink>
             <li> <a-dropdown trigger="hover">
@@ -14,22 +14,21 @@
                         <RouterLink to="/manager/add/question" active-class="active">
                             <a-doption>
             <li>
-                <p><icon-link />&nbsp;&nbsp;创建题目</p>
+                <p @click="handleClick('/manager/add/question')"><icon-link />&nbsp;&nbsp;创建题目</p>
             </li>
             </a-doption>
             </RouterLink>
             <RouterLink to="/manager/viewquestions" active-class="active">
                 <a-doption>
                     <li>
-                        <p><icon-align-left />&nbsp;&nbsp;题目列表</p>
+                        <p @click="handleClick('/manager/viewquestions')"><icon-align-left />&nbsp;&nbsp;题目列表</p>
                     </li>
                 </a-doption>
             </RouterLink>
             <RouterLink to="/manager/managequestions" active-class="active">
                 <a-doption>
                     <li>
-
-                        <p><icon-file />&nbsp;&nbsp;浏览题目提交</p>
+                        <p @click="handleClick('/manager/managequestions')"><icon-file />&nbsp;&nbsp;浏览题目提交</p>
                     </li>
                 </a-doption>
             </RouterLink>
@@ -54,7 +53,6 @@
 </a-doption>
 </template>
 </a-dropdown></li>
-
 </ul>
 <div>
     <div class="searchBar" :class="{ 'changeWidth': showSearch }">
@@ -109,60 +107,48 @@ import { IconEdit } from '@arco-design/web-vue/es/icon';
 import { ElMessage } from 'element-plus';
 import { useUserStore } from '@/stores/userStore';
 import router from "@/router";
-const userStore = useUserStore();
+import { useRoute } from 'vue-router';
+import { toggleSearch, toggleSidebar, hideSidebar, clearInput }from '@/Logic/NavLogics'
+let userStore = useUserStore();
 let showSidebar = ref(false);
 let showOverlay = ref(false);
 let showSearch = ref(false);
 let searchText = ref('');
 let selectedAvatar = ref('https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp');
-let tokenmanager = localStorage.getItem('tokenmanager')
-function switchAccount() {
-    userStore.logoutManager();
-    router.push({
-        path: "/login",
-        replace: true,
-    });
+let tokenmanager = localStorage.getItem('tokenmanager');
+let route = useRoute();
+let handleClick = (path: string) => {
+    if (route.path === path) {
+        ElMessage.warning('已经处于该页面！');
+        return;
+    }
+    router.push(path);
 }
-function logout() {
+let switchAccount = () => {
     userStore.logoutManager();
-    router.push({
-        path: "/managerhome",
-    });
+    router.push({ path: "/login", replace: true });
+};
+let logout = () => {
+    userStore.logoutManager();
+    router.push({ path: "/managerhome" });
     location.reload();
-}
-function toggleSearch() {
-    showSearch.value = !showSearch.value;
-}
-function toggleSidebar() {
-    showSidebar.value = !showSidebar.value;
-    showOverlay.value = !showOverlay.value; // 根据需要是否显示overlay
-}
-
-function hideSidebar() {
-    showSidebar.value = false;
-    showOverlay.value = false;
-}
-function clearInput() {
-    searchText.value = '';
-}
+};
 onMounted(() => {
-    const savedAvatarUrl = localStorage.getItem('selectedManagerAvatar');
+    let savedAvatarUrl = localStorage.getItem('selectedManagerAvatar');
     if (savedAvatarUrl) {
         selectedAvatar.value = savedAvatarUrl;
     }
-    // 在这里可以访问到 userStore 中的 username
-    const savedManagername = localStorage.getItem('managername');
+    let savedManagername = localStorage.getItem('managername');
     if (savedManagername) {
         userStore.setUsername(savedManagername);
     }
     if (!tokenmanager) {
         setTimeout(() => {
             router.push('/login');
-            ElMessage.warning('无权限，请登录管理员账号')
+            ElMessage.warning('无权限，请登录管理员账号');
         }, 1500);
     }
 });
-
 </script>
 <style scoped>
 .right div {

@@ -1,20 +1,3 @@
-<!-- <MdEditor :value="value" :handle-change="onChange" />
-    <CodeEditor :value="Codevalue" :handle-change="onCodeChange" /> -->
-<!-- // import MdEditor from "@/components/MdEditor.vue";
-// import CodeEditor from '@/components/CodeEditor.vue'
-// const value = ref();
-
-// const onChange = (v: string) => {
-// value.value = v;
-// };
-// const Codevalue = ref();
-
-// const onCodeChange = (v: string) => {
-// Codevalue.value = v;
-// } -->
-<!-- .bytemd-toolbar-icon.bytemd-tippy.bytemd-tippy-right:last-child {
-display: none;
-}  -->
 <template>
   <div class="home">
     <ManagerNav />
@@ -36,9 +19,9 @@ import { useAuthStore } from '@/stores/userStore';
 import ACCESS_ENUM from '@/access/accessEnum'
 import kexielogo from '@/assets/img/kexielogo.png'
 import { useRouter } from 'vue-router'
-const authStore = useAuthStore();
-const hasAdminPermission = authStore.checkPermission(ACCESS_ENUM.ADMIN);
-const userStore = useUserStore();
+let authStore = useAuthStore();
+let hasAdminPermission = authStore.checkPermission(ACCESS_ENUM.ADMIN);
+let userStore = useUserStore();
 </script>
 <style scoped>
 .footer{

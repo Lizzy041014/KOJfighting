@@ -2,7 +2,7 @@
     <div class="home">
         <UserNav />
         <div class="question">
-            <a-form layout="inline" class="dosubmit">
+            <a-form layout="inline" class="dosubmit" >
                 <a-form-item field="title" label="名称" style="min-width: 260px">
                     <a-input :style="{ width: '280px' }" v-model="title" placeholder="请输入题目名称" allow-clear />
                     <el-button type="primary" @click="dotitleSubmit" class="chaxunbutton">查询</el-button>
@@ -51,8 +51,8 @@
                                     }}</span></td>
                             <td><span>{{ question.updateTime }}</span></td>
                             <td style="text-align:center;vertical-align: middle;">
-                                <a-button type="outline" @click="topicquestion(question.topicId)" size="small" shape="round"
-                                  >做题</a-button>
+                                <a-button type="outline" @click="topicquestion(question.topicId)" size="small"
+                                    shape="round">做题</a-button>
                             </td>
                         </tr>
                     </tbody>
@@ -77,10 +77,11 @@
 import UserNav from '@/components/UserNav.vue';
 import { onMounted, ref } from 'vue';
 import axios from 'axios';
-import { totalpagesizeRef, currentPage, options, selectedLabels, onSelectChange,  getLabelClass } from '@/Logic/ViewQuesLogic';
+import { useQuestionsStore } from '@/stores/questions';
 import router from '@/router';
 import BasicFooter from '@/components/BasicFooter.vue';
-import { useQuestionsStore } from '@/stores/questions';
+import { useRoute } from "vue-router";
+import { totalpagesizeRef, currentPage, options, selectedLabels, onSelectChange, getLabelClass } from '@/Logic/ViewQuesLogic';
 interface Question {
     topicId: number;
     title: string;
@@ -91,22 +92,8 @@ interface Question {
 }
 let questionsStore = useQuestionsStore();
 let title = ref('');
-let topicquestion = (topicId:number) => {
-    console.log(`${topicId}`);
-    router.push(`/user/doquestion/${topicId}`)
-};
-onMounted(async () => {
-    await fetchData(currentPage.value);
-    try {
-        let response = await axios.get('/api/label/gets');
-        let data = response.data.data.records;
-        options.value = data.map((item: { labelId: any; labelName: any; }) => ({ value: item.labelId, label: item.labelName }));
-    } catch (error) {
-        console.error(error);
-    }
-});
-let dotitleSubmit = async (searchValue: string) => {
-    let data = { search: searchValue };
+let dotitleSubmit = async () => {
+    let data = { search: title.value };
     try {
         let response = await axios.post('/api/topic/gets', data);
         questionsStore.setQuestions(response.data.data.records as Question[]);
@@ -120,31 +107,41 @@ let dolabelSubmit = async (labelsid: number[]) => {
     let data = { labelIds: labelsid, pageNo: 1 };
     try {
         let response = await axios.post('/api/topic/gets', data);
-         questionsStore.setQuestions(response.data.data.records as Question[]);
-        totalpagesizeRef.value = response.data.data.totalPage;
+        console.log(response.data.data);
+        questionsStore.setQuestions(response.data.data.records as Question[]);
+        totalpagesizeRef.value = response.data.data.totalPage
     } catch (error) {
         console.log(error);
     }
 };
 
-let fetchData = async (pageNo: number) => {
+let handlePageChange = (page: number) => {
+    currentPage.value = page;
+};
+let topicquestion = (topicId:number) => {
+    console.log(`${topicId}`);
+    router.push(`/user/doquestion/${topicId}`)
+};
+let route = useRoute();
+onMounted(async () => {
+    let pathSegments = route.path.split("/");
+    let labelId = pathSegments[pathSegments.length - 1];
+    console.log(labelId);
     let data = {
-        pageNo,
+        labelIds: [labelId],
+        pageNo:1,
         pageSize: 10,
     };
     try {
+        console.log(data);
         let response = await axios.post('/api/topic/gets', data);
+        console.log(response.data.data);
         questionsStore.setQuestions(response.data.data.records as Question[]);
         totalpagesizeRef.value = response.data.data.totalRow;
     } catch (error) {
         console.error(error);
     }
-};
-let handlePageChange = (page: number) => {
-    currentPage.value = page;
-    fetchData(page);
-};
-
+});
 </script>
 <style scoped>
 .chaxunbutton{

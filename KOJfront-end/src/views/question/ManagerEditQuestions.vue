@@ -74,7 +74,7 @@ import axios from "axios";
 import { ElMessage } from "element-plus";
 import router from "@/router";
 import { useRoute } from "vue-router";
-const form = reactive({
+let form = reactive({
     title: "",
     content: "",
     difficulty: "",
@@ -116,13 +116,13 @@ let handleSubmit = async (event: Event) => {
         console.error(error);
     }
 };
-const route = useRoute();
+let route = useRoute();
 onMounted(async () => {
-    const pathSegments = route.path.split("/");
-    const topicId = pathSegments[pathSegments.length - 1];
+    let pathSegments = route.path.split("/");
+    let topicId = pathSegments[pathSegments.length - 1];
     try {
-        const response = await axios.get(`/api/topic/get/${topicId}`);
-        const data = response.data.data;
+        let response = await axios.get(`/api/topic/get/${topicId}`);
+        let data = response.data.data;
         console.log(data);
         form.title = data.title;
         form.content = data.content;

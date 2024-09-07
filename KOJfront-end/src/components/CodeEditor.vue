@@ -12,27 +12,22 @@ interface Props {
     value: string;
     handleChange: (v: string) => void;
 }
-
 /**
  * 给组件指定初始值
  */
-const props = withDefaults(defineProps<Props>(), {
+let props = withDefaults(defineProps<Props>(), {
     value: () => "",
     handleChange: (v: string) => {
         console.log(v);
     },
 });
-
-const codeEditorRef = ref();
-const codeEditor = ref();
-const value = ref("hello world");
-
-
+let codeEditorRef = ref();
+let codeEditor = ref();
+let value = ref("hello world");
 onMounted(() => {
     if (!codeEditorRef.value) {
         return;
     }
-    // Hover on each property to see its docs!
     codeEditor.value = monaco.editor.create(codeEditorRef.value, {
         value: value.value,
         language: "C#",
@@ -47,12 +42,9 @@ onMounted(() => {
         roundedSelection: false,
         scrollBeyondLastLine: false,
     });
-
     // 编辑 监听内容变化
     codeEditor.value.onDidChangeModelContent(() => {
         console.log("目前内容为：", toRaw(codeEditor.value).getValue());
     });
 });
 </script>
-
-<style scoped></style>

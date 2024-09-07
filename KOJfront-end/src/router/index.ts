@@ -12,6 +12,7 @@ import UserQuestionsView from "@/views/question/ManagerQuestionsView.vue";
 import ManagerEditQuestions from "@/views/question/ManagerEditQuestions.vue";
 import UserViewTotalDetailQusetions from '@/views/question/UserViewTotalDetailQusetions.vue'
 import UserDoQuestions from "@/views/question/UserDoQuestions.vue";
+import UserViewTotalDetailLabelQusetions from "@/views/question/UserViewTotalDetailLabelQusetions.vue";
 // import { useAuthStore } from '@/stores/userStore';
 // import ACCESS_ENUM from '@/access/accessEnum';
 //创建路由器
@@ -81,6 +82,12 @@ const router = createRouter({
             path: '/user/doquestion/:topic',
             name: 'userdoquestion',
             component: UserDoQuestions,
+            props: true 
+        },
+        {
+            path: '/user/labelviewquestion/:label',
+            name: 'userlabelviewquestion',
+            component: UserViewTotalDetailLabelQusetions,
             props: true 
         },
         {

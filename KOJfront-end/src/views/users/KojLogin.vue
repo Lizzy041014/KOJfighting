@@ -32,7 +32,6 @@
         </div>
     </div>
 </template>
-
 <script setup lang="ts" name="KojLogin">
 import kexielogo from '@/assets/img/kexielogo.png'
 import { RouterLink } from 'vue-router';
@@ -67,7 +66,6 @@ function handleBlur(content: any) {
         }
     }
 }
-
 let handleSubmit = async (event: { preventDefault: () => void; }) => {
     event.preventDefault();
     let data = {
@@ -83,26 +81,31 @@ let handleSubmit = async (event: { preventDefault: () => void; }) => {
             },
             data
         })
-        console.log(response.data.data);
-        if (response.data.code === 200 && response.data.data.roleName === "管理员") {
-            ElMessage.success("欢迎管理员uu！")
-            router.push({
-                path: "/manager",
-                replace: true, //替换当前页面， 就是返回也不会返回到注册页面了
-            }); 
-            localStorage.setItem('tokenmanager', response.data.data.token);
-            userStore.setManagername(response.data.data.nickname);
-            userStore.setManagerId(response.data.data.userId)
-        } else if (response.data.code === 200 && response.data.data.roleName === "普通用户") {
-            ElMessage.success("登陆成功！欢迎欢迎！")
-            localStorage.setItem('token', response.data.data.token);
-            localStorage.setItem('userpassword', password.value);
-            router.push({
-                path: "/userhome",
-                replace: true,
-            });
-            userStore.setPassword(password.value);
-            userStore.setUsername(response.data.data.nickname);
+        console.log(response.data.data.roleName);
+        if (response.data.code === 200  ) {
+            if (response.data.data.roleName === "管理员") {
+                localStorage.setItem('tokenmanager', response.data.data.token);
+                localStorage.setItem('managername', response.data.data.nickname);
+                ElMessage.success("欢迎管理员uu！")
+                router.push({
+                    path: "/manager",
+                    replace: true, //替换当前页面， 就是返回也不会返回到注册页面了
+                });
+              
+                userStore.setManagername(response.data.data.nickname);
+                userStore.setManagerId(response.data.data.userId)
+            } else if (response.data.data.roleName === "普通用户") {
+                ElMessage.success("登陆成功！欢迎欢迎！")
+                localStorage.setItem('token', response.data.data.token);
+                localStorage.setItem('userpassword', password.value);
+                localStorage.setItem('username', response.data.data.nickname);
+                router.push({
+                    path: "/userhome",
+                    replace: true,
+                });
+                userStore.setPassword(password.value);
+                userStore.setUsername(response.data.data.nickname);
+            }
         }
         else {
             ElMessage.error(response.data.message)
@@ -111,10 +114,7 @@ let handleSubmit = async (event: { preventDefault: () => void; }) => {
         console.error(error);
     }
 };
-
-
 </script>
-
 <style scoped>
 .item label {
     top: 17px;

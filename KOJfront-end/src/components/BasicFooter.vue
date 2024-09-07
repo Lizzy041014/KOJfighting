@@ -8,7 +8,7 @@
             </div>
         </a-layout-footer>
 </template>
- <style>
+<style>
 .footer{
     width: 100vw;
     height: 22vh;
@@ -16,7 +16,7 @@
     color: #052070;
     display: flex;
     position: relative;
-    bottom: -29%;
+    bottom: -30%;
     left: 0;
     right: 0;
     text-align:center;

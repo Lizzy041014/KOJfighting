@@ -43,7 +43,7 @@ let nickname = ref()
 let managername=''
 let formData=ref([])
 let search=ref('')
-const columns = [
+let columns = [
     {
         title: '题号',
         dataIndex: 'topicId',
@@ -75,9 +75,9 @@ let tokenmanager = localStorage.getItem('tokenmanager');
 let headers = {
     Authorization: tokenmanager
 };
-const loadData = async () => {
+let loadData = async () => {
     try {
-        const response = await axios.post('/api/topic/gets', headers);
+        let response = await axios.post('/api/topic/gets', headers);
         dataList.value = response.data.data.records;
         // total.value = response.data.data.totalRow;
     for(let i=0;i>=0;i++){
@@ -88,7 +88,7 @@ const loadData = async () => {
         // console.log(error);
     }
 };
-const isCurrentUser = (record: { uploadUser: { nickname: string | undefined; }; }) => {
+let isCurrentUser = (record: { uploadUser: { nickname: string | undefined; }; }) => {
     return userStore.username === record.uploadUser.nickname;
 };
 watchEffect(() => {
@@ -106,7 +106,7 @@ let toQuestionEditPage = async (topicId: any) => {
 let doSearch = async () => {
     let data = { search: search.value };
     try {
-        const response = await axios.post('/api/topic/gets', data, { headers });
+        let response = await axios.post('/api/topic/gets', data, { headers });
         dataList.value = response.data.data.records;
         for (let i = 0; i >= 0; i++) {
             nickname.value = response.data.data.records[i].uploadUser.nickname;
@@ -125,7 +125,10 @@ let doSearch = async () => {
 .edittimu:hover {
     color: blue;
 }
-
+.footer {
+    position: relative;
+    bottom: -190px;
+}
 #QuestionsView {
     max-width: 1200px;
     margin: 15px auto;

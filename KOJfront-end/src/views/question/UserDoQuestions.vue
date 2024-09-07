@@ -128,20 +128,6 @@ let props = withDefaults(defineProps<Props>(), {
     id: () => '',
 });
 
-let loadData = async () => {
-    // try {
-    //     let res = await axios.get(`/your-api-url/${props.id}`);
-    //     if (res.data.code === 0) {
-    //         // 使用类型断言明确指定返回数据的类型
-    //         question.value = res.data as Question;
-    //     } else {
-    //         message.error('加载失败，' + res.data.message);
-    //     }
-    // } catch (error) {
-    //     message.error('加载失败，发生错误：' + error);
-    // }
-};
-
 let form = ref({
     language: 'C#',
     code: '',
@@ -165,7 +151,6 @@ let doSubmit = async () => {
 };
 let route = useRoute();
 onMounted(async() => {
-    loadData();
     let pathSegments = route.path.split("/");
     let topicId = pathSegments[pathSegments.length - 1];
     try {
@@ -190,7 +175,7 @@ let changeCode = (value: string) => {
     form.value.code = value;
 };
 </script>
-<style>
+<style scoped>
 #userdoquestions {
     max-width: 1265px;
     margin: 15px auto;

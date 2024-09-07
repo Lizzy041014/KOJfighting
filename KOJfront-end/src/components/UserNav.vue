@@ -5,13 +5,13 @@
             <div class="title">KexieOJ</div>
             <ul class="tag">
                 <li>
-                    <RouterLink to="/userhome" active-class="active">
-                        <p><icon-home />&nbsp;首页</p>
-                    </RouterLink>
+                    <router-link to='/userhome' active-class="active">
+                        <p @click="handleClick('/userhome')"><icon-home />&nbsp;首页</p>
+                    </router-link>
                 </li>
-                <li>
+                <li >
                     <RouterLink to="/view/total/detailquestions" active-class="active">
-                        <p><icon-highlight />&nbsp;习题</p>
+                        <p @click="handleClick('/view/total/detailquestions')"><icon-highlight />&nbsp;习题</p>
                     </RouterLink>
                 </li>
                 <li>
@@ -95,7 +95,7 @@
                             <label><input type="radio" name="gender" value="男" v-model="gender"> <icon-man />
                                 男</label>
                         </div>
-                        <div v-if="userStore.qq!==''">
+                        <div v-if="userStore.qq !== ''">
                             <icon-qq-circle-fill />&nbsp; 修改QQ
                             <span style="margin-left: 12px;">{{ userStore.qq }}</span>
                             <input type="text" v-model="qq" class="ainput" v-show="isInputVisibleqq"
@@ -143,15 +143,17 @@
     </div>
 </template>
 <script setup lang="ts" name="UserNav">
-import { ref,onMounted, onBeforeMount } from 'vue';
+import { ref, onMounted, onBeforeMount} from 'vue';
 import kexielogo from '@/assets/img/kexielogo.png'
 import sousuo from '@/assets/img/搜索.png'
 import { IconEdit } from '@arco-design/web-vue/es/icon';
 import { useUserStore } from '@/stores/userStore';
 import router from "@/router";
+import { useRoute } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import axios from "axios";
-const userStore = useUserStore();
+import { toggleSearch, toggleSidebar, hideSidebar, clearInput } from '@/Logic/NavLogics'
+let userStore = useUserStore();
 let showSidebar = ref(false);
 let showOverlay = ref(false);
 let showSearch = ref(false);
@@ -169,13 +171,24 @@ let genderPattern: RegExp = /^(男|女)$/;
 let token = localStorage.getItem('token');
 // 初始默认头像
 let selectedAvatar = ref('https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp');
-const triggerFileUpload = () => {
-    const input = document.createElement('input');
+let route = useRoute();
+let handleClick = (path:string) => {
+    if (route.path !== path) {
+        router.push(path);
+    } else if (path === '/userhome'){
+        ElMessage.warning('已经正处于首页！');
+    }
+    else if (path === '/view/total/detailquestions') {
+        ElMessage.warning('已经正处于习题页面！');
+    }
+};
+let triggerFileUpload = () => {
+    let input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
     input.onchange = (e) => {
-        const file = (e.target as HTMLInputElement).files![0];
-        const reader = new FileReader();
+        let file = (e.target as HTMLInputElement).files![0];
+        let reader = new FileReader();
         reader.onload = (event) => {
             selectedAvatar.value = event.target!.result as string;
             localStorage.setItem('selectedAvatar', selectedAvatar.value);
@@ -296,21 +309,6 @@ let handleSubmit = async (event: { preventDefault: () => void; }) => {
         console.error(error);
     }
 };
-function toggleSearch() {
-    showSearch.value = !showSearch.value;
-}
-function toggleSidebar() {
-    showSidebar.value = !showSidebar.value;
-    showOverlay.value = !showOverlay.value; // 根据需要是否显示overlay
-}
-
-function hideSidebar() {
-    showSidebar.value = false;
-    showOverlay.value = false;
-}
-function clearInput() {
-    searchText.value = '';
-}
 function showinput(content: string) {
     if (content === 'username') {
         isInputVisibleusername.value = !isInputVisibleusername.value
@@ -334,32 +332,32 @@ function logout() {
     });
     location.reload();
 }
-const file = ref();
+let file = ref();
 onMounted(() => {
-    const savedUsername = localStorage.getItem('username');
+    let savedUsername = localStorage.getItem('username');
     if (savedUsername) {
         userStore.setUsername(savedUsername);// 在这里可以访问到 userStore 中的 username
     }
-    const savedAvatarUrl = localStorage.getItem('selectedAvatar');
+    let savedAvatarUrl = localStorage.getItem('selectedAvatar');
     if (savedAvatarUrl) {
         selectedAvatar.value = savedAvatarUrl;
     }
     if (savedAvatarUrl && savedAvatarUrl !== '') {
         file.value = { url: savedAvatarUrl };
     }
-    const savedQQ = localStorage.getItem('qq');
+    let savedQQ = localStorage.getItem('qq');
     if (savedQQ) {
         userStore.setQQ(savedQQ);
     }
     if (!token) {
-      setTimeout(() => {
-        router.push('/login');
-        ElMessage.warning('请uu先登录！')
-      }, 5000); 
+        setTimeout(() => {
+            router.push('/login');
+            ElMessage.warning('请uu先登录！')
+        }, 2500);
     }
 });
 onBeforeMount(() => {
-    const savedGender = localStorage.getItem('gender');
+    let savedGender = localStorage.getItem('gender');
     gender.value = savedGender || ''
 })
 </script>

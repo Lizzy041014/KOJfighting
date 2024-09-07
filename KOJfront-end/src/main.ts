@@ -10,9 +10,10 @@ import ArcoVue from '@arco-design/web-vue';
 import '@arco-design/web-vue/dist/arco.css';
 import ArcoVueIcon from '@arco-design/web-vue/es/icon';
 import { createPinia } from 'pinia';
+const pinia = createPinia();
 //利用createApp方法创建应用实例，且将应用实例挂载到挂载点上
 const app = createApp(App);
-const pinia = createPinia();
+
 app.use(pinia);
 app.use(router);
 app.use(ArcoVue, {

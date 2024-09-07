@@ -39,7 +39,6 @@ export const useUserStore = defineStore('user', {
         },
         setUsername(username: string) {
             this.username = username
-            localStorage.setItem('username', username);
         },
         logoutUser() {
             this.username = '';
@@ -65,11 +64,12 @@ export const useUserStore = defineStore('user', {
         },
         setManagername(managername: string) {
             this.managername = managername
-            localStorage.setItem('managername', managername);
         },
         logoutManager() {
             this.managername = '';
             localStorage.removeItem('managername');
+            localStorage.removeItem('tokenmanager');
+            localStorage.removeItem('uploadUserId');
         },
         setManagerPassword(password: string) {
             this.password = password;

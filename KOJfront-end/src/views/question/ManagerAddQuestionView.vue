@@ -115,7 +115,7 @@ import { ElMessage } from 'element-plus';
 import router from "@/router";
 let uploadUserId = localStorage.getItem('uploadUserId')
 let topicId=ref('')
-const form = reactive({
+let form = reactive({
     uploadUserId: uploadUserId,
     title:'',
     content:'',
@@ -136,16 +136,12 @@ const form = reactive({
     ],
     labelsId: [] as number[]
 });
-const handleAdd = () => {
+let handleAdd = () => {
     form.examples.push({
-        input: '',
-        output: '',
-        topicId:topicId.value,
-        showed: true,
-        assessed: true
+    input: '',output: '',topicId:topicId.value,showed: true,assessed: true
     });
 };
-const handleDelete = (index: number) => {
+let handleDelete = (index: number) => {
     form.examples.splice(index, 1);
 }
 let tokenmanager = localStorage.getItem('tokenmanager');
@@ -154,7 +150,7 @@ let headers = {
 };
 let onSelectChange = (selectedValues: number[]) => {
     form.labelsId = selectedValues.map(value => {
-        const option = options.value.find(item => item.value === value);
+        let option = options.value.find(item => item.value === value);
         return option ? option.value : null;
     }).filter((id): id is number => id !== null);
 };
@@ -184,35 +180,35 @@ let handleSubmit = async (event: Event) => {
         console.error(error);
     }
 };
-const inputValue = ref('')
-const inputVisible = ref(false)
-const inputValuedelete = ref('')
-const inputVisibledelete = ref(false)
-const InputRef = ref<InputInstance>()
+let inputValue = ref('')
+let inputVisible = ref(false)
+let inputValuedelete = ref('')
+let inputVisibledelete = ref(false)
+let InputRef = ref<InputInstance>()
 interface OptionType {
     value: number;
     label: string;
 }
-const value1 = ref<number[]>([]);
-const options = ref<OptionType[]>([]);
-const showInput = () => {
+let value1 = ref<number[]>([]);
+let options = ref<OptionType[]>([]);
+let showInput = () => {
     inputVisible.value = true
     nextTick(() => {
         InputRef.value!.input!.focus()
     })
 }
-const showdeleteInput = () => {
+let showdeleteInput = () => {
     inputVisibledelete.value = true
     nextTick(() => {
         InputRef.value!.input!.focus()
     })
 }
-const handleInputConfirm = async () => {
+let handleInputConfirm = async () => {
     try {
-        const data={
+        let data={
             labelName: inputValue.value
         }
-        const response = await axios({
+        let response = await axios({
             method:'POST',
             url:'/api/admin/label/add',
             headers,
@@ -232,12 +228,12 @@ const handleInputConfirm = async () => {
         console.error(error);
     }
 }
-const handleInputConfirmdelete = async () => {
+let handleInputConfirmdelete = async () => {
     try {
-        const data = {
+        let data = {
             labelName: inputValuedelete.value
         }
-        const response = await axios({
+        let response = await axios({
             method: 'DELETE',
             url: '/api/root/label/delete/{labelId}',
             headers,
@@ -259,8 +255,8 @@ const handleInputConfirmdelete = async () => {
 }
 onMounted(async () => {
     try {
-        const response = await axios.get('/api/label/gets');
-        const data = response.data.data.records;
+        let response = await axios.get('/api/label/gets');
+        let data = response.data.data.records;
         options.value = data.map((item: { labelId: any; labelName: any; }) => 
         ({ value: item.labelId, label: item.labelName }));
     } catch (error) {

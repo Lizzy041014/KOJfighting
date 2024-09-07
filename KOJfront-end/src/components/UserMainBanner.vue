@@ -1,5 +1,12 @@
 <template>
-    <div class="bigone">
+    <div v-if="isLoading" class="isLoading">
+        <a-spin :size="50">
+            <template #icon>
+                <icon-loading />
+            </template>
+        </a-spin>
+    </div>
+    <div v-else class="bigone">
         <div class="question">
             <div class="list-head">
                 <div>
@@ -44,7 +51,7 @@
                         </tr>
                     </tbody>
                 </table>
-                <a-pagination :total="totalpagesize" size="large" @change="handlePageChange">
+                <a-pagination :total="totalpagesizeRef" size="large" @change="handlePageChange">
                     <template #page-item="{ page }" :v-model="currentPage">
                         {{ page }}
                     </template>
@@ -91,6 +98,7 @@ import { onMounted,ref } from "vue";
 import axios from "axios";
 import { useQuestionsStore } from '@/stores/questions'
 import router from "@/router";
+import { totalpagesizeRef, currentPage, options,getLabelClass } from '@/Logic/ViewQuesLogic';
 interface Question {
     topicId: number;
     title: string;
@@ -98,17 +106,16 @@ interface Question {
     from: string;
     labels?: { labelId: number; labelName: string }[];
 }
-let totalpagesize=ref(0)
-let questionsStore = useQuestionsStore();
-let currentPage=ref(1)
 interface OptionType {
     value: number;
     label: string;
 }
-let options = ref<OptionType[]>([]);
+let questionsStore = useQuestionsStore();
 let optionsid = ref<OptionType[]>([]);
+let isLoading = ref(true);
 onMounted(async () => {
     await fetchData(currentPage.value);
+        isLoading.value = false;
 });
 let topicquestion = (topicId: number) => {
     console.log(`${topicId}`);
@@ -122,7 +129,7 @@ let fetchData = async (pageNo: number) => {
     try {
         let response = await axios.post("/api/topic/gets", data);
         questionsStore.setQuestions(response.data.data.records as Question[]);
-        totalpagesize.value = response.data.data.totalRow; 
+        totalpagesizeRef.value = response.data.data.totalRow; 
     } catch (error) {
         console.error(error);
     }
@@ -132,8 +139,6 @@ let fetchData = async (pageNo: number) => {
             ({ value: item.labelId, label: item.labelName }));
         optionsid.value = response.data.data.records.map((item: { labelId: any; }) =>
             ({ value: item.labelId }));
-            console.log(optionsid.value);
-            
     }catch(error){
         console.error(error);
     }
@@ -143,23 +148,17 @@ let handlePageChange = (page: number) => {
     fetchData(page);
 };
 let labelquestion = async (labelId: number) => {
-    console.log(`${labelId}`);
-    router.push('/view/total/detailquestions')
-};
-let getLabelClass = (difficulty: string) => {
-    switch (difficulty) {
-        case "低":
-            return "label-success";
-        case "中":
-            return "label-info";
-        case "高":
-            return "label-warning";
-        default:
-            return "";
-    }
+    router.push(`/user/labelviewquestion/${labelId}`)
 };
 </script>
 <style>
+.isLoading{
+    position: relative;
+    left: 50%;
+    top: 35%;
+    height: 45vh;
+    width: 100px;
+}
 .bigone{
     position: relative;
 }

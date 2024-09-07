@@ -37,7 +37,6 @@
         </div>
     </div>
 </template>
-
 <script setup lang="ts" name="KojRegister">
 import kexielogo from '@/assets/img/kexielogo.png'
 import { ElMessage } from 'element-plus';
@@ -45,7 +44,7 @@ import { RouterLink} from 'vue-router';
 import { useUserStore } from '@/stores/userStore';
 import axios from 'axios';
 import { ref } from 'vue';
-const userStore = useUserStore();
+let userStore = useUserStore();
 let username = ref('');
 let password = ref('');
 let email = ref('');
@@ -118,7 +117,6 @@ let handleSubmit = async (event: { preventDefault: () => void; }) => {
         password: _password,
         email: _email
     };
-
     try {
         let response = await axios.post('/api/register', data); 
         // 直接传递对象，不需要 JSON.stringify  
@@ -145,7 +143,6 @@ function handleFocus(content: any) {
         isAnimatedEmail.value = true;
     }
 }
-
 function handleBlur(content:any) {
     if (content === 'username') {
         if (!username.value) {

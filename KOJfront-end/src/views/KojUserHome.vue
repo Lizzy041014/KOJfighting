@@ -6,20 +6,22 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref} from "vue";
-import axios from "axios";
-import { useUserStore } from '@/stores/userStore';
 import UserMainBanner from "@/components/UserMainBanner.vue";
 import BasicFooter from "@/components/BasicFooter.vue";
 import UserNav from "@/components/UserNav.vue";
-
 </script>
 <style>
+.footer{
+  position: relative;
+  display: flex;
+    bottom: -30%;
+    left: 0;
+    right: 0;
+}
 .editPersonaltwo {
   position: absolute;
   right: 2px;
 }
-
 .ainput {
   height: 20px;
   font-size: 14px;
@@ -29,15 +31,12 @@ import UserNav from "@/components/UserNav.vue";
   color: #052070;
   padding-left: 6px;
 }
-
 .two form div:nth-child(2)>input {
   margin-left: 6px;
 }
-
 .two form div:nth-child(3)>input {
   margin-left: 5px;
 }
-
 .xiugai-button {
   margin-top: 12px;
   height: 28px;
@@ -51,55 +50,43 @@ import UserNav from "@/components/UserNav.vue";
   color: rgb(5, 32, 112);
   font-size: 14px;
 }
-
 .xiugai-button:hover {
   transition: box-shadow .4s;
   box-shadow: 2px 1.5px 3px 2px rgba(13, 30, 128, 0.328);
 }
-
-
 .input {
   margin-top: 10px;
 }
-
 .input input {
   margin-left: 10px;
   height: 25px;
 }
-
 .input label {
   margin-left: 10px;
 }
-
-
 * {
   margin: 0;
   padding: 0;
 }
-
 body {
   background-color: #fcfcfc;
 }
-
 .home {
   cursor: pointer;
   width: 100vw;
   height: 100vh;
 }
-
 .header {
   font-family: "微软雅黑";
   width: 100%;
   height: 48px;
   color: rgb(5, 32, 112);
 }
-
 .line {
   height: 1px;
   margin: 0 75px;
   background-color: rgba(159, 164, 174, 0.954);
 }
-
 .figure {
   position: absolute;
   top: 6px;
@@ -107,7 +94,6 @@ body {
   height: 100%;
   width: 15%;
 }
-
 .kexielogo {
   display: flex;
   margin-left: 110px;
@@ -126,11 +112,9 @@ body {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-size: 20px;
 }
-
 li {
   list-style: none;
 }
-
 .tag {
   display: flex;
   width: 30%;
@@ -142,11 +126,9 @@ li {
   font-size: 17px;
   font-weight: 500;
 }
-
 .tag li:first-child {
   margin-left: 80px;
 }
-
 .tag li {
   display: flex;
   margin-left: 5px;
@@ -158,18 +140,15 @@ li {
   display: block;
   flex-grow: 1;
 }
-
 .tag li p {
   width: 11vw;
   position: relative;
   display: block;
   text-decoration: none;
 }
-
 .tag li:hover {
   font-weight: 700;
 }
-
 .tag li p:before {
   /*添加上边框*/
   content: '';
@@ -185,12 +164,10 @@ li {
   z-index: -1;
   /* 其实是由有两条线的，将伪元素放置在父元素的背景下面，确保文本在伪元素上面 */
 }
-
 .tag li p:hover:before {
   transform: scaleY(1);
   opacity: 1;
 }
-
 .tag li p:after {
   content: '';
   position: absolute;
@@ -205,11 +182,9 @@ li {
   z-index: -1;
   border-radius: 5px;
 }
-
 .tag li p:hover:after {
   transform: scale(1);
 }
-
 .right {
   top: -4px;
   right: 6%;
@@ -219,7 +194,6 @@ li {
   display: flex;
   align-items: center;
 }
-
 .right div {
   float: right;
   margin-right: 15px;
@@ -253,7 +227,6 @@ li {
   width: 20px;
   height: 20px;
 }
-
 .searchBar {
   width: 28px;
   height: 28px;
@@ -265,11 +238,9 @@ li {
   overflow: hidden;
   transition: .7s;
 }
-
 .changeWidth {
   width: 230px;
 }
-
 .textInput {
   width: 86%;
   height: 28px;
@@ -280,7 +251,6 @@ li {
   top: 0;
   left: 25px;
 }
-
 .textInput input {
   width: 100%;
   height: 100%;
@@ -289,7 +259,6 @@ li {
   font-size: 17px;
   color: #585858;
 }
-
 .clear {
   width: 15px;
   height: 15px;
@@ -304,11 +273,9 @@ li {
   font-size: 20px;
   color: #2a477e;
 }
-
 .searchBar img {
   transform: translate(20%, 16%);
 }
-
 .sidebar {
   position: fixed;
   top: 0;
@@ -321,7 +288,6 @@ li {
   border-bottom-left-radius: 12px;
   transition: right .5s ease;
 }
-
 .overlay {
   position: fixed;
   top: 0;
@@ -333,17 +299,14 @@ li {
   display: block;
   transition: opacity .3s ease;
 }
-
 .sidebar.show {
   right: 0;
 }
-
 .overlay.show {
   display: block;
   opacity: 0.5;
 
 }
-
 .sidebar span {
   display: inline-block;
 }
@@ -356,7 +319,6 @@ li {
   margin:10px 10px;
   width: 10%;
 }
-
 .username {
   position: relative;
   font-size: 17px;
@@ -364,7 +326,6 @@ li {
   width: 70%;
   margin-left: 65px;
 }
-
 .close {
   position: relative;
   width: 5%;
@@ -372,14 +333,12 @@ li {
   margin-left: 280px;
   top: -22px;
 }
-
 .two div {
   margin-left: 15px;
   margin-top: 30px;
   height: 25px;
   font-size: 15px;
 }
-
 .nickname {
   margin-left: 8px;
   font-size: 15px;
@@ -390,11 +349,9 @@ li {
     font-size: 12px;
     letter-spacing: .5px;
   }
-
   .tag {
     left: 110px;
   }
-
   .kexielogo {
     display: flex;
     margin-left: 65px;
@@ -406,7 +363,6 @@ li {
   .tag li {
     margin-left: -7px;
   }
-
   .right {
     font-size: 12px;
     right: 4.5%;
