@@ -90,7 +90,7 @@ body {
 .figure {
   position: absolute;
   top: 6px;
-  right: 0px;
+  right: -30px;
   height: 100%;
   width: 15%;
 }
@@ -230,7 +230,7 @@ li {
 .searchBar {
   width: 28px;
   height: 28px;
-  right: 16%;
+  right: 14.5%;
   top: 13px;
   box-shadow: 0 0 6px cornflowerblue;
   border-radius: 25px;
@@ -239,10 +239,10 @@ li {
   transition: .7s;
 }
 .changeWidth {
-  width: 230px;
+  width: 250px;
 }
 .textInput {
-  width: 86%;
+  width: 87%;
   height: 28px;
   display: flex;
   justify-content: center;
@@ -256,8 +256,9 @@ li {
   height: 100%;
   border: none;
   outline: none;
-  font-size: 17px;
+  font-size: 14px;
   color: #585858;
+ 
 }
 .clear {
   width: 15px;
@@ -274,7 +275,7 @@ li {
   color: #2a477e;
 }
 .searchBar img {
-  transform: translate(20%, 16%);
+  transform: translate(20%, 22%);
 }
 .sidebar {
   position: fixed;

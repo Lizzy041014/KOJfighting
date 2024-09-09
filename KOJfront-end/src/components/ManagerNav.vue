@@ -58,7 +58,6 @@
 </a-doption>
 </template>
 </a-dropdown></li>
-
 </ul>
 <div>
     <div class="searchBar" :class="{ 'changeWidth': showSearch }">
@@ -114,7 +113,6 @@ import { ElMessage } from 'element-plus';
 import { useUserStore } from '@/stores/userStore';
 import router from "@/router";
 import { useRoute } from 'vue-router';
-import { toggleSearch, toggleSidebar, hideSidebar, clearInput }from '@/Logic/NavLogics'
 let userStore = useUserStore();
 let showSidebar = ref(false);
 let showOverlay = ref(false);
@@ -155,6 +153,21 @@ onMounted(() => {
         }, 1500);
     }
 });
+function toggleSearch() {
+    showSearch.value = !showSearch.value;
+};
+function toggleSidebar() {
+    showSidebar.value = !showSidebar.value;
+    showOverlay.value = !showOverlay.value;
+};
+function hideSidebar() {
+    showSidebar.value = false;
+    showOverlay.value = false;
+};
+
+function clearInput() {
+    searchText.value = '';
+};
 </script>
 <style scoped>
 .right div {

@@ -28,8 +28,8 @@
                 <a-collapse-item v-for="item in collapseData" :key="item.columnId" :header="item.columnName"
                     :customStyle>
                     <template #expand-icon="{ active }">
-                        <icon-star-fill v-if="active" size="17" />
-                        <icon-star v-else size="17" />
+                        <icon-up-circle  v-if="active" size="17" />
+                        <icon-down-circle v-else size="17" />
                     </template>
                     <template #extra>
                         <el-button type="primary" plain size="small">添加题目</el-button>
@@ -43,13 +43,22 @@
         </div>
     </div>
 </template>
-
 <script setup lang="ts">
 import ManagerNav from '@/components/ManagerNav.vue';
 import { ref,nextTick, onMounted } from 'vue';
 import { ElMessage, InputInstance } from 'element-plus';
 import axios from 'axios';
-let collapseData = ref([]);
+interface Topic {
+    topicId: number;
+    title: string;
+    content: string;
+}
+interface ColumnData {
+    columnId: number;
+    columnName: string;
+    topicVOS: Topic[];
+}
+let collapseData = ref<ColumnData[]>([]);
 let inputValue = ref('')
 let inputVisible = ref(false)
 let inputValuedelete = ref('')
@@ -95,6 +104,9 @@ let handleInputConfirm = async () => {
             ElMessage.success('栏目添加成功')
             inputVisible.value = false
             inputValue.value = ''
+            setTimeout(()=>{
+                location.reload()
+            },1000)
         }
         else {
             ElMessage.error('添加失败或已有该栏目')

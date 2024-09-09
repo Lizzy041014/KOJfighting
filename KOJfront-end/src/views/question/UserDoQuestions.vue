@@ -69,6 +69,11 @@
                             <a-select v-model="form.language" :style="{ width: '320px' }" placeholder="选择编程语言">
                                 <a-option>C#</a-option>
                             </a-select>
+                            <a-space style="margin-top: -10px;margin-left: 110px;">
+                                <a-col :flex="1">
+                                    <a-countdown title="倒计时" :value="now + 1000 * 60 * 60 * 1" :now="now" />
+                                </a-col>
+                            </a-space>
                         </a-form-item>
                     </a-form>
                     <CodeEditor :value="form.code as string" :language="form.language" :handle-change="changeCode" />
@@ -83,15 +88,15 @@
 </template>
 <script setup lang="ts">
 import { onMounted, ref, reactive } from 'vue';
-import message from '@arco-design/web-vue/es/message';
+import { ElMessage } from 'element-plus';
 import CodeEditor from '@/components/CodeEditor.vue';
 import axios from 'axios';
 import UserNav from '@/components/UserNav.vue'
-// import router from '@/router';
 import { useRoute } from "vue-router";
 interface Props {
     id: string;
 }
+let now = Date.now();
 let question = reactive({
     title: "",
     content: "",
@@ -141,12 +146,12 @@ let doSubmit = async () => {
             questionId: props.id,
         });
         if (res.data.code === 0) {
-            message.success('提交成功');
+            ElMessage.success('提交成功');
         } else {
-            message.error('提交失败，' + res.data.message);
+            ElMessage.error('提交失败，' + res.data.message);
         }
     } catch (error) {
-        message.error('提交失败，发生错误：' + error);
+        ElMessage.error('提交失败，发生错误：' + error);
     }
 };
 let route = useRoute();

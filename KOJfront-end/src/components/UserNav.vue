@@ -24,7 +24,7 @@
                 <div class="searchBar" :class="{ 'changeWidth': showSearch }">
                     <div class="icon" @click="toggleSearch"><img :src="sousuo" alt="" width="20"></div>
                     <div class="textInput" v-if="showSearch">
-                        <input type="text" placeholder="Search Here..." v-model="searchText">
+                        <input type="text" placeholder="Search here..." v-model="title" @keyup.enter="dotitleSubmit">
                         <div class="clear" @click="clearInput">×</div>
                     </div>
                 </div>
@@ -152,12 +152,11 @@ import router from "@/router";
 import { useRoute } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import axios from "axios";
-import { toggleSearch, toggleSidebar, hideSidebar, clearInput } from '@/Logic/NavLogics'
 let userStore = useUserStore();
 let showSidebar = ref(false);
 let showOverlay = ref(false);
 let showSearch = ref(false);
-let searchText = ref('');
+let title = ref('');
 let username = ref('');
 let qq = ref('');
 let password = ref('');
@@ -182,6 +181,10 @@ let handleClick = (path:string) => {
         ElMessage.warning('已经正处于习题页面！');
     }
 };
+let dotitleSubmit = async () => {
+    
+};
+
 let triggerFileUpload = () => {
     let input = document.createElement('input');
     input.type = 'file';
@@ -360,4 +363,19 @@ onBeforeMount(() => {
     let savedGender = localStorage.getItem('gender');
     gender.value = savedGender || ''
 })
+function toggleSearch() {
+    showSearch.value = !showSearch.value;
+};
+function toggleSidebar() {
+    showSidebar.value = !showSidebar.value;
+    showOverlay.value = !showOverlay.value;
+};
+function hideSidebar() {
+    showSidebar.value = false;
+    showOverlay.value = false;
+};
+
+function clearInput() {
+    title.value = '';
+};
 </script>
