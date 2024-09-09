@@ -79,7 +79,6 @@ let loadData = async () => {
     try {
         let response = await axios.post('/api/topic/gets', headers);
         dataList.value = response.data.data.records;
-        // total.value = response.data.data.totalRow;
     for(let i=0;i>=0;i++){
         nickname.value = response.data.data.records[i].uploadUser.nickname
         managername = nickname.value

@@ -182,7 +182,6 @@ let handleClick = (path:string) => {
     }
 };
 let dotitleSubmit = async () => {
-    
 };
 
 let triggerFileUpload = () => {

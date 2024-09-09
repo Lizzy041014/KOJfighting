@@ -96,16 +96,9 @@
 <script setup lang="ts" name="MainBanner">
 import { onMounted,ref } from "vue";
 import axios from "axios";
-import { useQuestionsStore } from '@/stores/questions'
+import { useQuestionsStore, Question } from '@/stores/questions'
 import router from "@/router";
 import { totalpagesizeRef, currentPage, options,getLabelClass } from '@/Logic/ViewQuesLogic';
-interface Question {
-    topicId: number;
-    title: string;
-    difficulty: string;
-    from: string;
-    labels?: { labelId: number; labelName: string }[];
-}
 interface OptionType {
     value: number;
     label: string;

@@ -28,15 +28,38 @@
                 <a-collapse-item v-for="item in collapseData" :key="item.columnId" :header="item.columnName"
                     :customStyle>
                     <template #expand-icon="{ active }">
-                        <icon-up-circle  v-if="active" size="17" />
+                        <icon-up-circle v-if="active" size="17" />
                         <icon-down-circle v-else size="17" />
                     </template>
                     <template #extra>
-                        <el-button type="primary" plain size="small">添加题目</el-button>
+                        <a-trigger :popup-translate="[-570, -70]" trigger="click">
+                            <el-button type="primary" plain size="small">添加题目</el-button>
+                            <template #content>
+                                <div class="trigger-demo-translate">
+                                    <div v-if="false"> <a-empty /></div>
+                                    <div v-else> <a-table :ref="tableRef" :columns="columns" :data="data" stripe
+                                            class="table">
+                                            <template #add="{record}">
+                                                <span style="margin-left: 10px;" class="edittimu"><icon-plus-circle-fill
+                                                        size="large" style="color:cornflowerblue;"
+                                                        @click="addtopictocolumn(item.columnId, record.topicId)" /></span>
+                                            </template>
+                                            <template #tags="{ record }">
+                                                <a-space wrap>
+                                                    <a-tag v-for="(tag, index) of record.tags" :key="index">{{ tag
+                                                        }}</a-tag>
+                                                </a-space>
+                                            </template>
+                                        </a-table>
+                                    </div>
+                                </div>
+                            </template>
+                        </a-trigger>
                     </template>
-                    <div v-for="topic in item.topicVOS" :key="topic.topicId">
-                        {{ topic.title }}
-                        <div>{{ topic.content }}</div>
+                    <div v-for="topic in item.topicVOS" :key="topic.topicId" style="position: relative;">
+                        <div>{{ topic.title }}<span class="deletetopic"><icon-delete size="17"
+                                    @click="deletetopictocolumn()" /></span>
+                        </div>
                     </div>
                 </a-collapse-item>
             </a-collapse>
@@ -48,10 +71,31 @@ import ManagerNav from '@/components/ManagerNav.vue';
 import { ref,nextTick, onMounted } from 'vue';
 import { ElMessage, InputInstance } from 'element-plus';
 import axios from 'axios';
+let columns = [
+    {
+        title: ' ',
+        slotName: 'add'
+    },
+    {
+        title: '题号',
+        dataIndex: 'topicId',
+    },
+    {
+        title: '题目标题',
+        dataIndex: 'title',
+    },
+    {
+        title: '难度',
+        dataIndex: 'difficulty',
+    },
+];
+let data = ref([]);
+let tableRef = ref();
 interface Topic {
     topicId: number;
     title: string;
     content: string;
+    labels?: { labelId: number; labelName: string }[];
 }
 interface ColumnData {
     columnId: number;
@@ -73,6 +117,31 @@ let customStyle = {
     borderRadius: '6px',
     marginBottom: '22px',
     overflow: 'hidden',
+}
+let addtopictocolumn = async (columnId:any,topicIds:any)=>{
+    let data={
+        columnId,
+        topicIds:[topicIds],
+    }
+    try {
+        let response = await axios({
+            method: 'post',
+            url: '/api/admin/topic/add_to_column',
+            headers,
+            data
+        });
+     console.log(response.data.code);
+     console.log(data);
+ if(response.data.code===200){
+     ElMessage.success('题目添加成功')
+ } else ElMessage.error('添加失败或已该题目')
+    } catch (error) {
+        console.log(error);
+    }
+
+}
+let deletetopictocolumn=async()=>{
+    
 }
 let showInput = () => {
     inputVisible.value = true
@@ -98,8 +167,6 @@ let handleInputConfirm = async () => {
             headers,
             data
         })
-        console.log(response.data.code);
-        console.log(data);
         if (response.data.code === 200) {
             ElMessage.success('栏目添加成功')
             inputVisible.value = false
@@ -147,11 +214,37 @@ onMounted(async()=>{
         collapseData.value = response.data.data.records;
     } catch (error) {
         console.error(error);
+    };
+    try {
+        let response = await axios({
+            method:'post',
+            url:'/api/topic/gets',
+            headers,
+            data
+});
+        data.value = response.data.data.records;
+    } catch (error) {
+        console.log(error);
     }
-   
 })
 </script>
 <style scoped>
+.table{
+    color: black;
+}
+.trigger-demo-translate {
+    padding: 10px;
+    width: 700px;
+    height: 488px;
+    background-color: var(--color-bg-popup);
+    border-radius: 4px;
+    box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.15);
+}
+.deletetopic{
+    color: red;
+    position: absolute;
+    right: 15px;
+}
 .column{
     position: relative;
     height: 80vh;
