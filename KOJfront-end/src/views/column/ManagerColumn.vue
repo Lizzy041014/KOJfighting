@@ -32,33 +32,36 @@
                         <icon-down-circle v-else size="17" />
                     </template>
                     <template #extra>
-                        <a-trigger :popup-translate="[-570, -70]" trigger="click">
-                            <el-button type="primary" plain size="small">添加题目</el-button>
-                            <template #content>
-                                <div class="trigger-demo-translate">
-                                    <div v-if="false"> <a-empty /></div>
-                                    <div v-else> <a-table :ref="tableRef" :columns="columns" :data="data" stripe
-                                            class="table">
-                                            <template #add="{record}">
-                                                <span style="margin-left: 10px;" class="edittimu"><icon-plus-circle-fill
-                                                        size="large" style="color:cornflowerblue;"
-                                                        @click="addtopictocolumn(item.columnId, record.topicId)" /></span>
-                                            </template>
-                                            <template #tags="{ record }">
-                                                <a-space wrap>
-                                                    <a-tag v-for="(tag, index) of record.tags" :key="index">{{ tag
-                                                        }}</a-tag>
-                                                </a-space>
-                                            </template>
-                                        </a-table>
+                        <div><a-trigger :popup-translate="[-570, -70]" trigger="click">
+                                <el-button type="primary" plain size="small">添加题目</el-button>
+                                <template #content>
+                                    <div class="trigger-demo-translate">
+                                        <div v-if="false"> <a-empty /></div>
+                                        <div v-else> <a-table :ref="tableRef" :columns="columns" :data="data" stripe
+                                                class="table">
+                                                <template #add="{ record }">
+                                                    <span style="margin-left: 10px;"
+                                                        class="edittimu"><icon-plus-circle-fill size="large"
+                                                            style="color:cornflowerblue;"
+                                                            @click="addtopictocolumn(item.columnId, record.topicId)" /></span>
+                                                </template>
+                                                <template #tags="{ record }">
+                                                    <a-space wrap>
+                                                        <a-tag v-for="(tag, index) of record.tags" :key="index">{{ tag
+                                                            }}</a-tag>
+                                                    </a-space>
+                                                </template>
+                                            </a-table>
+                                        </div>
                                     </div>
-                                </div>
-                            </template>
-                        </a-trigger>
+                                </template>
+                            </a-trigger></div>
                     </template>
-                    <div v-for="topic in item.topicVOS" :key="topic.topicId" style="position: relative;">
-                        <div>{{ topic.title }}<span class="deletetopic"><icon-delete size="17"
-                                    @click="deletetopictocolumn()" /></span>
+                    <div v-for="topic in item.topicVOS" :key="topic.topicId" style="position: relative;"
+                        class="topicsincolunm">
+                        <div>{{ topic.title }}<span class="deletetopic"
+                                @click="deletetopictocolumn(topic.topicId, item.columnId)"><icon-delete
+                                    size="16" /></span>
                         </div>
                     </div>
                 </a-collapse-item>
@@ -70,7 +73,7 @@
 import ManagerNav from '@/components/ManagerNav.vue';
 import { ref,nextTick, onMounted } from 'vue';
 import { ElMessage, InputInstance } from 'element-plus';
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 let columns = [
     {
         title: ' ',
@@ -113,9 +116,9 @@ let headers = {
     Authorization: tokenmanager
 };
 let customStyle = {
-    marginTop:'22px',
+    marginTop:'25px',
     borderRadius: '6px',
-    marginBottom: '22px',
+    marginBottom: '25px',
     overflow: 'hidden',
 }
 let addtopictocolumn = async (columnId:any,topicIds:any)=>{
@@ -134,14 +137,42 @@ let addtopictocolumn = async (columnId:any,topicIds:any)=>{
      console.log(data);
  if(response.data.code===200){
      ElMessage.success('题目添加成功')
+     try {
+         let response = await axios.post('/api/column/gets', headers);
+         collapseData.value = response.data.data.records;
+     } catch (error) {
+         console.error(error);
+     };
  } else ElMessage.error('添加失败或已该题目')
     } catch (error) {
         console.log(error);
     }
-
 }
-let deletetopictocolumn=async()=>{
-    
+let deletetopictocolumn = async (topicId: any, columnId: any) => {
+    let data = {
+        columnId,
+        topicIds: [topicId],
+    }
+    try {
+        let response = await axios({
+            method: 'delete',
+            url: '/api/admin/column/delete_topic',
+            headers,
+            data
+        })
+        console.log(response);
+        if (response.data.code === 200) {
+            ElMessage.success('题目删除成功')
+            try {
+                let response = await axios.post('/api/column/gets', headers);
+                collapseData.value = response.data.data.records;
+            } catch (error) {
+                console.error(error);
+            };
+        }
+    } catch (error) {
+        console.error('删除题目失败', error);
+    }
 }
 let showInput = () => {
     inputVisible.value = true
@@ -210,8 +241,9 @@ let handleInputConfirmdelete = async () => {
 onMounted(async()=>{
     try {
         let response = await axios.post('/api/column/gets',headers);
-        console.log(response.data.data);
         collapseData.value = response.data.data.records;
+        console.log(collapseData.value);
+        
     } catch (error) {
         console.error(error);
     };
@@ -227,8 +259,19 @@ onMounted(async()=>{
         console.log(error);
     }
 })
+
 </script>
 <style scoped>
+.topicsincolunm:nth-child(2n){
+background-color: #ffffff;
+}
+.topicsincolunm:nth-child(2n+1) {
+    background-color: #f7f8fa;
+}
+.topicsincolunm{
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
 .table{
     color: black;
 }

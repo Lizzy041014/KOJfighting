@@ -102,9 +102,8 @@ let dotitleSubmit = async () => {
         console.log(error);
     }
 };
-
 let dolabelSubmit = async (labelsid: number[]) => {
-    let data = { labelIds: labelsid, pageNo: 1 };
+    let data = { labelIds: labelsid, pageNo: 1 ,pageSize:10};
     try {
         let response = await axios.post('/api/topic/gets', data);
         console.log(response.data.data);

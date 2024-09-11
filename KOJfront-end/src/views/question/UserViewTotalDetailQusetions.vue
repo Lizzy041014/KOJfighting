@@ -5,7 +5,7 @@
             <a-form layout="inline" class="dosubmit">
                 <a-form-item field="title" label="名称" style="min-width: 260px">
                     <a-input :style="{ width: '280px' }" v-model="title" placeholder="请输入题目名称" allow-clear />
-                    <el-button type="primary" @click="dotitleSubmit" class="chaxunbutton">查询</el-button>
+                    <el-button type="primary" @click="dotitleSubmit(title)" class="chaxunbutton">查询</el-button>
                 </a-form-item>
                 <a-form-item field="tags" label="标签">
                     <div class="m-4">
@@ -81,6 +81,7 @@ import { totalpagesizeRef, currentPage, options, selectedLabels, onSelectChange,
 import router from '@/router';
 import BasicFooter from '@/components/BasicFooter.vue';
 import { useQuestionsStore } from '@/stores/questions';
+import { log } from 'console';
 interface Question {
     topicId: number;
     title: string;
@@ -105,12 +106,15 @@ onMounted(async () => {
         console.error(error);
     }
 });
-let dotitleSubmit = async (searchValue: string) => {
-    let data = { search: searchValue };
+let dotitleSubmit = async (title: string) => {
+    let data = { search: title,pageSize :10};
     try {
+        console.log(data);
         let response = await axios.post('/api/topic/gets', data);
         questionsStore.setQuestions(response.data.data.records as Question[]);
         totalpagesizeRef.value = response.data.data.totalPage;
+        console.log(response.data);
+        
     } catch (error) {
         console.log(error);
     }
@@ -136,6 +140,8 @@ let fetchData = async (pageNo: number) => {
         let response = await axios.post('/api/topic/gets', data);
         questionsStore.setQuestions(response.data.data.records as Question[]);
         totalpagesizeRef.value = response.data.data.totalRow;
+        console.log(response.data);
+        
     } catch (error) {
         console.error(error);
     }

@@ -69,16 +69,12 @@
                 <div class="panel-heading">栏目</div>
                 <div class="panel-body-two">
                     <ul class="tag-group-two">
-                        <li>基础入门栏目</li>
-                        <li>突破进阶栏目</li>
-                        <li>终极提升栏目</li>
-                        <li>综和应用题</li>
-                        <li>......</li>
+                        <li v-for="item in columnName">{{item.columnName }}</li>
                     </ul>
                 </div>
             </div>
         </div>
-        <div class="panel">
+        <div class="panel" >
             <div>
                 <div class="panel-heading">标签</div>
                 <div class="panel-body">
@@ -103,12 +99,26 @@ interface OptionType {
     value: number;
     label: string;
 }
+interface Column {
+    columnName: string;
+}
+let columnName=ref<Column[]>([])
 let questionsStore = useQuestionsStore();
 let optionsid = ref<OptionType[]>([]);
 let isLoading = ref(true);
 onMounted(async () => {
     await fetchData(currentPage.value);
         isLoading.value = false;
+    try {
+        let data = {
+            "columnState": true,
+            "topicState": true
+        }
+        let response = await axios.post("/api/column/gets",data);
+       columnName.value=response.data.data.records
+    } catch (error) {
+        console.error(error);
+    }
 });
 let topicquestion = (topicId: number) => {
     console.log(`${topicId}`);
@@ -154,6 +164,7 @@ let labelquestion = async (labelId: number) => {
 }
 .bigone{
     position: relative;
+    display: flex;
 }
 .doquestion{
     width: 60px;
@@ -164,7 +175,6 @@ let labelquestion = async (labelId: number) => {
     padding-top: 10px;
     padding-left: 15px;
 }
-
 .tag-group-two li:nth-child(2n){
     background-color: rgba(238, 238, 238, 0.567);
 }
@@ -233,7 +243,7 @@ let labelquestion = async (labelId: number) => {
     float: right;
     position: absolute;
     right: 5.8%;
-    top: 20px;
+    top: 37px;
     background-color: #fefefe;
     border: 1px solid #bbc9d4;
     border-radius: 4px;
@@ -245,13 +255,12 @@ let labelquestion = async (labelId: number) => {
     width: 22vw;
     position: absolute;
     right: 5.8%;
-    top: 300px;
+    bottom: 140px;
     background-color: #fefefe;
     border: 1px solid #bbc9d4;
     border-radius: 4px;
     box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
 }
-
 .question {
     width: 61vw;
     margin-left: 5.5%;
@@ -259,7 +268,6 @@ let labelquestion = async (labelId: number) => {
     padding: 20px;
     font-size: 15px;
 }
-
 .tbody {
     color: #134c89;
     background-color: #fff;
@@ -323,16 +331,12 @@ let labelquestion = async (labelId: number) => {
     text-align: left;
 }
 
-
-
 .problem-list-tags a {
     /* background-color: #e9ecef; */
     padding: 5px 10px;
     border-radius: 5px;
     margin-right: 5px;
 }
-
-
 
 .index-list,
 .table-top-border {
@@ -380,5 +384,4 @@ table {
     background-color: #f0cff0;
     border-radius: 5px;
 }
-
 </style>
