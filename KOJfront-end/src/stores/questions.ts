@@ -9,11 +9,15 @@ export interface Question {
 }
 export const useQuestionsStore = defineStore('questions', {
     state: () => ({
-        questions: [] as Question[]
+        questions: [] as Question[],
+         queryCondition: null as string | null,
     }),
     actions: {
         setQuestions(questions: Question[]) {
             this.questions = questions;
+        },
+        setQueryCondition(condition: string | null) {
+            this.queryCondition = condition;
         }
     }
 });

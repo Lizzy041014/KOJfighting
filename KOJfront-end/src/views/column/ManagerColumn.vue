@@ -13,15 +13,16 @@
                     <el-button v-else class="button-new-tag" @click="showInput">
                         + 新栏目
                     </el-button>
-                    <a-input :style="{ width: '260px' }" placeholder="请输入想要删除的栏目" allow-clear v-if="inputVisibledelete"
-                        ref="InputRefdelete" v-model="inputValuedelete" @keyup.enter="handleInputConfirmdelete">
-                        <template #prefix>
-                            <icon-minus-circle size="18" />
-                        </template>
-                    </a-input>
-                    <el-button v-else class="button-new-tag" @click="showdeleteInput">
-                        - 删除栏目
-                    </el-button>
+                    <div> <el-select :style="{ width: '260px' }" placeholder="请选择想要删除的栏目" allow-clear
+                            ref="InputRefdelete" v-model="inputValuedelete">
+                            <el-option v-for="item in collapseData" :value="item.columnName" :key="item.columnId"
+                                :columnId="item.columnId"></el-option>
+                        </el-select>
+                        <el-button class="button-new-tag" @click="handleInputConfirmdelete" style="margin-left: 15px;">-
+                            删除栏目
+                        </el-button>
+                    </div>
+
                 </a-space>
             </div>
             <a-collapse>
@@ -71,9 +72,9 @@
 </template>
 <script setup lang="ts">
 import ManagerNav from '@/components/ManagerNav.vue';
-import { ref,nextTick, onMounted } from 'vue';
+import { ref,nextTick, onMounted,watch } from 'vue';
 import { ElMessage, InputInstance } from 'element-plus';
-import axios, { AxiosRequestConfig } from 'axios';
+import axios from 'axios';
 let columns = [
     {
         title: ' ',
@@ -133,8 +134,6 @@ let addtopictocolumn = async (columnId:any,topicIds:any)=>{
             headers,
             data
         });
-     console.log(response.data.code);
-     console.log(data);
  if(response.data.code===200){
      ElMessage.success('题目添加成功')
      try {
@@ -160,7 +159,6 @@ let deletetopictocolumn = async (topicId: any, columnId: any) => {
             headers,
             data
         })
-        console.log(response);
         if (response.data.code === 200) {
             ElMessage.success('题目删除成功')
             try {
@@ -176,12 +174,6 @@ let deletetopictocolumn = async (topicId: any, columnId: any) => {
 }
 let showInput = () => {
     inputVisible.value = true
-    nextTick(() => {
-        InputRef.value!.input!.focus()
-    })
-}
-let showdeleteInput = () => {
-    inputVisibledelete.value = true
     nextTick(() => {
         InputRef.value!.input!.focus()
     })
@@ -204,7 +196,7 @@ let handleInputConfirm = async () => {
             inputValue.value = ''
             setTimeout(()=>{
                 location.reload()
-            },1000)
+            },500)
         }
         else {
             ElMessage.error('添加失败或已有该栏目')
@@ -213,37 +205,49 @@ let handleInputConfirm = async () => {
         console.error(error);
     }
 }
+let selectedColumnIdForDelete = ref();
 let handleInputConfirmdelete = async () => {
-    try {
-        let data = {
-            columnId: ''
+    if (selectedColumnIdForDelete.value) {
+        try {
+            let data = {
+                columnId: selectedColumnIdForDelete.value
+            };
+            let response = await axios({
+                method: 'DELETE',
+                url: `/api/admin/column/delete/${selectedColumnIdForDelete.value}`,
+                headers,
+                data
+            });
+            if (response.data.code === 200) {
+                ElMessage.success('成功删除该栏目');
+                inputVisibledelete.value = false;
+                inputValuedelete.value = '';
+                setTimeout(() => {
+                    location.reload()
+                }, 500)
+            } else {
+                ElMessage.error('删除失败或还未有该栏目的存在');
+            }
+        } catch (error) {
+            console.error(error);
         }
-        let response = await axios({
-            method: 'DELETE',
-            url: '/admin/column/delete/{columnId}',
-            headers,
-            data
-        })
-        console.log(response.data.code);
-        console.log(data);
-        if (response.data.code === 200) {
-            ElMessage.success('成功删除该栏目')
-            inputVisibledelete.value = false
-            inputValuedelete.value = ''
-        }
-        else {
-            ElMessage.error('删除失败或还未有该栏目的存在')
-        }
-    } catch (error) {
-        console.error(error);
+    } else {
+        ElMessage.warning('请先选择一个栏目进行删除。');
     }
-}
+};
+watch(inputValuedelete, (newValue) => {
+    let selectedItem = collapseData.value.find(item => item.columnName === newValue);
+    if (selectedItem) {
+        selectedColumnIdForDelete.value = selectedItem.columnId;
+    } else {
+        selectedColumnIdForDelete.value = null;
+    }
+});
 onMounted(async()=>{
     try {
         let response = await axios.post('/api/column/gets',headers);
         collapseData.value = response.data.data.records;
-        console.log(collapseData.value);
-        
+
     } catch (error) {
         console.error(error);
     };

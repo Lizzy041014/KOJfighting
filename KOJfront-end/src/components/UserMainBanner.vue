@@ -121,7 +121,6 @@ onMounted(async () => {
     }
 });
 let topicquestion = (topicId: number) => {
-    console.log(`${topicId}`);
     router.push(`/user/doquestion/${topicId}`)
 };
 let fetchData = async (pageNo: number) => {

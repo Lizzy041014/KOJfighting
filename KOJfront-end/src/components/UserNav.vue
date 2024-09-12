@@ -4,18 +4,18 @@
             <div class="kexielogo"><img alt="kexielogo" :src="kexielogo"></div>
             <div class="title">KexieOJ</div>
             <ul class="tag">
-                <li>
+                <li :class="{ 'activenav': activeClassForPathone }" @click="handleClick('/userhome')">
                     <router-link to='/userhome' active-class="active">
-                        <p @click="handleClick('/userhome')"><icon-home />&nbsp;首页</p>
+                        <p><icon-home />&nbsp;首页</p>
                     </router-link>
                 </li>
-                <li >
+                <li :class="{ 'activenav': activeClassForPathtwo }" @click="handleClick('/view/total/detailquestions')">
                     <RouterLink to="/view/total/detailquestions" active-class="active">
-                        <p @click="handleClick('/view/total/detailquestions')"><icon-highlight />&nbsp;习题</p>
+                        <p><icon-highlight />&nbsp;习题</p>
                     </RouterLink>
                 </li>
-                <li>
-                    <RouterLink to="/userhome" active-class="active">
+                <li :class="{ 'activenav': activeClassForPaththree }">
+                    <RouterLink to="" active-class="active">
                         <p><icon-book />&nbsp;考试</p>
                     </RouterLink>
                 </li>
@@ -168,17 +168,30 @@ let uPattern: RegExp = /^[\u4e00-\u9fa5a-zA-Z0-9]{3,12}$/;
 let pPattern: RegExp = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*_-]).{8,16}$/
 let genderPattern: RegExp = /^(男|女)$/;
 let token = localStorage.getItem('token');
-// 初始默认头像
+let activeClassForPathone=ref(false)
+let activeClassForPathtwo = ref(false)
+let activeClassForPaththree = ref(false)
 let selectedAvatar = ref('https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp');
 let route = useRoute();
 let handleClick = (path:string) => {
-    if (route.path !== path) {
-        router.push(path);
-    } else if (path === '/userhome'){
-        ElMessage.warning('已经正处于首页！');
+    // if (route.path !== path) {
+    //     router.push(path);
+    // } 
+    // else if (path === '/userhome'){
+    //     activeClassForPathone.value =! activeClassForPathone.value
+    //     ElMessage.warning('已经正处于首页！');
+    // }
+    // else if (path === '/view/total/detailquestions') {
+    //     activeClassForPathtwo.value = !activeClassForPathtwo.value
+    //     ElMessage.warning('已经正处于习题页面！');
+    // }
+     if (path === '/userhome') {
+     activeClassForPathone.value =! activeClassForPathone.value
+         ElMessage.warning('已经正处于首页！');
     }
     else if (path === '/view/total/detailquestions') {
-        ElMessage.warning('已经正处于习题页面！');
+        activeClassForPathtwo.value = !activeClassForPathtwo.value
+         ElMessage.warning('已经正处于习题页面！');
     }
 };
 let dotitleSubmit = async () => {
@@ -294,7 +307,6 @@ let handleSubmit = async (event: { preventDefault: () => void; }) => {
             ElMessage.error(response.data.message)
         }
         else if (response.data.code === 200) {
-            console.log(response.data);
             ElMessage.success("修改信息成功！")
             if (username.value !== '') {
                 userStore.setUsername(username.value);
@@ -378,3 +390,9 @@ function clearInput() {
     title.value = '';
 };
 </script>
+<style scoped>
+.activenav {
+    background-color: #edf0f2;
+}
+
+</style>

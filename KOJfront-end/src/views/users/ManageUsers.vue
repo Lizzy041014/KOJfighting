@@ -103,14 +103,12 @@ let fetchUsers = async () => {
             headers,
             data
         })
-        console.log(response);  
         let backendData = response.data.data as DataResponse;
         backendData.records.forEach((user) => {
             let storedValue = localStorage.getItem(`userSwitchValue_${user.userId}`);
             user.switchValue = storedValue ? Number(storedValue) : 0;
             user.switchColorChecked = "#f45e5e";
             user.switchColorUnchecked = "#2e69fd";
-            console.log(user.switchColorChecked);
         });
         users.value = backendData.records;
         totalUsers.value = backendData.totalRow;
@@ -156,7 +154,6 @@ let changeUserStatus = async (userId: any) => {
             if (response.data.code === 200) {
                 localStorage.setItem(`userSwitchValue_${userId}`, user.switchValue.toString());
                 ElMessage.warning('修改用户状态成功')
-                console.log(user.switchValue);
                 if (user.switchValue===1){
                     user.switchColorChecked = "#2e69fd";
                 } 

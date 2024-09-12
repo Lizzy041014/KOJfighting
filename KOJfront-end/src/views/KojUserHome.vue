@@ -14,7 +14,7 @@ import UserNav from "@/components/UserNav.vue";
 .footer{
   position: relative;
   display: flex;
-    bottom: -15%;
+    bottom: -25%;
     left: 0;
     right: 0;
 }

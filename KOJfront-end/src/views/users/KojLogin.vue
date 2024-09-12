@@ -53,7 +53,6 @@ function handleFocus(content: any) {
         isAnimatedEmail.value = true;
     }
 }
-
 function handleBlur(content: any) {
     if (content === 'password') {
         if (!password.value) {

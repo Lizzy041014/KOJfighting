@@ -5,7 +5,7 @@
             <a-form layout="inline" class="dosubmit">
                 <a-form-item field="title" label="名称" style="min-width: 260px">
                     <a-input :style="{ width: '280px' }" v-model="title" placeholder="请输入题目名称" allow-clear />
-                    <el-button type="primary" @click="dotitleSubmit(title)" class="chaxunbutton">查询</el-button>
+                    <el-button type="primary" @click="dotitleSubmit(title, currentPage)" class="chaxunbutton">查询</el-button>
                 </a-form-item>
                 <a-form-item field="tags" label="标签">
                     <div class="m-4">
@@ -15,7 +15,7 @@
                                 :value="item.value"></el-option>
                         </el-select>
                     </div>
-                    <el-button type="primary" @click="dolabelSubmit(selectedLabels)" class="chaxunbutton">查询</el-button>
+                    <el-button type="primary" @click="dolabelSubmit(selectedLabels, currentPage)" class="chaxunbutton">查询</el-button>
                 </a-form-item>
             </a-form>
             <div class="list-head">
@@ -57,7 +57,7 @@
                         </tr>
                     </tbody>
                 </table>
-                <a-pagination :total="totalpagesizeRef" size="large" @change="handlePageChange">
+                <a-pagination :total="computedTotal" size="large" @change="handlePageChange">
                     <template #page-item="{ page }" :v-model="currentPage">
                         {{ page }}
                     </template>
@@ -75,13 +75,12 @@
 </template>
 <script setup lang="ts">
 import UserNav from '@/components/UserNav.vue';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref ,computed,reactive } from 'vue';
 import axios from 'axios';
 import { totalpagesizeRef, currentPage, options, selectedLabels, onSelectChange,  getLabelClass } from '@/Logic/ViewQuesLogic';
 import router from '@/router';
 import BasicFooter from '@/components/BasicFooter.vue';
 import { useQuestionsStore } from '@/stores/questions';
-import { log } from 'console';
 interface Question {
     topicId: number;
     title: string;
@@ -90,10 +89,10 @@ interface Question {
     labels?: { labelId: number; labelName: string }[];
     updataTime: string;
 }
+
 let questionsStore = useQuestionsStore();
 let title = ref('');
 let topicquestion = (topicId:number) => {
-    console.log(`${topicId}`);
     router.push(`/user/doquestion/${topicId}`)
 };
 onMounted(async () => {
@@ -106,31 +105,34 @@ onMounted(async () => {
         console.error(error);
     }
 });
-let dotitleSubmit = async (title: string) => {
-    let data = { search: title,pageSize :10};
+let dotitleSubmit = async (title: string, pageNo: number) => {
+    let data;
+    if (title === '') {
+        data = { pageNo, pageSize: 10 };
+    } else {
+        data = { search: title,  pageNo,pageSize: 10 };
+    }
     try {
-        console.log(data);
         let response = await axios.post('/api/topic/gets', data);
+        totalpagesizeRef.value = response.data.data.totalRow;
         questionsStore.setQuestions(response.data.data.records as Question[]);
-        totalpagesizeRef.value = response.data.data.totalPage;
-        console.log(response.data);
-        
+        questionsStore.setQueryCondition('titleQuery');
     } catch (error) {
         console.log(error);
     }
 };
 
-let dolabelSubmit = async (labelsid: number[]) => {
-    let data = { labelIds: labelsid, pageNo: 1 };
+let dolabelSubmit = async (labelsid: number[], pageNo: number) => {
+    let data = { labelIds: labelsid,  pageNo,pageSize: 10 };
     try {
         let response = await axios.post('/api/topic/gets', data);
+        totalpagesizeRef.value = response.data.data.totalRow;
          questionsStore.setQuestions(response.data.data.records as Question[]);
-        totalpagesizeRef.value = response.data.data.totalPage;
+        questionsStore.setQueryCondition('labelQuery');
     } catch (error) {
         console.log(error);
     }
 };
-
 let fetchData = async (pageNo: number) => {
     let data = {
         pageNo,
@@ -139,18 +141,26 @@ let fetchData = async (pageNo: number) => {
     try {
         let response = await axios.post('/api/topic/gets', data);
         questionsStore.setQuestions(response.data.data.records as Question[]);
+        questionsStore.setQueryCondition('');
         totalpagesizeRef.value = response.data.data.totalRow;
-        console.log(response.data);
-        
     } catch (error) {
         console.error(error);
     }
 };
 let handlePageChange = (page: number) => {
-    currentPage.value = page;
-    fetchData(page);
+    currentPage.value = page
+    if (questionsStore.queryCondition === 'titleQuery') {
+        dotitleSubmit(title.value,page);
+    } else if (questionsStore.queryCondition === 'labelQuery') {
+        dolabelSubmit(selectedLabels.value, page);
+    } else {
+        fetchData(page);
+    }
 };
-
+let computedTotal = computed(() => {
+    let totalRow = totalpagesizeRef.value;
+    return Math.ceil(totalRow / 10) * 10;
+});
 </script>
 <style scoped>
 .chaxunbutton{

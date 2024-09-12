@@ -5,7 +5,7 @@
             <a-form layout="inline" class="dosubmit" >
                 <a-form-item field="title" label="名称" style="min-width: 260px">
                     <a-input :style="{ width: '280px' }" v-model="title" placeholder="请输入题目名称" allow-clear />
-                    <el-button type="primary" @click="dotitleSubmit" class="chaxunbutton">查询</el-button>
+                    <el-button type="primary" @click="dotitleSubmit(title, currentPage)" class="chaxunbutton">查询</el-button>
                 </a-form-item>
                 <a-form-item field="tags" label="标签">
                     <div class="m-4">
@@ -15,7 +15,7 @@
                                 :value="item.value"></el-option>
                         </el-select>
                     </div>
-                    <el-button type="primary" @click="dolabelSubmit(selectedLabels)" class="chaxunbutton">查询</el-button>
+                    <el-button type="primary" @click="dolabelSubmit(selectedLabels, currentPage)" class="chaxunbutton">查询</el-button>
                 </a-form-item>
             </a-form>
             <div class="list-head">
@@ -49,7 +49,7 @@
                             </td>
                             <td><span class="label" :class="getLabelClass(question.difficulty)">{{ question.difficulty
                                     }}</span></td>
-                            <td><span>{{ question.updateTime }}</span></td>
+                            <td><span>{{question.updateTime}}</span></td>
                             <td style="text-align:center;vertical-align: middle;">
                                 <a-button type="outline" @click="topicquestion(question.topicId)" size="small"
                                     shape="round">做题</a-button>
@@ -57,7 +57,7 @@
                         </tr>
                     </tbody>
                 </table>
-                <a-pagination :total="totalpagesizeRef" size="large" @change="handlePageChange">
+                <a-pagination :total="computedTotal" size="large" @change="handlePageChange">
                     <template #page-item="{ page }" :v-model="currentPage">
                         {{ page }}
                     </template>
@@ -75,7 +75,7 @@
 </template>
 <script setup lang="ts">
 import UserNav from '@/components/UserNav.vue';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import axios from 'axios';
 import { useQuestionsStore } from '@/stores/questions';
 import router from '@/router';
@@ -92,54 +92,78 @@ interface Question {
 }
 let questionsStore = useQuestionsStore();
 let title = ref('');
-let dotitleSubmit = async () => {
-    let data = { search: title.value };
+let dotitleSubmit = async (title: string, pageNo: number) => {
+    let data;
+    if (title === '') {
+        data = { pageNo, pageSize: 10 };
+    } else {
+        data = { search: title, pageNo, pageSize: 10 };
+    }
     try {
         let response = await axios.post('/api/topic/gets', data);
+        totalpagesizeRef.value = response.data.data.totalRow;
         questionsStore.setQuestions(response.data.data.records as Question[]);
-        totalpagesizeRef.value = response.data.data.totalPage;
+        questionsStore.setQueryCondition('titleQuery');
     } catch (error) {
         console.log(error);
     }
 };
-let dolabelSubmit = async (labelsid: number[]) => {
-    let data = { labelIds: labelsid, pageNo: 1 ,pageSize:10};
+let dolabelSubmit = async (labelsid: number[], pageNo: number) => {
+    let data = { labelIds: labelsid, pageNo,pageSize:10};
     try {
         let response = await axios.post('/api/topic/gets', data);
-        console.log(response.data.data);
         questionsStore.setQuestions(response.data.data.records as Question[]);
-        totalpagesizeRef.value = response.data.data.totalPage
+        questionsStore.setQueryCondition('labelQuery');
+        totalpagesizeRef.value = response.data.data.totalRow
     } catch (error) {
         console.log(error);
     }
 };
 
 let handlePageChange = (page: number) => {
-    currentPage.value = page;
+    currentPage.value = page
+    if (questionsStore.queryCondition === 'titleQuery') {
+        dotitleSubmit(title.value,page);
+    } else if (questionsStore.queryCondition === 'labelQuery') {
+        dolabelSubmit(selectedLabels.value, page);
+    } else {
+        fetchData(page);
+    }
 };
 let topicquestion = (topicId:number) => {
-    console.log(`${topicId}`);
     router.push(`/user/doquestion/${topicId}`)
 };
 let route = useRoute();
-onMounted(async () => {
+let fetchData = (async (pageNo: number) => {
     let pathSegments = route.path.split("/");
     let labelId = pathSegments[pathSegments.length - 1];
-    console.log(labelId);
     let data = {
+        pageNo,
         labelIds: [labelId],
-        pageNo:1,
-        pageSize: 10,
+        pageSize:10
     };
     try {
-        console.log(data);
         let response = await axios.post('/api/topic/gets', data);
-        console.log(response.data.data);
         questionsStore.setQuestions(response.data.data.records as Question[]);
+        questionsStore.setQueryCondition('labelQuery');
         totalpagesizeRef.value = response.data.data.totalRow;
     } catch (error) {
         console.error(error);
     }
+});
+onMounted(async () => {
+    await fetchData(currentPage.value);
+    try {
+        let response = await axios.get('/api/label/gets');
+        let data = response.data.data.records;
+        options.value = data.map((item: { labelId: any; labelName: any; }) => ({ value: item.labelId, label: item.labelName }));
+    } catch (error) {
+        console.error(error);
+    }
+});
+let computedTotal = computed(() => {
+    let totalRow = totalpagesizeRef.value;
+    return Math.ceil(totalRow / 10) * 10;
 });
 </script>
 <style scoped>

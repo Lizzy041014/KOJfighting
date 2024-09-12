@@ -158,7 +158,6 @@ let handleSubmit = async (event: Event) => {
     form.examples.forEach(item => {
         item.topicId = topicId.value.toString(); 
     });
-    console.log(form);
     try {
         let response = await axios({
             method: 'POST',
@@ -166,7 +165,6 @@ let handleSubmit = async (event: Event) => {
             headers: headers,
             data: form
         })
-        console.log(response.data);
         if (response.data.code === 200) {
             ElMessage.success("创建题目成功")
             setTimeout(()=>{
@@ -213,8 +211,6 @@ let handleInputConfirm = async () => {
             headers,
             data
         })
-        console.log(response.data.code);
-        console.log(data);
         if(response.data.code===200){
             ElMessage.success('标签添加成功')
         inputVisible.value = false
@@ -238,8 +234,6 @@ let handleInputConfirmdelete = async () => {
             headers,
             data
         })
-        console.log(response.data.code);
-        console.log(data);
         if (response.data.code === 200) {
             ElMessage.success('成功删除该标签')
             inputVisibledelete.value = false

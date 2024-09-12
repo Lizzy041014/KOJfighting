@@ -93,7 +93,6 @@ let headers = {
 
 let handleSubmit = async (event: Event) => {
     event.preventDefault();
-    console.log(form);
     try {
         let response = await axios({
             method: "put",
@@ -101,7 +100,6 @@ let handleSubmit = async (event: Event) => {
             headers: headers,
             data: form,
         });
-        console.log(response.data);
         if (response.data.code === 200) {
             ElMessage.success("修改题目成功");
             setTimeout(()=>{
@@ -123,7 +121,6 @@ onMounted(async () => {
     try {
         let response = await axios.get(`/api/topic/get/${topicId}`);
         let data = response.data.data;
-        console.log(data);
         form.title = data.title;
         form.content = data.content;
         form.difficulty = data.difficulty;
